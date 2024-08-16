@@ -1,0 +1,40 @@
+{
+  "name": "vue-drag-component-plus",
+  "description": "拖拽卡片布局组件 vue3版组件",
+  "version": "0.0.1",
+  "author": "aFei <1106728884@qq.com>",
+  "license": "MIT",
+  "main": "dist/vue-drag-component-plus.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-drag-component-plus.mjs",
+      "require": "./dist/vue-drag-component-plus.umd.js"
+    },
+    "./index.css": "./dist/style.css"
+  },
+  "private": false,
+  "scripts": {
+    "init": "npm install",
+    "build": "vite build",
+    "push": "npm publish",
+    "preview": "vite"
+  },
+  "keywords": [
+    "Vue3",
+    "component",
+    "drag",
+    "grid",
+    "resizable"
+  ],
+  "homepage": "https://github.com/QuietHear",
+  "repository": "https://github.com/QuietHear/vue-drag-component-plus",
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "element-plus": "^2.7.8",
+    "sass": "^1.77.8",
+    "unplugin-auto-import": "^0.18.2",
+    "vite": "^4.3.9",
+    "vue": "^3.3.4",
+    "vue-router": "^4.4.3"
+  }
+}
