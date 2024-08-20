@@ -18,6 +18,12 @@
 
 
 ## 0. 可改动样式变量
+>
+	画布是width、height:100%;如果要调整/固定画布大小，控制外层父元素的大小即可
+>
+
+* `--bg`：rgba(0, 0, 0, 0.1);-->画布背景色
+
 * `--com-item-bg`：#fff;-->组件项背景色
 
 * `--com-item-border-width`：1px;-->组件项边框宽度
@@ -48,9 +54,15 @@
 * `--setting-pop-width`：84px;-->设置弹窗的宽度
 
 
-
-
 ## 1. 参数
+* `insertResizeKeys`：包含收缩方向-->Array;非必传;默认*['topLeft', 'top', 'topRight', 'left', 'right', 'bottomLeft', 'bottom', 'bottomRight']*
+
+* `excludeResizeKeys`：排除收缩方向-->Array;非必传;默认*[]*
+
+* `seeModel`：预览模式-->Boolean;非必传;默认*false*
+
+* `noEditModel`：无设置菜单模式（仅拖动、缩放）-->Boolean;非必传;默认*false*
+
 * `itemMinWidth`：组件项最小宽度，校验变量不能小于15-->Number;非必传;默认*15*
 
 * `itemMinHeight`：组件项最小高度，校验变量不能小于15-->Number;非必传;默认*15*
@@ -67,12 +79,14 @@
 
 
 ## 2. 方法
-* `init`：初始化画布-->传入（初始宽度，初始高度，组件数据），第一次使用必须初始化，组件的默认宽高均为0，后续也可以用来重置画布及组件数据
+* `init`：初始化画布-->传入（历史组件数据，历史画布宽度）；历史组件数据不传默认为空；历史画布宽度不传默认为null，代表不处理组件数据，如果传入了，那组件的宽高等数据会根据当前画布的宽度重新计算
 >
 	一个组件项的数据结构：
 	{
+		// 当前组件的唯一值，删除、合并等的重要字段
+		id: xxx,
 		// 当前尺寸对应的宽度
-		width:100,
+		width: 100,
 		// 当前尺寸对应的高度
 		height: 100,
 		// 当前尺寸对应的横坐标
@@ -84,30 +98,39 @@
 		// 可以拖动改变大小，仅false为不可改变
 		resizable: false,
 		// 可以拖动改变位置，仅false为不可改变
-		dragable: false,
-		1
-		1
-		1
-		1
-		1
-		1
-		1
-		1
-		1
-		1
-		1
-		1
+		dragable: false
 	}
 >
 
-* `changePageSize`：手动设置画布高度-->传入（新宽度，新高度），可以给宽度/高度传入null，null代表不更新
+* `addItem`：添加一个组件项-->传入（组件项数据）
 >
-	父组件可以根据窗口的变化、布局的变化等情况实时更新画布的大小
-	以窗口变化为例：
-	window.addEventListener("resize", 更新画布尺寸方法);
-	onBeforeUnmount(() => {
-	  window.removeEventListener("resize", 更新画布尺寸方法);
-	});	
+	一个组件项的数据结构：
+	{
+		// 当前组件的唯一值，删除、合并等的重要字段；可以不传，会自动生成一个当前时间戳的字符串
+		id: xxx,
+		// 当前尺寸对应的宽度
+		width: 100,
+		// 当前尺寸对应的高度
+		height: 100,
+		// 静态组件，不能主动/被动移动、不能拖动改变大小，仅true为不可动
+		static: true,
+		// 可以拖动改变大小，仅false为不可改变
+		resizable: false,
+		// 可以拖动改变位置，仅false为不可改变
+		dragable: false
+	}
+>
+
+* `deleteItem`：删除一个组件项-->传入（组件项id）
+
+* `updateItem`：更新一个组件项-->传入（组件项数据），id必须包含，不要随便更改x,y,width,height等画布上的信息，避免出现BUG
+
+* `getData`：获取当前画布数据
+>
+	{
+		data:组件数据,
+		width:当前画布宽度
+	}
 >
 
 

@@ -4,10 +4,10 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-16 14:29:35
+ * @LastEditTime: 2024-08-20 11:08:39
 */
 .vue-drag-component-plus {
-  box-sizing              : border-box;
+  --bg                    : rgba(0, 0, 0, 0.1);
   --com-item-bg           : #fff;
   --com-item-border-width : 1px;
   --com-item-border-type  : solid;
@@ -21,6 +21,10 @@
   --setting-icon-color    : #000;
   --setting-icon-size     : 12px;
   --setting-pop-width     : 84px;
+  box-sizing              : border-box;
+  width                   : 100%;
+  height                  : 100%;
+  background              : var(--bg);
 
   ::-webkit-scrollbar {
     width: 0;

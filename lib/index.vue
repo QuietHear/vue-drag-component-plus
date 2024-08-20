@@ -4,44 +4,53 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-16 14:29:14
+ * @LastEditTime: 2024-08-20 10:52:55
 */
 <template>
-  <div class="vue-drag-component-plus" :style="{ width: pageWidth + 'px', height: pageHeight + 'px' }">
+  <div class="vue-drag-component-plus" ref="pageRef">
     <div class="content-box" ref="boxRef">
       <div
-        :class="['com-item', item.static === true || item.dragable === false ? '' : 'can-drag', item.move ? 'is-move' : '']"
+        :class="['com-item', seeModel || item.static === true || item.dragable === false ? '' : 'can-drag', item.move ? 'is-move' : '']"
         :style="{
           width: item.width + 'px',
           height: item.height + 'px',
           top: item.y + 'px',
           left: item.x + 'px'
         }" v-for="(item, index) in comData" :key="index"
-        @mousedown.prevent="item.static === true || item.dragable === false ? null : dragStart($event, index)">
+        @mousedown.prevent="seeModel || item.static === true || item.dragable === false ? null : dragStart($event, index)">
         <div class="com-item-content">
           <slot name="item" :$index="index" :data="item">
             {{ index }}
           </slot>
-          <div class="setting-box" :style="{ display: item.showPop ? 'flex' : 'none' }" @mousedown.prevent.stop="null">
+          <div class="setting-box" :style="{ display: item.showPop ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
+            v-if="!seeModel && !noEditModel && dragSrc === null && resizeObj === null">
             <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
             <template v-if="item.showPop">
               <div class="setting-box-pop">
-                <slot name="setPopNormal" :$index="index" :data="item">
-                  <div class="setting-box-pop-item" @click="comData.splice(index, 1);">删除</div>
+                <slot name="setPopNormal" :$index="index" :data="deepCopy(item)">
+                  <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
                 </slot>
               </div>
             </template>
           </div>
         </div>
-        <template v-if="item.static !== true && item.resizable !== false">
-          <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"></div>
-          <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"></div>
-          <div class="resize-line top-right" @mousedown.prevent.stop="resizeStart($event, item, 'top-right')"></div>
-          <div class="resize-line left" @mousedown.prevent.stop="resizeStart($event, item, 'left')"></div>
-          <div class="resize-line right" @mousedown.prevent.stop="resizeStart($event, item, 'right')"></div>
-          <div class="resize-line bottom-left" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-left')"></div>
-          <div class="resize-line bottom" @mousedown.prevent.stop="resizeStart($event, item, 'bottom')"></div>
-          <div class="resize-line bottom-right" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-right')">
+        <template v-if="!seeModel && item.static !== true && item.resizable !== false">
+          <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
+            v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
+          <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
+            v-if="resizeKeys.indexOf('top') !== -1"></div>
+          <div class="resize-line top-right" @mousedown.prevent.stop="resizeStart($event, item, 'top-right')"
+            v-if="resizeKeys.indexOf('topRight') !== -1"></div>
+          <div class="resize-line left" @mousedown.prevent.stop="resizeStart($event, item, 'left')"
+            v-if="resizeKeys.indexOf('left') !== -1"></div>
+          <div class="resize-line right" @mousedown.prevent.stop="resizeStart($event, item, 'right')"
+            v-if="resizeKeys.indexOf('right') !== -1"></div>
+          <div class="resize-line bottom-left" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-left')"
+            v-if="resizeKeys.indexOf('bottomLeft') !== -1"></div>
+          <div class="resize-line bottom" @mousedown.prevent.stop="resizeStart($event, item, 'bottom')"
+            v-if="resizeKeys.indexOf('bottom') !== -1"></div>
+          <div class="resize-line bottom-right" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-right')"
+            v-if="resizeKeys.indexOf('bottomRight') !== -1">
           </div>
         </template>
       </div>
@@ -57,6 +66,30 @@
 <script setup>
 import Icon from "./components/icon.vue";
 const props = defineProps({
+  // 包含收缩方向
+  insertResizeKeys: {
+    type: Array,
+    default: () => {
+      return ['topLeft', 'top', 'topRight', 'left', 'right', 'bottomLeft', 'bottom', 'bottomRight'];
+    }
+  },
+  // 排除收缩方向
+  excludeResizeKeys: {
+    type: Array,
+    default: () => {
+      return [];
+    }
+  },
+  // 预览模式
+  seeModel: {
+    type: Boolean,
+    default: false
+  },
+  // 无设置菜单模式（仅拖动、缩放）
+  noEditModel: {
+    type: Boolean,
+    default: false
+  },
   // 组件项最小宽度
   itemMinWidth: {
     type: Number,
@@ -91,57 +124,76 @@ const deepCopy = (obj) => {
   }
   return result;
 };
+// 计算当前应该生效的缩放key
+const dealResizeKeys = () => {
+  props.insertResizeKeys.forEach(item => {
+    if (props.excludeResizeKeys.indexOf(item) === -1) {
+      resizeKeys.value.push(item);
+    }
+  });
+};
+watch(
+  () => [props.insertResizeKeys, props.excludeResizeKeys],
+  () => {
+    dealResizeKeys();
+  }
+);
+// 当前生效的缩放key
+const resizeKeys = ref([]);
+dealResizeKeys();
+// 画布ref
+const pageRef = ref(null);
 // 画布宽度
-const pageWidth = ref(0);
+let pageWidth = null;
 // 画布高度
-const pageHeight = ref(0);
+let pageHeight = null;
 // 画布容器ref
 const boxRef = ref(null);
 // 占位高度
 const heightBg = ref(0);
 // 组件数据
 const comData = ref([
-  {
-    width: 100,
-    height: 100,
-    x: 300,
-    y: 300
-  },
-  {
-    width: 100,
-    height: 100,
-    x: 390,
-    y: 50,
-    static: true
-  },
-  {
-    width: 100,
-    height: 100,
-    x: 50,
-    y: 210,
-    static: true
-  },
-  {
-    width: 100,
-    height: 100,
-    x: 210,
-    y: 600,
-    static: true
-  },
-  {
-    width: 100,
-    height: 100,
-    x: 700,
-    y: 390,
-    static: true
-  },
-  {
-    width: 100,
-    height: 100,
-    x: 600,
-    y: 290,
-    static: true
-  }
+  // {
+  //   width: 100,
+  //   height: 100,
+  //   x: 300,
+  //   y: 300
+  // },
+  // {
+  //   width: 100,
+  //   height: 100,
+  //   x: 390,
+  //   y: 50,
+  //   static: true
+  // },
+  // {
+  //   width: 100,
+  //   height: 100,
+  //   x: 50,
+  //   y: 210,
+  //   static: true
+  // },
+  // {
+  //   width: 100,
+  //   height: 100,
+  //   x: 210,
+  //   y: 600,
+  //   static: true
+  // },
+  // {
+  //   width: 100,
+  //   height: 100,
+  //   x: 700,
+  //   y: 390,
+  //   static: true
+  // },
+  // {
+  //   width: 100,
+  //   height: 100,
+  //   x: 600,
+  //   y: 290,
+  //   static: true
+  // }
 ]);
 // 当前拖拽目标
 let dragSrc = null;
@@ -188,7 +240,7 @@ const dragIng = (e) => {
     }
   }
   dealBg();
-  boxRef.value.scrollTo(0, heightBg.value - pageHeight.value);
+  boxRef.value.scrollTo(0, heightBg.value - pageHeight);
 };
 // 结束拖拽
 const dragEnd = () => {
@@ -204,7 +256,7 @@ const dealDragMax = (direction) => {
       return 0;
       break;
     case 'right':
-      return pageWidth.value - comData.value[dragSrc].width;
+      return pageWidth - comData.value[dragSrc].width;
       break;
     case 'bottom':
       return 999999999;
@@ -330,7 +382,7 @@ const resizeIng = (e) => {
       break;
   };
   dealBg();
-  boxRef.value.scrollTo(0, heightBg.value - pageHeight.value);
+  boxRef.value.scrollTo(0, heightBg.value - pageHeight);
 };
 // 结束收缩
 const resizeEnd = (e) => {
@@ -349,7 +401,7 @@ const dealResizeMax = (direction) => {
       return startLeft + startWidth - leftObstacle;
       break;
     case 'right':
-      return (rightObstacle > 0 ? rightObstacle : pageWidth.value) - startLeft;
+      return (rightObstacle > 0 ? rightObstacle : pageWidth) - startLeft;
       break;
     case 'bottom':
       return bottomObstacle > 0 ? (bottomObstacle - startTop) : 999999999;
@@ -365,23 +417,110 @@ const dealBg = () => {
     heightBg.value = 0;
   }
 };
+// 初始化
+onMounted(() => {
+  // 绑定监听
+  resizePageObserver.observe(pageRef.value);
+});
+// 画布尺寸改变监听器
+const resizePageObserver = new ResizeObserver(entries => {
+  changePageSize(pageWidth === entries[0].contentRect.width ? null : entries[0].contentRect.width, pageHeight === entries[0].contentRect.height ? null : entries[0].contentRect.height);
+});
+// 正在init
+let initIng = false;
 // 初始化画布
-const init = (width, height) => {
-  changePageSize(width, height);
-  dealBg();
+const init = (historyData = [], historyWidth = null) => {
+  comData.value = deepCopy(historyData);
+  if (historyWidth !== null) {
+    nextTick(() => {
+      const obj = pageRef.value.getBoundingClientRect();
+      const multiple = obj.width / historyWidth;
+      comData.value.forEach(item => {
+        item.width *= multiple;
+        item.height *= multiple;
+        item.x *= multiple;
+        item.y *= multiple;
+      });
+      dealBg();
+    });
+  } else {
+    dealBg();
+  }
+  initIng = true;
+  setTimeout(() => {
+    initIng = false;
+  }, 500)
 };
 // 添加一个组件
-const addItem = () => { };
+const addItem = (obj) => {
+  const item = deepCopy(obj);
+  if (!item.id) {
+    item.id = new Date().getTime() + '';
+  }
+  item.x = 0;
+  const lin = comData.value.map(item => (item.y + item.height));
+  if (lin.length > 0) {
+    item.y = Math.max(...lin);
+  } else {
+    item.y = 0;
+  }
+  comData.value.push(item);
+  dealBg();
+};
 // 删除一个组件
-const deleteItem = () => { };
-// 手动设置画布尺寸
+const deleteItem = (id) => {
+  const index = comData.value.findIndex(item => item.id === id);
+  if (index !== -1) {
+    comData.value.splice(index, 1);
+    dealBg();
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
+};
+// 更新一个组件
+const updateItem = (obj) => {
+  if (obj.id) {
+    const item = deepCopy(obj);
+    const index = comData.value.findIndex(one => one.id === item.id);
+    if (index !== -1) {
+      comData.value[index] = item;
+      dealBg();
+    } else {
+      try {
+        console.error('未找到组件');
+      } catch (error) { }
+    }
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
+};
+// 记录画布尺寸
 const changePageSize = (width, height) => {
   if (width !== null) {
-    pageWidth.value = width;
+    const multiple = pageWidth ? (width / pageWidth) : 1;
+    pageWidth = width;
+    // 防止init时widh监听正好触发
+    if (!initIng) {
+      comData.value.forEach(item => {
+        item.width *= multiple;
+        item.height *= multiple;
+        item.x *= multiple;
+        item.y *= multiple;
+      });
+      dealBg();
+    }
   }
   if (height !== null) {
-    pageHeight.value = height;
+    pageHeight = height;
   }
+};
+// 获取当前画布数据
+const getData = () => {
+  return { data: deepCopy(comData.value), width: pageWidth };
 };
 // 展开一个菜单
 const openSettingPop = (item) => {
@@ -401,9 +540,11 @@ const closeSettingPop = () => {
   window.removeEventListener('click', closeSettingPop);
 };
 onBeforeUnmount(() => {
+  // 移除监听
+  resizePageObserver.unobserve(pageRef.value);
   window.removeEventListener('click', closeSettingPop);
 });
-defineExpose({ init, addItem, deleteItem, changePageSize });
+defineExpose({ init, addItem, deleteItem, updateItem, getData });
 </script>
 <style lang="scss">
 @use "style/index.scss" as *;

@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-12 11:25:41
+ * @LastEditTime: 2024-08-20 11:17:24
 */
 * {
   padding    : 0;
@@ -55,4 +55,18 @@ body,
 
 .demo {
   padding: 20px 10px;
+}
+
+.con-box {
+  .con {
+    margin-bottom: 10px;
+
+    .el-switch {
+      margin-left: 12px;
+    }
+  }
+
+  .box {
+    height: calc(100vh - 82px);
+  }
 }
