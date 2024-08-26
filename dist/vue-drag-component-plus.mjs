@@ -1,5 +1,5 @@
-import { resolveComponent as we, openBlock as f, createBlock as U, resolveDynamicComponent as se, normalizeProps as re, mergeProps as K, withCtx as xe, createElementBlock as v, toDisplayString as he, watch as Me, ref as X, onMounted as be, onBeforeUnmount as me, createElementVNode as T, Fragment as ae, renderList as ke, unref as y, normalizeClass as Oe, normalizeStyle as G, withModifiers as w, renderSlot as J, createTextVNode as ce, createVNode as ze, createCommentVNode as p, nextTick as Ee } from "vue";
-const Re = {
+import { resolveComponent as He, openBlock as h, createBlock as le, resolveDynamicComponent as xe, normalizeProps as be, mergeProps as J, withCtx as Re, createElementBlock as v, toDisplayString as ie, watch as We, ref as H, onMounted as _e, onBeforeUnmount as $e, createElementVNode as R, Fragment as Q, renderList as Me, unref as p, normalizeClass as ke, normalizeStyle as A, withModifiers as x, createTextVNode as Z, renderSlot as B, createVNode as me, createCommentVNode as y, nextTick as Le } from "vue";
+const Oe = {
   __name: "icon",
   props: {
     iconObj: {
@@ -7,31 +7,28 @@ const Re = {
       requured: !0
     }
   },
-  setup(u) {
-    return (L, r) => {
-      const M = we("el-icon");
-      return u.iconObj.type === "custom" ? (f(), U(se(u.iconObj.icon), re(K({ key: 0 }, u.iconObj.attrs)), null, 16)) : u.iconObj.type === "el" ? (f(), U(M, re(K({ key: 1 }, u.iconObj.attrs)), {
-        default: xe(() => [
-          (f(), U(se(u.iconObj.icon)))
+  setup(g) {
+    return (W, se) => {
+      const T = He("el-icon");
+      return g.iconObj.type === "custom" ? (h(), le(xe(g.iconObj.icon), be(J({ key: 0 }, g.iconObj.attrs)), null, 16)) : g.iconObj.type === "el" ? (h(), le(T, be(J({ key: 1 }, g.iconObj.attrs)), {
+        default: Re(() => [
+          (h(), le(xe(g.iconObj.icon)))
         ]),
         _: 1
-      }, 16)) : u.iconObj.type === "iconfont" ? (f(), v("i", K({
+      }, 16)) : g.iconObj.type === "iconfont" ? (h(), v("i", J({
         key: 2,
-        class: ["icon iconfont", "icon-" + u.iconObj.icon]
-      }, u.iconObj.attrs), null, 16)) : (f(), v("i", K({
+        class: ["icon iconfont", "icon-" + g.iconObj.icon]
+      }, g.iconObj.attrs), null, 16)) : (h(), v("i", J({
         key: 3,
-        class: u.iconObj.type
-      }, u.iconObj.attrs), he(u.iconObj.icon), 17));
+        class: g.iconObj.type
+      }, g.iconObj.attrs), ie(g.iconObj.icon), 17));
     };
   }
 };
-const He = ["onMousedown"], We = { class: "com-item-content" }, Le = {
-  key: 0,
-  class: "setting-box-pop"
-}, Pe = ["onClick"], _e = ["onMousedown"], Ce = ["onMousedown"], Ae = ["onMousedown"], Xe = ["onMousedown"], Ye = ["onMousedown"], Ie = ["onMousedown"], Be = ["onMousedown"], Se = ["onMousedown"], $e = {
-  key: 0,
+const Ae = ["onMousedown"], Be = { class: "com-item-content" }, Te = ["onClick"], Xe = ["onClick"], Ye = ["onClick"], Se = ["onClick"], Ke = ["onClick"], Ne = ["onClick"], Ve = ["onMousedown"], je = ["onMousedown"], qe = ["onMousedown"], Fe = ["onMousedown"], Ue = ["onMousedown"], Je = ["onMousedown"], Qe = ["onMousedown"], Ze = ["onMousedown"], et = {
+  key: 1,
   class: "com-empty"
-}, De = {
+}, tt = {
   __name: "index",
   props: {
     // 包含收缩方向
@@ -49,25 +46,20 @@ const He = ["onMousedown"], We = { class: "com-item-content" }, Le = {
       type: Boolean,
       default: !1
     },
-    // 无设置菜单模式（仅拖动、缩放）
-    noEditModel: {
-      type: Boolean,
-      default: !1
-    },
     // 组件项最小宽度
     itemMinWidth: {
       type: Number,
       default: 15,
-      validator(u, L) {
-        return u >= 15;
+      validator(g, W) {
+        return g >= 15;
       }
     },
     // 组件项最小高度
     itemMinHeight: {
       type: Number,
       default: 15,
-      validator(u, L) {
-        return u >= 15;
+      validator(g, W) {
+        return g >= 15;
       }
     },
     // 设置图标
@@ -78,28 +70,29 @@ const He = ["onMousedown"], We = { class: "com-item-content" }, Le = {
       })
     }
   },
-  setup(u, { expose: L }) {
-    const r = u, M = (t) => {
-      let e = t instanceof Array ? [] : {};
-      for (let n in t)
-        e[n] = typeof t[n] == "object" ? M(t[n]) : t[n];
-      return e;
-    }, Q = () => {
-      r.insertResizeKeys.forEach((t) => {
-        r.excludeResizeKeys.indexOf(t) === -1 && x.value.push(t);
+  emits: ["showGroup", "updateChecked"],
+  setup(g, { expose: W, emit: se }) {
+    const T = se, a = g, m = (n) => {
+      let o = n instanceof Array ? [] : {};
+      for (let t in n)
+        o[t] = typeof n[t] == "object" ? m(n[t]) : n[t];
+      return o;
+    }, re = () => {
+      a.insertResizeKeys.forEach((n) => {
+        a.excludeResizeKeys.indexOf(n) === -1 && O.value.push(n);
       });
     };
-    Me(
-      () => [r.insertResizeKeys, r.excludeResizeKeys],
+    We(
+      () => [a.insertResizeKeys, a.excludeResizeKeys],
       () => {
-        Q();
+        re();
       }
     );
-    const x = X([]);
-    Q();
-    const Y = X(null);
-    let O = null, I = null;
-    const N = X(null), C = X(0), i = X([
+    const O = H([]);
+    re();
+    const S = H(null);
+    let E = null, K = null;
+    const X = H(null), N = H(0), i = H([
       // {
       //   width: 100,
       //   height: 100,
@@ -130,6 +123,13 @@ const He = ["onMousedown"], We = { class: "com-item-content" }, Le = {
       // {
       //   width: 100,
       //   height: 100,
+      //   x: 310,
+      //   y: 500,
+      //   static: true
+      // },
+      // {
+      //   width: 100,
+      //   height: 100,
       //   x: 700,
       //   y: 390,
       //   static: true
@@ -142,117 +142,137 @@ const He = ["onMousedown"], We = { class: "com-item-content" }, Le = {
       //   static: true
       // }
     ]);
-    let a = null, Z = null, j = null;
-    const de = (t, e) => {
-      A(), a = e, i.value[a].move = !0, Z = t.clientX - t.target.offsetParent.offsetLeft, j = t.clientY - t.target.offsetParent.offsetTop, window.addEventListener("mousemove", ee), window.addEventListener("mouseup", te);
-    }, ee = (t) => {
-      const e = t.clientX - Z, n = t.clientY - j, l = e <= b("left") ? b("left") : e >= b("right") ? b("right") : e, o = n <= b("top") ? b("top") : n >= b("bottom") ? b("bottom") : n;
-      i.value.filter((d) => d.static === !0).filter((d) => d.x === l && d.width === i.value[a].width || d.x > l && d.x < l + i.value[a].width || d.x + d.width > l && d.x + d.width < l + i.value[a].width).filter((d) => d.y === o && d.height === i.value[a].height || d.y > o && d.y < o + i.value[a].height || d.y + d.height > o && d.y + d.height < o + i.value[a].height).length === 0 ? (i.value[a].x = l, i.value[a].y = o) : (i.value.filter((s) => s.static === !0).filter((s) => s.x === l && s.width === i.value[a].width || s.x > l && s.x < l + i.value[a].width || s.x + s.width > l && s.x + s.width < l + i.value[a].width).filter((s) => s.y === i.value[a].y && s.height === i.value[a].height || s.y > i.value[a].y && s.y < i.value[a].y + i.value[a].height || s.y + s.height > i.value[a].y && s.y + s.height < i.value[a].y + i.value[a].height).length === 0 && (i.value[a].x = l), i.value.filter((s) => s.static === !0).filter((s) => s.x === i.value[a].x && s.width === i.value[a].width || s.x > i.value[a].x && s.x < i.value[a].x + i.value[a].width || s.x + s.width > i.value[a].x && s.x + s.width < i.value[a].x + i.value[a].width).filter((s) => s.y === o && s.height === i.value[a].height || s.y > o && s.y < o + i.value[a].height || s.y + s.height > o && s.y + s.height < o + i.value[a].height).length === 0 && (i.value[a].y = o)), k(), N.value.scrollTo(0, C.value - I);
-    }, te = () => {
-      window.removeEventListener("mousemove", ee), window.removeEventListener("mouseup", te), delete i.value[a].move, a = null;
-    }, b = (t) => {
-      switch (t) {
+    let s = null, ae = null, ce = null;
+    const b = H({}), ze = (n, o) => {
+      Y(), s = o, b.value = m(i.value[s]), i.value[s].move = !0, ae = n.clientX - n.target.offsetParent.offsetLeft, ce = n.clientY - n.target.offsetParent.offsetTop, window.addEventListener("mousemove", ue), window.addEventListener("mouseup", de);
+    }, ue = (n) => {
+      const o = n.clientX - ae, t = n.clientY - ce, l = o <= z("left") ? z("left") : o >= z("right") ? z("right") : o, e = t <= z("top") ? z("top") : t >= z("bottom") ? z("bottom") : t;
+      e > i.value[s].y && e > K - i.value[s].height - 30 && X.value.scrollBy(0, 20), e < i.value[s].y && e - X.value.scrollTop < 30 && X.value.scrollBy(0, -20), i.value[s].x = l, i.value[s].y = e, setTimeout(() => {
+        i.value.filter((c) => c.static === !0).filter((c) => c.x === l && c.width === i.value[s].width || c.x > l && c.x < l + i.value[s].width || c.x + c.width > l && c.x + c.width < l + i.value[s].width).filter((c) => c.y === e && c.height === i.value[s].height || c.y > e && c.y < e + i.value[s].height || c.y + c.height > e && c.y + c.height < e + i.value[s].height).length === 0 ? (b.value.x = l, b.value.y = e) : (i.value.filter((r) => r.static === !0).filter((r) => r.x === l && r.width === i.value[s].width || r.x > l && r.x < l + i.value[s].width || r.x + r.width > l && r.x + r.width < l + i.value[s].width).filter((r) => r.y === i.value[s].y && r.height === i.value[s].height || r.y > i.value[s].y && r.y < i.value[s].y + i.value[s].height || r.y + r.height > i.value[s].y && r.y + r.height < i.value[s].y + i.value[s].height).length === 0 && (b.value.x = l), i.value.filter((r) => r.static === !0).filter((r) => r.x === i.value[s].x && r.width === i.value[s].width || r.x > i.value[s].x && r.x < i.value[s].x + i.value[s].width || r.x + r.width > i.value[s].x && r.x + r.width < i.value[s].x + i.value[s].width).filter((r) => r.y === e && r.height === i.value[s].height || r.y > e && r.y < e + i.value[s].height || r.y + r.height > e && r.y + r.height < e + i.value[s].height).length === 0 && (b.value.y = e)), M();
+      }, 30);
+    }, de = () => {
+      window.removeEventListener("mousemove", ue), window.removeEventListener("mouseup", de), setTimeout(() => {
+        delete i.value[s].move, i.value[s].x = b.value.x, i.value[s].y = b.value.y, s = null;
+      }, 30);
+    }, z = (n) => {
+      switch (n) {
         case "top":
           return 0;
         case "right":
-          return O - i.value[a].width;
+          return E - i.value[s].width;
         case "bottom":
           return 999999999;
         case "left":
           return 0;
       }
     };
-    let g = null, V = "", B = 0, S = 0, z = 0, E = 0, R = 0, H = 0, P = 0, $ = 0, _ = 0, D = 0;
-    const m = (t, e, n) => {
-      A(), g = e, V = n, B = t.clientX, S = t.clientY, z = e.width, E = e.height, R = e.y, H = e.x;
-      const l = i.value.filter((c) => c.static === !0 && (c.x < e.x ? c.x + c.width >= e.x : c.x <= e.x + e.width)), o = i.value.filter((c) => c.static === !0 && (c.y < e.y ? c.y + c.height >= e.y : c.y <= e.y + e.height)), W = l.filter((c) => c.y + c.height <= e.y).map((c) => c.y + c.height);
-      W.length > 0 ? P = Math.max(...W) : P = 0;
-      const d = l.filter((c) => c.y >= e.y + e.height).map((c) => c.y);
-      d.length > 0 ? $ = Math.max(...d) : $ = 0;
-      const F = o.filter((c) => c.x + c.width <= e.x).map((c) => c.x + c.width);
-      F.length > 0 ? _ = Math.max(...F) : _ = 0;
-      const s = o.filter((c) => c.x >= e.x + e.width).map((c) => c.x);
-      s.length > 0 ? D = Math.max(...s) : D = 0, window.addEventListener("mousemove", ne), window.addEventListener("mouseup", oe);
-    }, ne = (t) => {
-      const e = z + (t.clientX - B), n = E + (t.clientY - S), l = z - (t.clientX - B), o = E - (t.clientY - S), W = R + (t.clientY - S), d = H + (t.clientX - B);
-      switch (V) {
+    let f = null, ee = "", V = 0, j = 0, D = 0, G = 0, I = 0, P = 0, _ = 0, q = 0, $ = 0, F = 0;
+    const C = (n, o, t) => {
+      Y(), f = o, ee = t, V = n.clientX, j = n.clientY, D = o.width, G = o.height, I = o.y, P = o.x, f.drag = !0;
+      const l = i.value.filter((u) => u.static === !0 && (u.x < o.x ? u.x + u.width >= o.x : u.x <= o.x + o.width)), e = i.value.filter((u) => u.static === !0 && (u.y < o.y ? u.y + u.height >= o.y : u.y <= o.y + o.height)), w = l.filter((u) => u.y + u.height <= o.y).map((u) => u.y + u.height);
+      w.length > 0 ? _ = Math.max(...w) : _ = 0;
+      const c = l.filter((u) => u.y >= o.y + o.height).map((u) => u.y);
+      c.length > 0 ? q = Math.min(...c) : q = 0;
+      const ne = e.filter((u) => u.x + u.width <= o.x).map((u) => u.x + u.width);
+      ne.length > 0 ? $ = Math.max(...ne) : $ = 0;
+      const r = e.filter((u) => u.x >= o.x + o.width).map((u) => u.x);
+      r.length > 0 ? F = Math.min(...r) : F = 0, window.addEventListener("mousemove", he), window.addEventListener("mouseup", ge);
+    }, he = (n) => {
+      const o = D + (n.clientX - V), t = G + (n.clientY - j), l = D - (n.clientX - V), e = G - (n.clientY - j), w = I + (n.clientY - j), c = P + (n.clientX - V);
+      switch (ee) {
         case "top-left":
-          g.height = o < r.itemMinHeight ? r.itemMinHeight : o > h("top") ? h("top") : o, g.y = o < r.itemMinHeight ? R + E - r.itemMinHeight : o > h("top") ? P : W, g.width = l < r.itemMinWidth ? r.itemMinWidth : l > h("left") ? h("left") : l, g.x = l < r.itemMinWidth ? H + z - r.itemMinWidth : l > h("left") ? _ : d;
+          f.height = e < a.itemMinHeight ? a.itemMinHeight : e > d("top") ? d("top") : e, f.y = e < a.itemMinHeight ? I + G - a.itemMinHeight : e > d("top") ? _ : w, f.width = l < a.itemMinWidth ? a.itemMinWidth : l > d("left") ? d("left") : l, f.x = l < a.itemMinWidth ? P + D - a.itemMinWidth : l > d("left") ? $ : c;
           break;
         case "top":
-          g.height = o < r.itemMinHeight ? r.itemMinHeight : o > h("top") ? h("top") : o, g.y = o < r.itemMinHeight ? R + E - r.itemMinHeight : o > h("top") ? P : W;
+          f.height = e < a.itemMinHeight ? a.itemMinHeight : e > d("top") ? d("top") : e, f.y = e < a.itemMinHeight ? I + G - a.itemMinHeight : e > d("top") ? _ : w;
           break;
         case "top-right":
-          g.height = o < r.itemMinHeight ? r.itemMinHeight : o > h("top") ? h("top") : o, g.y = o < r.itemMinHeight ? R + E - r.itemMinHeight : o > h("top") ? P : W, g.width = e < r.itemMinWidth ? r.itemMinWidth : e > h("right") ? h("right") : e;
+          f.height = e < a.itemMinHeight ? a.itemMinHeight : e > d("top") ? d("top") : e, f.y = e < a.itemMinHeight ? I + G - a.itemMinHeight : e > d("top") ? _ : w, f.width = o < a.itemMinWidth ? a.itemMinWidth : o > d("right") ? d("right") : o;
           break;
         case "left":
-          g.width = l < r.itemMinWidth ? r.itemMinWidth : l > h("left") ? h("left") : l, g.x = l < r.itemMinWidth ? H + z - r.itemMinWidth : l > h("left") ? _ : d;
+          f.width = l < a.itemMinWidth ? a.itemMinWidth : l > d("left") ? d("left") : l, f.x = l < a.itemMinWidth ? P + D - a.itemMinWidth : l > d("left") ? $ : c;
           break;
         case "right":
-          g.width = e < r.itemMinWidth ? r.itemMinWidth : e > h("right") ? h("right") : e;
+          f.width = o < a.itemMinWidth ? a.itemMinWidth : o > d("right") ? d("right") : o;
           break;
         case "bottom-left":
-          g.height = n < r.itemMinHeight ? r.itemMinHeight : n > h("bottom") ? h("bottom") : n, g.width = l < r.itemMinWidth ? r.itemMinWidth : l > h("left") ? h("left") : l, g.x = l < r.itemMinWidth ? H + z - r.itemMinWidth : l > h("left") ? _ : d;
+          f.height = t < a.itemMinHeight ? a.itemMinHeight : t > d("bottom") ? d("bottom") : t, f.width = l < a.itemMinWidth ? a.itemMinWidth : l > d("left") ? d("left") : l, f.x = l < a.itemMinWidth ? P + D - a.itemMinWidth : l > d("left") ? $ : c;
           break;
         case "bottom":
-          g.height = n < r.itemMinHeight ? r.itemMinHeight : n > h("bottom") ? h("bottom") : n;
+          f.height = t < a.itemMinHeight ? a.itemMinHeight : t > d("bottom") ? d("bottom") : t;
           break;
         case "bottom-right":
-          g.height = n < r.itemMinHeight ? r.itemMinHeight : n > h("bottom") ? h("bottom") : n, g.width = e < r.itemMinWidth ? r.itemMinWidth : e > h("right") ? h("right") : e;
+          f.height = t < a.itemMinHeight ? a.itemMinHeight : t > d("bottom") ? d("bottom") : t, f.width = o < a.itemMinWidth ? a.itemMinWidth : o > d("right") ? d("right") : o;
           break;
       }
-      k(), N.value.scrollTo(0, C.value - I);
-    }, oe = (t) => {
-      V = "", g = null, window.removeEventListener("mousemove", ne), window.removeEventListener("mouseup", oe);
-    }, h = (t) => {
-      switch (t) {
+      M(), X.value.scrollTo(0, N.value - K);
+    }, ge = (n) => {
+      delete f.drag, ee = "", f = null, window.removeEventListener("mousemove", he), window.removeEventListener("mouseup", ge);
+    }, d = (n) => {
+      switch (n) {
         case "top":
-          return R + E - P;
+          return I + G - _;
         case "left":
-          return H + z - _;
+          return P + D - $;
         case "right":
-          return (D > 0 ? D : O) - H;
+          return (F > 0 ? F : E) - P;
         case "bottom":
-          return $ > 0 ? $ - R : 999999999;
+          return q > 0 ? q - I : 999999999;
       }
-    }, k = () => {
-      const t = i.value.map((e) => e.y + e.height);
-      t.length > 0 ? C.value = Math.max(...t) + 50 : C.value = 0;
+    }, M = () => {
+      const n = i.value.map((o) => o.y + o.height);
+      n.length > 0 ? N.value = Math.max(...n) + 50 : N.value = 0;
     };
-    be(() => {
-      ie.observe(Y.value);
+    _e(() => {
+      pe.observe(S.value);
     });
-    const ie = new ResizeObserver((t) => {
-      ve(O === t[0].contentRect.width ? null : t[0].contentRect.width, I === t[0].contentRect.height ? null : t[0].contentRect.height);
+    const pe = new ResizeObserver((n) => {
+      De(E === n[0].contentRect.width ? null : n[0].contentRect.width, K === n[0].contentRect.height ? null : n[0].contentRect.height);
     });
-    let q = !1;
-    const ue = (t = [], e = null) => {
-      i.value = M(t), e !== null ? Ee(() => {
-        const l = Y.value.getBoundingClientRect().width / e;
-        i.value.forEach((o) => {
-          o.width *= l, o.height *= l, o.x *= l, o.y *= l;
-        }), k();
-      }) : k(), q = !0, setTimeout(() => {
-        q = !1;
+    let te = !1;
+    const Ce = (n = [], o = null) => {
+      i.value = m(n), o !== null ? Le(() => {
+        const l = S.value.getBoundingClientRect().width / o;
+        i.value.forEach((e) => {
+          e.width *= l, e.height *= l, e.x *= l, e.y *= l;
+        }), M();
+      }) : M(), te = !0, setTimeout(() => {
+        te = !1;
       }, 500);
-    }, ge = (t) => {
-      const e = M(t);
-      e.id || (e.id = (/* @__PURE__ */ new Date()).getTime() + ""), e.x = 0;
-      const n = i.value.map((l) => l.y + l.height);
-      n.length > 0 ? e.y = Math.max(...n) : e.y = 0, i.value.push(e), k();
-    }, le = (t) => {
-      const e = i.value.findIndex((n) => n.id === t);
-      if (e !== -1)
-        i.value.splice(e, 1), k();
+    }, U = (n, o = null, t = !1) => {
+      const l = m(n);
+      if (l.id || (l.id = (/* @__PURE__ */ new Date()).getTime() + ""), t !== !0 && !o) {
+        l.x = 0;
+        const e = i.value.map((w) => w.y + w.height);
+        e.length > 0 ? l.y = Math.max(...e) : l.y = 0;
+      }
+      if (o) {
+        const e = i.value.filter((w) => w.id === o);
+        if (e.length === 1)
+          e[0].groupData.push(l);
+        else
+          try {
+          } catch {
+          }
+      } else
+        i.value.push(l);
+      M();
+    }, L = (n, o = null) => {
+      let t = -1;
+      const l = i.value.filter((e) => e.id === o);
+      if (o ? l.length === 1 && (t = l[0].groupData.findIndex((e) => e.id === n)) : t = i.value.findIndex((e) => e.id === n), t !== -1)
+        o ? l[0].groupData.splice(t, 1) : i.value.splice(t, 1), M();
       else
         try {
         } catch {
         }
-    }, fe = (t) => {
-      if (t.id) {
-        const e = M(t), n = i.value.findIndex((l) => l.id === e.id);
-        if (n !== -1)
-          i.value[n] = e, k();
+    }, Ee = (n) => {
+      if (n.id) {
+        const o = m(n);
+        let t = -1;
+        const l = i.value.filter((e) => e.id === o.inGroupId);
+        if (o.inGroupId ? l.length === 1 && (t = l[0].groupData.findIndex((e) => e.id === o.id)) : t = i.value.findIndex((e) => e.id === o.id), t !== -1)
+          o.inGroupId ? l[0].groupData[t] = o : i.value[t] = o, M();
         else
           try {
           } catch {
@@ -261,139 +281,275 @@ const He = ["onMousedown"], We = { class: "com-item-content" }, Le = {
         try {
         } catch {
         }
-    }, ve = (t, e) => {
-      if (t !== null) {
-        const n = O ? t / O : 1;
-        O = t, q || (i.value.forEach((l) => {
-          l.width *= n, l.height *= n, l.x *= n, l.y *= n;
-        }), k());
+    }, De = (n, o) => {
+      if (n !== null) {
+        const t = E ? n / E : 1;
+        E = n, te || (i.value.forEach((l) => {
+          l.width *= t, l.height *= t, l.x *= t, l.y *= t;
+        }), M());
       }
-      e !== null && (I = e);
-    }, ye = () => ({ data: M(i.value), width: O }), pe = (t) => {
-      t.showPop || (i.value.forEach((e) => {
-        delete e.showPop;
-      }), t.showPop = !0, window.addEventListener("click", A));
-    }, A = () => {
-      i.value.forEach((t) => {
-        delete t.showPop;
-      }), window.removeEventListener("click", A);
-    };
-    return me(() => {
-      ie.unobserve(Y.value), window.removeEventListener("click", A);
-    }), L({ init: ue, addItem: ge, deleteItem: le, updateItem: fe, getData: ye }), (t, e) => (f(), v("div", {
+      o !== null && (K = o);
+    }, ve = (n) => {
+      n.showPop || (i.value.forEach((o) => {
+        delete o.showPop, o.groupData && o.groupData.forEach((t) => {
+          delete t.showPop;
+        });
+      }), n.showPop = !0, window.addEventListener("click", Y));
+    }, Y = () => {
+      i.value.forEach((n) => {
+        delete n.showPop, n.groupData && n.groupData.forEach((o) => {
+          delete o.showPop;
+        });
+      }), window.removeEventListener("click", Y);
+    }, k = H(!1), fe = (n) => {
+      const o = i.value.findIndex((t) => t.id === n);
+      if (o !== -1)
+        i.value[o].checked = !0, i.value[o].disabled = !0, k.value = !0, T("showGroup", k.value);
+      else
+        try {
+        } catch {
+        }
+    }, ye = () => {
+      k.value = !1, i.value.forEach((n) => {
+        delete n.checked, delete n.disabled, n.groupData && n.groupData.forEach((o) => {
+          delete o.checked, delete o.disabled;
+        });
+      }), T("showGroup", k.value);
+    }, Ge = (n) => {
+      n.checked = !n.checked, T("updateChecked", i.value.filter((o) => o.checked).length);
+    }, Ie = () => {
+      const n = i.value.filter((o) => o.checked);
+      if (n.length > 1) {
+        const o = {
+          id: (/* @__PURE__ */ new Date()).getTime() + "G",
+          isGroup: !0,
+          width: 200,
+          height: 200,
+          groupData: []
+        };
+        n.forEach((t) => {
+          L(t.id), t.inGroupId = o.id, o.groupData.push(t);
+        }), U(o), M();
+      }
+      ye();
+    }, we = (n, o) => {
+      const t = i.value.filter((l) => l.id === o)[0];
+      if (t) {
+        const l = t.groupData.filter((e) => e.id === n)[0];
+        if (l)
+          delete l.inGroupId, U(l), L(l.id, t.id), t.groupData.length < 2 && oe(o), M();
+        else
+          try {
+          } catch {
+          }
+      } else
+        try {
+        } catch {
+        }
+    }, oe = (n) => {
+      const o = i.value.filter((t) => t.id === n)[0];
+      if (o)
+        L(o.id), o.groupData.forEach((t) => {
+          delete t.inGroupId, U(t, null, !0);
+        }), M();
+      else
+        try {
+        } catch {
+        }
+    }, Pe = () => ({ data: m(i.value), width: E });
+    return $e(() => {
+      pe.unobserve(S.value), window.removeEventListener("click", Y);
+    }), W({ init: Ce, addItem: U, deleteItem: L, updateItem: Ee, openGroup: fe, closeGroup: ye, addGroup: Ie, removeGroupItem: we, removeGroup: oe, getData: Pe }), (n, o) => (h(), v("div", {
       class: "vue-drag-component-plus",
       ref_key: "pageRef",
-      ref: Y
+      ref: S
     }, [
-      T("div", {
+      R("div", {
         class: "content-box",
         ref_key: "boxRef",
-        ref: N
+        ref: X
       }, [
-        (f(!0), v(ae, null, ke(y(i), (n, l) => (f(), v("div", {
-          class: Oe(["com-item", u.seeModel || n.static === !0 || n.dragable === !1 ? "" : "can-drag", n.move ? "is-move" : ""]),
-          style: G({
-            width: n.width + "px",
-            height: n.height + "px",
-            top: n.y + "px",
-            left: n.x + "px"
+        (h(!0), v(Q, null, Me(p(i), (t, l) => (h(), v("div", {
+          class: ke(["com-item", g.seeModel || p(k) || t.static === !0 || t.dragable === !1 ? "" : "can-drag", t.move ? "is-move" : "", t.drag ? "is-drag" : "", t.showPop ? "on-top" : ""]),
+          style: A({
+            width: t.width + "px",
+            height: t.height + "px",
+            top: t.y + "px",
+            left: t.x + "px"
           }),
           key: l,
-          onMousedown: w((o) => u.seeModel || n.static === !0 || n.dragable === !1 ? null : de(o, l), ["prevent"])
+          onMousedown: x((e) => g.seeModel || p(k) || t.static === !0 || t.dragable === !1 ? null : ze(e, l), ["prevent"])
         }, [
-          T("div", We, [
-            J(t.$slots, "item", {
-              $index: l,
-              data: n
+          R("div", Be, [
+            t.isGroup ? (h(), v(Q, { key: 0 }, [
+              Z(" 123 "),
+              (h(!0), v(Q, null, Me(t.groupData, (e, w) => (h(), v("div", {
+                class: "com-item-content-child",
+                style: A({
+                  width: e.width + "px",
+                  height: e.height + "px",
+                  top: e.y + "px",
+                  left: e.x + "px"
+                }),
+                key: w
+              }, [
+                B(n.$slots, "item", { data: e }, () => [
+                  Z(ie(l), 1)
+                ]),
+                !g.seeModel && !p(k) && p(s) === null && p(f) === null ? (h(), v("div", {
+                  key: 0,
+                  class: "setting-box",
+                  style: A({ display: e.showPop ? "flex" : "none" }),
+                  onMousedown: x((c) => null, ["prevent", "stop"])
+                }, [
+                  me(Oe, {
+                    iconObj: g.settingIcon,
+                    onClick: x((c) => ve(e), ["prevent", "stop"])
+                  }, null, 8, ["iconObj", "onClick"])
+                ], 36)) : y("", !0),
+                e.showPop ? (h(), v("div", {
+                  key: 1,
+                  class: "setting-box-pop",
+                  onMousedown: x((c) => null, ["prevent", "stop"])
+                }, [
+                  B(n.$slots, "setPopNormal", {
+                    data: m(e)
+                  }, () => [
+                    R("div", {
+                      class: "setting-box-pop-item",
+                      onClick: (c) => we(e.id, e.inGroupId)
+                    }, "移出组合", 8, Te),
+                    R("div", {
+                      class: "setting-box-pop-item",
+                      onClick: (c) => L(e.id, e.inGroupId)
+                    }, "删除", 8, Xe)
+                  ])
+                ], 32)) : y("", !0)
+              ], 4))), 128))
+            ], 64)) : B(n.$slots, "item", {
+              key: 1,
+              data: t
             }, () => [
-              ce(he(l), 1)
+              Z(ie(l), 1)
             ]),
-            !u.seeModel && !u.noEditModel && y(a) === null && y(g) === null ? (f(), v("div", {
-              key: 0,
+            !t.isGroup && t.notGroup !== !0 && p(k) ? (h(), v("div", {
+              key: 2,
+              class: ke(["group-checkbox", t.checked ? "is-checked" : "", t.disabled ? "disabled" : ""]),
+              onClick: (e) => t.disabled ? null : Ge(t)
+            }, null, 10, Ye)) : y("", !0),
+            !g.seeModel && !p(k) && p(s) === null && p(f) === null ? (h(), v("div", {
+              key: 3,
               class: "setting-box",
-              style: G({ display: n.showPop ? "flex" : "none" }),
-              onMousedown: w((o) => null, ["prevent", "stop"])
+              style: A({ display: t.showPop ? "flex" : "none" }),
+              onMousedown: x((e) => null, ["prevent", "stop"])
             }, [
-              ze(Re, {
-                iconObj: u.settingIcon,
-                onClick: w((o) => pe(n), ["prevent", "stop"])
-              }, null, 8, ["iconObj", "onClick"]),
-              n.showPop ? (f(), v("div", Le, [
-                J(t.$slots, "setPopNormal", {
-                  $index: l,
-                  data: M(n)
-                }, () => [
-                  T("div", {
-                    class: "setting-box-pop-item",
-                    onClick: (o) => le(n.id)
-                  }, "删除", 8, Pe)
-                ])
-              ])) : p("", !0)
-            ], 36)) : p("", !0)
+              me(Oe, {
+                iconObj: g.settingIcon,
+                onClick: x((e) => ve(t), ["prevent", "stop"])
+              }, null, 8, ["iconObj", "onClick"])
+            ], 36)) : y("", !0),
+            t.showPop ? (h(), v("div", {
+              key: 4,
+              class: "setting-box-pop",
+              onMousedown: x((e) => null, ["prevent", "stop"])
+            }, [
+              t.isGroup === !0 ? B(n.$slots, "setPopSpecial", {
+                key: 0,
+                data: m(t)
+              }, () => [
+                R("div", {
+                  class: "setting-box-pop-item",
+                  onClick: (e) => oe(t.id)
+                }, "解除组合", 8, Se)
+              ]) : B(n.$slots, "setPopNormal", {
+                key: 1,
+                data: m(t)
+              }, () => [
+                t.notGroup !== !0 ? (h(), v("div", {
+                  key: 0,
+                  class: "setting-box-pop-item",
+                  onClick: (e) => fe(t.id)
+                }, "组合", 8, Ke)) : y("", !0),
+                R("div", {
+                  class: "setting-box-pop-item",
+                  onClick: (e) => L(t.id)
+                }, "删除", 8, Ne)
+              ])
+            ], 32)) : y("", !0)
           ]),
-          !u.seeModel && n.static !== !0 && n.resizable !== !1 ? (f(), v(ae, { key: 0 }, [
-            y(x).indexOf("topLeft") !== -1 ? (f(), v("div", {
+          !g.seeModel && !p(k) && !t.move && t.static !== !0 && t.resizable !== !1 ? (h(), v(Q, { key: 0 }, [
+            p(O).indexOf("topLeft") !== -1 ? (h(), v("div", {
               key: 0,
               class: "resize-line top-left",
-              onMousedown: w((o) => m(o, n, "top-left"), ["prevent", "stop"])
-            }, null, 40, _e)) : p("", !0),
-            y(x).indexOf("top") !== -1 ? (f(), v("div", {
+              onMousedown: x((e) => C(e, t, "top-left"), ["prevent", "stop"])
+            }, null, 40, Ve)) : y("", !0),
+            p(O).indexOf("top") !== -1 ? (h(), v("div", {
               key: 1,
               class: "resize-line top",
-              onMousedown: w((o) => m(o, n, "top"), ["prevent", "stop"])
-            }, null, 40, Ce)) : p("", !0),
-            y(x).indexOf("topRight") !== -1 ? (f(), v("div", {
+              onMousedown: x((e) => C(e, t, "top"), ["prevent", "stop"])
+            }, null, 40, je)) : y("", !0),
+            p(O).indexOf("topRight") !== -1 ? (h(), v("div", {
               key: 2,
               class: "resize-line top-right",
-              onMousedown: w((o) => m(o, n, "top-right"), ["prevent", "stop"])
-            }, null, 40, Ae)) : p("", !0),
-            y(x).indexOf("left") !== -1 ? (f(), v("div", {
+              onMousedown: x((e) => C(e, t, "top-right"), ["prevent", "stop"])
+            }, null, 40, qe)) : y("", !0),
+            p(O).indexOf("left") !== -1 ? (h(), v("div", {
               key: 3,
               class: "resize-line left",
-              onMousedown: w((o) => m(o, n, "left"), ["prevent", "stop"])
-            }, null, 40, Xe)) : p("", !0),
-            y(x).indexOf("right") !== -1 ? (f(), v("div", {
+              onMousedown: x((e) => C(e, t, "left"), ["prevent", "stop"])
+            }, null, 40, Fe)) : y("", !0),
+            p(O).indexOf("right") !== -1 ? (h(), v("div", {
               key: 4,
               class: "resize-line right",
-              onMousedown: w((o) => m(o, n, "right"), ["prevent", "stop"])
-            }, null, 40, Ye)) : p("", !0),
-            y(x).indexOf("bottomLeft") !== -1 ? (f(), v("div", {
+              onMousedown: x((e) => C(e, t, "right"), ["prevent", "stop"])
+            }, null, 40, Ue)) : y("", !0),
+            p(O).indexOf("bottomLeft") !== -1 ? (h(), v("div", {
               key: 5,
               class: "resize-line bottom-left",
-              onMousedown: w((o) => m(o, n, "bottom-left"), ["prevent", "stop"])
-            }, null, 40, Ie)) : p("", !0),
-            y(x).indexOf("bottom") !== -1 ? (f(), v("div", {
+              onMousedown: x((e) => C(e, t, "bottom-left"), ["prevent", "stop"])
+            }, null, 40, Je)) : y("", !0),
+            p(O).indexOf("bottom") !== -1 ? (h(), v("div", {
               key: 6,
               class: "resize-line bottom",
-              onMousedown: w((o) => m(o, n, "bottom"), ["prevent", "stop"])
-            }, null, 40, Be)) : p("", !0),
-            y(x).indexOf("bottomRight") !== -1 ? (f(), v("div", {
+              onMousedown: x((e) => C(e, t, "bottom"), ["prevent", "stop"])
+            }, null, 40, Qe)) : y("", !0),
+            p(O).indexOf("bottomRight") !== -1 ? (h(), v("div", {
               key: 7,
               class: "resize-line bottom-right",
-              onMousedown: w((o) => m(o, n, "bottom-right"), ["prevent", "stop"])
-            }, null, 40, Se)) : p("", !0)
-          ], 64)) : p("", !0)
-        ], 46, He))), 128)),
-        T("div", {
+              onMousedown: x((e) => C(e, t, "bottom-right"), ["prevent", "stop"])
+            }, null, 40, Ze)) : y("", !0)
+          ], 64)) : y("", !0)
+        ], 46, Ae))), 128)),
+        p(s) !== null ? (h(), v("div", {
+          key: 0,
+          class: "drag-bg",
+          style: A({
+            width: p(b).width + "px",
+            height: p(b).height + "px",
+            top: p(b).y + "px",
+            left: p(b).x + "px"
+          })
+        }, null, 4)) : y("", !0),
+        R("div", {
           class: "height-bg",
-          style: G({ height: y(C) + "px" })
+          style: A({ height: p(N) + "px" })
         }, null, 4),
-        y(i).length === 0 ? (f(), v("div", $e, [
-          J(t.$slots, "empty", {}, () => [
-            ce(" 暂无数据 ")
+        p(i).length === 0 ? (h(), v("div", et, [
+          B(n.$slots, "empty", {}, () => [
+            Z(" 暂无数据 ")
           ])
-        ])) : p("", !0)
+        ])) : y("", !0)
       ], 512)
     ], 512));
   }
-}, Ke = [De], Te = {
-  install(u) {
-    Ke.forEach((L) => {
-      u.component("vueDragComponentPlus", L);
+}, ot = [tt], nt = {
+  install(g) {
+    ot.forEach((W) => {
+      g.component("vueDragComponentPlus", W);
     });
   }
 };
-typeof window < "u" && window.Vue && window.Vue.use(Te);
+typeof window < "u" && window.Vue && window.Vue.use(nt);
 export {
-  Te as default
+  nt as default
 };

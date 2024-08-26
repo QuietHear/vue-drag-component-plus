@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-20 11:17:24
+ * @LastEditTime: 2024-08-26 10:27:52
 */
 * {
   padding    : 0;
@@ -60,6 +60,11 @@ body,
 .con-box {
   .con {
     margin-bottom: 10px;
+
+    >em {
+      margin-right  : 10px;
+      vertical-align: middle;
+    }
 
     .el-switch {
       margin-left: 12px;

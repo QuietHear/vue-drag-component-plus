@@ -4,37 +4,83 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-20 10:52:55
+ * @LastEditTime: 2024-08-26 10:14:04
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
+    <!-- 滚动区 -->
     <div class="content-box" ref="boxRef">
+      <!-- 组件项 -->
       <div
-        :class="['com-item', seeModel || item.static === true || item.dragable === false ? '' : 'can-drag', item.move ? 'is-move' : '']"
+        :class="['com-item', seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop ? 'on-top' : '']"
         :style="{
           width: item.width + 'px',
           height: item.height + 'px',
           top: item.y + 'px',
           left: item.x + 'px'
         }" v-for="(item, index) in comData" :key="index"
-        @mousedown.prevent="seeModel || item.static === true || item.dragable === false ? null : dragStart($event, index)">
+        @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)">
         <div class="com-item-content">
-          <slot name="item" :$index="index" :data="item">
-            {{ index }}
-          </slot>
-          <div class="setting-box" :style="{ display: item.showPop ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
-            v-if="!seeModel && !noEditModel && dragSrc === null && resizeObj === null">
-            <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
-            <template v-if="item.showPop">
-              <div class="setting-box-pop">
-                <slot name="setPopNormal" :$index="index" :data="deepCopy(item)">
-                  <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
+          <!-- 组件内容区 -->
+          <!-- 组合内容 -->
+          <template v-if="item.isGroup">
+            <!-- 组合标题 -->
+            123
+            <!-- 组合子项内容 -->
+            <div class="com-item-content-child" :style="{
+              width: one.width + 'px',
+              height: one.height + 'px',
+              top: one.y + 'px',
+              left: one.x + 'px'
+            }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
+              <!-- 内容 -->
+              <slot name="item" :data="one">
+                {{ index }}
+              </slot>
+              <!-- 设置弹窗入口 -->
+              <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
+                @mousedown.prevent.stop="null"
+                v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
+                <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
+              </div>
+              <!-- 设置弹窗 -->
+              <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
+                <slot name="setPopNormal" :data="deepCopy(one)">
+                  <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
+                  <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
                 </slot>
               </div>
-            </template>
+            </div>
+          </template>
+          <!-- 普通内容 -->
+          <template v-else>
+            <slot name="item" :data="item">
+              {{ index }}
+            </slot>
+          </template>
+          <!-- 组合选择器 -->
+          <div :class="['group-checkbox', item.checked ? 'is-checked' : '', item.disabled ? 'disabled' : '']"
+            @click="item.disabled ? null : changeCheck(item)"
+            v-if="!item.isGroup && item.notGroup !== true && isGrouping">
+          </div>
+          <!-- 设置弹窗入口 -->
+          <div class="setting-box" :style="{ display: item.showPop ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
+            v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
+            <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
+          </div>
+          <!-- 设置弹窗 -->
+          <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="item.showPop">
+            <slot name="setPopSpecial" :data="deepCopy(item)" v-if="item.isGroup === true">
+              <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
+            </slot>
+            <slot name="setPopNormal" :data="deepCopy(item)" v-else>
+              <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
+              <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
+            </slot>
           </div>
         </div>
-        <template v-if="!seeModel && item.static !== true && item.resizable !== false">
+        <!-- 缩放触发器 -->
+        <template v-if="!seeModel && !isGrouping && !item.move && item.static !== true && item.resizable !== false">
           <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
             v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
           <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
@@ -54,7 +100,16 @@
           </div>
         </template>
       </div>
+      <!-- 拖拽背景占位 -->
+      <div class="drag-bg" :style="{
+        width: dragBg.width + 'px',
+        height: dragBg.height + 'px',
+        top: dragBg.y + 'px',
+        left: dragBg.x + 'px'
+      }" v-if="dragSrc !== null"></div>
+      <!-- 高度占位，出现滚动条 -->
       <div class="height-bg" :style="{ height: heightBg + 'px' }"></div>
+      <!-- 空数据 -->
       <div class="com-empty" v-if="comData.length === 0">
         <slot name="empty">
           暂无数据
@@ -65,6 +120,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
+const emit = defineEmits(["showGroup", "updateChecked"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -82,11 +138,6 @@ const props = defineProps({
   },
   // 预览模式
   seeModel: {
-    type: Boolean,
-    default: false
-  },
-  // 无设置菜单模式（仅拖动、缩放）
-  noEditModel: {
     type: Boolean,
     default: false
   },
@@ -183,6 +234,13 @@ const comData = ref([
   // {
   //   width: 100,
   //   height: 100,
+  //   x: 310,
+  //   y: 500,
+  //   static: true
+  // },
+  // {
+  //   width: 100,
+  //   height: 100,
   //   x: 700,
   //   y: 390,
   //   static: true
@@ -201,10 +259,13 @@ let dragSrc = null;
 let differX = null;
 // 纵向初始差值
 let differY = null;
+// 拖拽背景信息
+const dragBg = ref({});
 // 开始拖拽
 const dragStart = (e, index) => {
   closeSettingPop();
   dragSrc = index;
+  dragBg.value = deepCopy(comData.value[dragSrc]);
   comData.value[dragSrc].move = true;
   differX = e.clientX - e.target.offsetParent.offsetLeft;
   differY = e.clientY - e.target.offsetParent.offsetTop;
@@ -217,37 +278,50 @@ const dragIng = (e) => {
   const y = e.clientY - differY;
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
   const resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
-  const obstacleArr = comData.value.filter(item => item.static === true)
-    .filter(item => ((item.x === resultX && item.width === comData.value[dragSrc].width) || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)) || ((item.x + item.width) > resultX && (item.x + item.width) < (resultX + comData.value[dragSrc].width))))
-    .filter(item => ((item.y === resultY && item.height === comData.value[dragSrc].height) || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height)) || ((item.y + item.height) > resultY && (item.y + item.height) < (resultY + comData.value[dragSrc].height))));
-  if (obstacleArr.length === 0) {
-    comData.value[dragSrc].x = resultX;
-    comData.value[dragSrc].y = resultY;
-  } else {
-    // 主左右移动
-    const obstacleArrX = comData.value.filter(item => item.static === true)
-      .filter(item => ((item.x === resultX && item.width === comData.value[dragSrc].width) || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)) || ((item.x + item.width) > resultX && (item.x + item.width) < (resultX + comData.value[dragSrc].width))))
-      .filter(item => ((item.y === comData.value[dragSrc].y && item.height === comData.value[dragSrc].height) || (item.y > comData.value[dragSrc].y && item.y < (comData.value[dragSrc].y + comData.value[dragSrc].height)) || ((item.y + item.height) > comData.value[dragSrc].y && (item.y + item.height) < (comData.value[dragSrc].y + comData.value[dragSrc].height))));
-    if (obstacleArrX.length === 0) {
-      comData.value[dragSrc].x = resultX;
-    }
-    // 主上下移动
-    const obstacleArrY = comData.value.filter(item => item.static === true)
-      .filter(item => ((item.x === comData.value[dragSrc].x && item.width === comData.value[dragSrc].width) || (item.x > comData.value[dragSrc].x && item.x < (comData.value[dragSrc].x + comData.value[dragSrc].width)) || ((item.x + item.width) > comData.value[dragSrc].x && (item.x + item.width) < (comData.value[dragSrc].x + comData.value[dragSrc].width))))
-      .filter(item => ((item.y === resultY && item.height === comData.value[dragSrc].height) || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height)) || ((item.y + item.height) > resultY && (item.y + item.height) < (resultY + comData.value[dragSrc].height))));
-    if (obstacleArrY.length === 0) {
-      comData.value[dragSrc].y = resultY;
-    }
+  if (resultY > comData.value[dragSrc].y && resultY > (pageHeight - comData.value[dragSrc].height - 30)) {
+    boxRef.value.scrollBy(0, 20);
   }
-  dealBg();
-  boxRef.value.scrollTo(0, heightBg.value - pageHeight);
+  if (resultY < comData.value[dragSrc].y && (resultY - boxRef.value.scrollTop) < 30) {
+    boxRef.value.scrollBy(0, -20);
+  }
+  comData.value[dragSrc].x = resultX;
+  comData.value[dragSrc].y = resultY;
+  setTimeout(() => {
+    const obstacleArr = comData.value.filter(item => item.static === true)
+      .filter(item => ((item.x === resultX && item.width === comData.value[dragSrc].width) || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)) || ((item.x + item.width) > resultX && (item.x + item.width) < (resultX + comData.value[dragSrc].width))))
+      .filter(item => ((item.y === resultY && item.height === comData.value[dragSrc].height) || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height)) || ((item.y + item.height) > resultY && (item.y + item.height) < (resultY + comData.value[dragSrc].height))));
+    if (obstacleArr.length === 0) {
+      dragBg.value.x = resultX;
+      dragBg.value.y = resultY;
+    } else {
+      // 主左右移动
+      const obstacleArrX = comData.value.filter(item => item.static === true)
+        .filter(item => ((item.x === resultX && item.width === comData.value[dragSrc].width) || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)) || ((item.x + item.width) > resultX && (item.x + item.width) < (resultX + comData.value[dragSrc].width))))
+        .filter(item => ((item.y === comData.value[dragSrc].y && item.height === comData.value[dragSrc].height) || (item.y > comData.value[dragSrc].y && item.y < (comData.value[dragSrc].y + comData.value[dragSrc].height)) || ((item.y + item.height) > comData.value[dragSrc].y && (item.y + item.height) < (comData.value[dragSrc].y + comData.value[dragSrc].height))));
+      if (obstacleArrX.length === 0) {
+        dragBg.value.x = resultX;
+      }
+      // 主上下移动
+      const obstacleArrY = comData.value.filter(item => item.static === true)
+        .filter(item => ((item.x === comData.value[dragSrc].x && item.width === comData.value[dragSrc].width) || (item.x > comData.value[dragSrc].x && item.x < (comData.value[dragSrc].x + comData.value[dragSrc].width)) || ((item.x + item.width) > comData.value[dragSrc].x && (item.x + item.width) < (comData.value[dragSrc].x + comData.value[dragSrc].width))))
+        .filter(item => ((item.y === resultY && item.height === comData.value[dragSrc].height) || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height)) || ((item.y + item.height) > resultY && (item.y + item.height) < (resultY + comData.value[dragSrc].height))));
+      if (obstacleArrY.length === 0) {
+        dragBg.value.y = resultY;
+      }
+    }
+    dealBg();
+  }, 30);
 };
 // 结束拖拽
 const dragEnd = () => {
   window.removeEventListener('mousemove', dragIng);
   window.removeEventListener('mouseup', dragEnd);
-  delete comData.value[dragSrc].move;
-  dragSrc = null;
+  setTimeout(() => {
+    delete comData.value[dragSrc].move;
+    comData.value[dragSrc].x = dragBg.value.x;
+    comData.value[dragSrc].y = dragBg.value.y;
+    dragSrc = null;
+  }, 30);
 };
 // 计算拖拽最大边界
 const dealDragMax = (direction) => {
@@ -301,6 +375,7 @@ const resizeStart = (e, obj, direction) => {
   startHeight = obj.height;
   startTop = obj.y;
   startLeft = obj.x;
+  resizeObj.drag = true;
   // 计算阻碍边界
   const xArr = comData.value.filter(item => item.static === true && (item.x < obj.x ? (item.x + item.width) >= obj.x : item.x <= (obj.x + obj.width)));
   const yArr = comData.value.filter(item => item.static === true && (item.y < obj.y ? (item.y + item.height) >= obj.y : item.y <= (obj.y + obj.height)));
@@ -312,7 +387,7 @@ const resizeStart = (e, obj, direction) => {
   }
   const b = xArr.filter(item => item.y >= (obj.y + obj.height)).map(item => item.y);
   if (b.length > 0) {
-    bottomObstacle = Math.max(...b);
+    bottomObstacle = Math.min(...b);
   } else {
     bottomObstacle = 0;
   }
@@ -324,7 +399,7 @@ const resizeStart = (e, obj, direction) => {
   }
   const r = yArr.filter(item => item.x >= (obj.x + obj.width)).map(item => item.x);
   if (r.length > 0) {
-    rightObstacle = Math.max(...r);
+    rightObstacle = Math.min(...r);
   } else {
     rightObstacle = 0;
   }
@@ -386,6 +461,7 @@ const resizeIng = (e) => {
 };
 // 结束收缩
 const resizeEnd = (e) => {
+  delete resizeObj.drag;
   resizeDirection = '';
   resizeObj = null;
   window.removeEventListener('mousemove', resizeIng);
@@ -452,26 +528,55 @@ const init = (historyData = [], historyWidth = null) => {
   }, 500)
 };
 // 添加一个组件
-const addItem = (obj) => {
+const addItem = (obj, pid = null, keepPosition = false) => {
   const item = deepCopy(obj);
   if (!item.id) {
     item.id = new Date().getTime() + '';
   }
-  item.x = 0;
-  const lin = comData.value.map(item => (item.y + item.height));
-  if (lin.length > 0) {
-    item.y = Math.max(...lin);
-  } else {
-    item.y = 0;
+  if (keepPosition !== true) {
+    if (pid) {
+
+    } else {
+      item.x = 0;
+      const lin = comData.value.map(item => (item.y + item.height));
+      if (lin.length > 0) {
+        item.y = Math.max(...lin);
+      } else {
+        item.y = 0;
+      }
+    }
   }
-  comData.value.push(item);
+  if (pid) {
+    const pArr = comData.value.filter(item => item.id === pid);
+    if (pArr.length === 1) {
+      pArr[0].groupData.push(item);
+    } else {
+      try {
+        console.error('未找到组件');
+      } catch (error) { }
+    }
+  } else {
+    comData.value.push(item);
+  }
   dealBg();
 };
 // 删除一个组件
-const deleteItem = (id) => {
-  const index = comData.value.findIndex(item => item.id === id);
+const deleteItem = (id, pid = null) => {
+  let index = -1;
+  const pArr = comData.value.filter(item => item.id === pid);
+  if (pid) {
+    if (pArr.length === 1) {
+      index = pArr[0].groupData.findIndex(item => item.id === id);
+    }
+  } else {
+    index = comData.value.findIndex(item => item.id === id);
+  }
   if (index !== -1) {
-    comData.value.splice(index, 1);
+    if (pid) {
+      pArr[0].groupData.splice(index, 1);
+    } else {
+      comData.value.splice(index, 1);
+    }
     dealBg();
   } else {
     try {
@@ -483,9 +588,21 @@ const deleteItem = (id) => {
 const updateItem = (obj) => {
   if (obj.id) {
     const item = deepCopy(obj);
-    const index = comData.value.findIndex(one => one.id === item.id);
+    let index = -1;
+    const pArr = comData.value.filter(one => one.id === item.inGroupId);
+    if (item.inGroupId) {
+      if (pArr.length === 1) {
+        index = pArr[0].groupData.findIndex(one => one.id === item.id);
+      }
+    } else {
+      index = comData.value.findIndex(one => one.id === item.id);
+    }
     if (index !== -1) {
-      comData.value[index] = item;
+      if (item.inGroupId) {
+        pArr[0].groupData[index] = item;
+      } else {
+        comData.value[index] = item;
+      }
       dealBg();
     } else {
       try {
@@ -517,16 +634,18 @@ const changePageSize = (width, height) => {
   if (height !== null) {
     pageHeight = height;
   }
-};
-// 获取当前画布数据
-const getData = () => {
-  return { data: deepCopy(comData.value), width: pageWidth };
+  console.log(pageWidth, pageHeight);
 };
 // 展开一个菜单
 const openSettingPop = (item) => {
   if (!item.showPop) {
     comData.value.forEach(item => {
       delete item.showPop;
+      if (item.groupData) {
+        item.groupData.forEach(one => {
+          delete one.showPop;
+        });
+      }
     });
     item.showPop = true;
     window.addEventListener('click', closeSettingPop);
@@ -536,15 +655,121 @@ const openSettingPop = (item) => {
 const closeSettingPop = () => {
   comData.value.forEach(item => {
     delete item.showPop;
+    if (item.groupData) {
+      item.groupData.forEach(one => {
+        delete one.showPop;
+      });
+    }
   });
   window.removeEventListener('click', closeSettingPop);
+};
+// 正在组合中
+const isGrouping = ref(false);
+// 打开组合开关
+const openGroup = (id) => {
+  const index = comData.value.findIndex(item => item.id === id);
+  if (index !== -1) {
+    comData.value[index].checked = true;
+    comData.value[index].disabled = true;
+    isGrouping.value = true;
+    emit('showGroup', isGrouping.value);
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
+};
+// 关闭组合开关
+const closeGroup = () => {
+  isGrouping.value = false;
+  comData.value.forEach(item => {
+    delete item.checked;
+    delete item.disabled;
+    if (item.groupData) {
+      item.groupData.forEach(one => {
+        delete one.checked;
+        delete one.disabled;
+      });
+    }
+  });
+  emit('showGroup', isGrouping.value);
+};
+// 改变一条的选中
+const changeCheck = (obj) => {
+  obj.checked = obj.checked ? false : true;
+  emit('updateChecked', comData.value.filter(item => item.checked).length);
+};
+// 生成组合
+const addGroup = () => {
+  const arr = comData.value.filter(item => item.checked);
+  if (arr.length > 1) {
+    const obj = {
+      id: new Date().getTime() + 'G',
+      isGroup: true,
+      width: 200,
+      height: 200,
+      groupData: []
+    };
+    arr.forEach(item => {
+      deleteItem(item.id);
+      item.inGroupId = obj.id;
+      obj.groupData.push(item);
+    });
+    addItem(obj);
+    dealBg();
+  }
+  closeGroup();
+};
+// 从组合中移出某一项
+const removeGroupItem = (id, pid) => {
+  const pObj = comData.value.filter(item => item.id === pid)[0];
+  if (pObj) {
+    const lin = pObj.groupData.filter(item => item.id === id)[0];
+    if (lin) {
+      delete lin.inGroupId;
+      addItem(lin);
+      deleteItem(lin.id, pObj.id);
+      if (pObj.groupData.length < 2) {
+        removeGroup(pid);
+      }
+      dealBg();
+    } else {
+      try {
+        console.error('未找到组件');
+      } catch (error) { }
+    }
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
+};
+// 解除组合
+const removeGroup = (id) => {
+  const lin = comData.value.filter(item => item.id === id)[0];
+  if (lin) {
+    deleteItem(lin.id);
+    lin.groupData.forEach(item => {
+      delete item.inGroupId;
+      addItem(item, null, true);
+    });
+    dealBg();
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
+};
+// 获取当前画布数据
+const getData = () => {
+  return { data: deepCopy(comData.value), width: pageWidth };
 };
 onBeforeUnmount(() => {
   // 移除监听
   resizePageObserver.unobserve(pageRef.value);
   window.removeEventListener('click', closeSettingPop);
 });
-defineExpose({ init, addItem, deleteItem, updateItem, getData });
+defineExpose({ init, addItem, deleteItem, updateItem, openGroup, closeGroup, addGroup, removeGroupItem, removeGroup, getData });
 </script>
 <style lang="scss">
 @use "style/index.scss" as *;
