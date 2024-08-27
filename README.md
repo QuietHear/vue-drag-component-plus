@@ -55,7 +55,9 @@
 
 * `--setting-icon-size`：12px;-->设置按钮的字体大小
 
-* `--setting-pop-width`：84px;-->设置弹窗的宽度
+* `--setting-pop-width`：80px;-->设置弹窗的宽度
+
+* `--setting-pop-special-width`：120px;-->组合设置弹窗的宽度
 
 * `--check-border-color`：#DCDFE6;-->多选项边框的默认/禁用颜色
 
@@ -66,6 +68,12 @@
 * `--check-dis-bg-color`：#F5F7FA;-->多选项禁用的背景色
 
 * `--check-dis-color`：rgba(8, 8, 10, 0.32);-->多选项禁用的选中色
+
+* `--group-tit-color`：#000;-->组合标题颜色
+
+* `--group-tit-size`：16px;-->组合标题高度
+
+* `--group-tit-height`：24px;-->组合标题高度
 
 
 ## 1. 参数
@@ -88,6 +96,8 @@
 	// iconfont，此时为iconfont，icon为图标去掉icon-后部分（！！！未内置，确保当前页面或全局已引入）
 	// 其他，此时为本地自定义图标，type为class，icon为内容
 >
+
+* `hideTit`：不展示内置设置组合标题按钮-->Boolean;非必传;默认*false*
 
 
 ## 2. 方法
@@ -116,6 +126,8 @@
 		// 组合相关的数据不要随意修改/创造，不然会有BUG
 		// 当前组件是组合壳子
 		isGroup: true,
+		// 当前组合标题
+		groupTit: '',
 		// 当前组件所在组合的id
 		inGroupId: xxx,
 		// 组合子项数据
@@ -158,7 +170,7 @@
 
 * `addGroup`：把选中的项生成一个组合（需要手动调用）
 >
-	最少两项才会生成一个组合
+	最少两项才会生成一个组合，生成组合后默认无组合标题
 >
 
 * `removeGroupItem`：从组合中移出某一项-->传入（组件项id，当前组合id）
@@ -167,6 +179,8 @@
 >
 
 * `removeGroup`：解除组合-->传入（当前组合id）
+
+* `changeGroupTit`：设置组合标题-->传入（新标题，当前组合id）；标题可以为空
 
 * `getData`：获取当前画布数据
 >
@@ -184,10 +198,16 @@
 
 * `@updateChecked`：实时返回当前组合选中项的个数-->第一个参数返回总选中个数
 
+* `@showTitPop`：打开组合标题设置弹窗-->第一个参数返回当前标题，第二个参数返回当前组合id
+>
+	无内置弹窗，需要的话自己写
+>
+
 
 ## 3. 插槽
 * `item`：替换默认展示的内容区（不包含组合壳子）
 >
+	// 如果插槽需要点击事件阻止默认的拖动事件（这两个事件是冲突的），给需要点击的地方加 @mousedown.prevent.stop="null" 即可
 	// 此处包含在组合内的设置菜单，可以用data.inGroupId判断当前是独立组件还是在组合内
 	data:返回当前组件项的详细数据
 >

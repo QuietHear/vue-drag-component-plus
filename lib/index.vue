@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-26 10:14:04
+ * @LastEditTime: 2024-08-27 15:21:39
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -25,37 +25,43 @@
           <!-- 组合内容 -->
           <template v-if="item.isGroup">
             <!-- 组合标题 -->
-            123
+            <div class="group-item-tit" :title="item.groupTit" v-if="item.groupTit">
+              {{ item.groupTit }}
+            </div>
             <!-- 组合子项内容 -->
-            <div class="com-item-content-child" :style="{
-              width: one.width + 'px',
-              height: one.height + 'px',
-              top: one.y + 'px',
-              left: one.x + 'px'
-            }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
-              <!-- 内容 -->
-              <slot name="item" :data="one">
-                {{ index }}
-              </slot>
-              <!-- 设置弹窗入口 -->
-              <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
-                @mousedown.prevent.stop="null"
-                v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
-                <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
-              </div>
-              <!-- 设置弹窗 -->
-              <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
-                <slot name="setPopNormal" :data="deepCopy(one)">
-                  <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
-                  <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
+            <div :class="['group-item-content', item.groupTit ? '' : 'full']">
+              <div class="com-item-content-child" :style="{
+                width: one.width + 'px',
+                height: one.height + 'px',
+                top: one.y + 'px',
+                left: one.x + 'px'
+              }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
+                <!-- 内容 -->
+                <slot name="item" :data="one">
+                  <p>{{ one.width }},{{ one.height }}</p>
+                  <p>{{ one.x }},{{ one.y }}</p>
                 </slot>
+                <!-- 设置弹窗入口 -->
+                <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
+                  @mousedown.prevent.stop="null"
+                  v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
+                  <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
+                </div>
+                <!-- 设置弹窗 -->
+                <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
+                  <slot name="setPopNormal" :data="deepCopy(one)">
+                    <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
+                    <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
+                  </slot>
+                </div>
               </div>
             </div>
           </template>
           <!-- 普通内容 -->
           <template v-else>
             <slot name="item" :data="item">
-              {{ index }}
+              <p>{{ item.width }},{{ item.height }}</p>
+              <p>{{ item.x }},{{ item.y }}</p>
             </slot>
           </template>
           <!-- 组合选择器 -->
@@ -69,8 +75,11 @@
             <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
           </div>
           <!-- 设置弹窗 -->
-          <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="item.showPop">
+          <div :class="['setting-box-pop', item.isGroup === true ? 'special' : '']" @mousedown.prevent.stop="null"
+            v-if="item.showPop">
             <slot name="setPopSpecial" :data="deepCopy(item)" v-if="item.isGroup === true">
+              <div class="setting-box-pop-item" @click="emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
+                设置组合标题</div>
               <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
             </slot>
             <slot name="setPopNormal" :data="deepCopy(item)" v-else>
@@ -120,7 +129,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
-const emit = defineEmits(["showGroup", "updateChecked"]);
+const emit = defineEmits(["showGroup", "updateChecked", "showTitPop"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -165,6 +174,11 @@ const props = defineProps({
         icon: "设置"
       };
     },
+  },
+  // 不展示内置设置组合标题按钮
+  hideTit: {
+    type: Boolean,
+    default: false
   }
 });
 // 深拷贝
@@ -253,6 +267,17 @@ const comData = ref([
   //   static: true
   // }
 ]);
+// JQ的closest()方法
+const closest = (ele, selector) => {
+  let matchesSelector = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || ele.msMatchesSelector;
+  while (ele) {
+    if (matchesSelector.call(ele, selector)) {
+      break;
+    }
+    ele = ele.parentElement;
+  }
+  return ele;
+};
 // 当前拖拽目标
 let dragSrc = null;
 // 横向初始差值
@@ -267,8 +292,9 @@ const dragStart = (e, index) => {
   dragSrc = index;
   dragBg.value = deepCopy(comData.value[dragSrc]);
   comData.value[dragSrc].move = true;
-  differX = e.clientX - e.target.offsetParent.offsetLeft;
-  differY = e.clientY - e.target.offsetParent.offsetTop;
+  const parentNode = closest(e.target, '.com-item');
+  differX = e.clientX - parentNode.offsetLeft;
+  differY = e.clientY - parentNode.offsetTop;
   window.addEventListener('mousemove', dragIng);
   window.addEventListener('mouseup', dragEnd);
 };
@@ -706,6 +732,7 @@ const addGroup = () => {
     const obj = {
       id: new Date().getTime() + 'G',
       isGroup: true,
+      groupTit: '',
       width: 200,
       height: 200,
       groupData: []
@@ -760,6 +787,18 @@ const removeGroup = (id) => {
     } catch (error) { }
   }
 };
+// 设置组合标题
+const changeGroupTit = (tit = '', id) => {
+  const lin = comData.value.filter(item => item.id === id)[0];
+  if (lin) {
+    lin.groupTit = tit;
+    dealBg();
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
+};
 // 获取当前画布数据
 const getData = () => {
   return { data: deepCopy(comData.value), width: pageWidth };
@@ -769,7 +808,7 @@ onBeforeUnmount(() => {
   resizePageObserver.unobserve(pageRef.value);
   window.removeEventListener('click', closeSettingPop);
 });
-defineExpose({ init, addItem, deleteItem, updateItem, openGroup, closeGroup, addGroup, removeGroupItem, removeGroup, getData });
+defineExpose({ init, addItem, deleteItem, updateItem, openGroup, closeGroup, addGroup, removeGroupItem, removeGroup, changeGroupTit, getData });
 </script>
 <style lang="scss">
 @use "style/index.scss" as *;

@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2024-08-26 10:31:50
+* @LastEditors: aFei
+* @LastEditTime: 2024-08-27 13:14:00
 */
 <template>
   <div class="demo">
@@ -20,15 +20,27 @@
             <el-button @click="addOne" type="primary">添加</el-button>
             <el-button @click="getData">查看当前数据</el-button>
             <el-switch v-model="seeModel" active-text="仅查看" inactive-text="正常" />
-            <el-switch v-model="noEditModel" active-text="无菜单" inactive-text="正常" />
           </template>
         </div>
         <div class="box">
-          <vueDragComponentPlus ref="comRef" @showGroup="chengGroup" @updateChecked="num => groupNum = num" :seeModel
-            :noEditModel>
+          <vueDragComponentPlus ref="comRef" @showGroup="chengGroup" @updateChecked="num => groupNum = num"
+            @showTitPop="showTitPop" :seeModel>
           </vueDragComponentPlus>
         </div>
       </div>
+      <el-dialog v-model="pop" title="设置组合标题" width="420px">
+        <el-form :model="popMsg">
+          <el-form-item prop="title" label="标题">
+            <el-input v-model.trim="popMsg.title" placeholder="请输入" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="pop = false">取消</el-button>
+          <el-button type="primary" @click="popSubmit">
+            确认
+          </el-button>
+        </template>
+      </el-dialog>
     </el-scrollbar>
   </div>
 </template>
@@ -36,7 +48,6 @@
 import vueDragComponentPlus from "~/lib/index.vue";
 const comRef = ref(null);
 const seeModel = ref(false);
-const noEditModel = ref(false);
 const addOne = () => {
   comRef.value.addItem({
     width: 100,
@@ -57,5 +68,18 @@ const addGroup = () => {
 };
 const closeGroup = () => {
   comRef.value.closeGroup();
+};
+const pop = ref(false);
+const popMsg = ref({
+  title: ''
+});
+const showTitPop = (tit, id) => {
+  popMsg.value.title = tit;
+  popMsg.value.id = id;
+  pop.value = true;
+};
+const popSubmit = () => {
+  comRef.value.changeGroupTit(popMsg.value.title, popMsg.value.id);
+  pop.value = false;
 };
 </script>
