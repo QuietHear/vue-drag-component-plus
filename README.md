@@ -27,6 +27,9 @@
 * `--com-item-bg`：#fff;-->组件项背景色
 
 * `--com-item-border-width`：1px;-->组件项边框宽度
+>
+	尽量不要动态改变，不然之前组合的宽度会有问题
+>
 
 * `--com-item-border-type`：solid;-->组件项边框类型
 
@@ -130,6 +133,16 @@
 		groupTit: '',
 		// 当前组件所在组合的id
 		inGroupId: xxx,
+		// 当前组件在组合区域宽度占比
+		groupW: xxx,
+		// 当前组件在组合区域高度占比
+		groupH: xxx,
+		// 当前组件在组合区域x坐标占比
+		groupX: xxx,
+		// 当前组件在组合区域y坐标占比
+		groupY: xxx,
+		// 当前组件在组合内是否是右上角
+		isObstacle: fasle,
 		// 组合子项数据
 		groupData: [{结构与普通组件项一致},{结构与普通组件项一致}...]
 	}

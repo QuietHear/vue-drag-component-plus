@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-27 15:21:39
+ * @LastEditTime: 2024-09-09 15:28:14
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -12,7 +12,7 @@
     <div class="content-box" ref="boxRef">
       <!-- 组件项 -->
       <div
-        :class="['com-item', seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop ? 'on-top' : '']"
+        :class="['com-item', seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop ? 'on-top' : '', seeModel ? 'no-hover' : '']"
         :style="{
           width: item.width + 'px',
           height: item.height + 'px',
@@ -30,7 +30,7 @@
             </div>
             <!-- 组合子项内容 -->
             <div :class="['group-item-content', item.groupTit ? '' : 'full']">
-              <div class="com-item-content-child" :style="{
+              <div :class="['com-item-content-child', one.isObstacle ? 'else' : '']" :style="{
                 width: one.width + 'px',
                 height: one.height + 'px',
                 top: one.y + 'px',
@@ -217,56 +217,7 @@ const boxRef = ref(null);
 // 占位高度
 const heightBg = ref(0);
 // 组件数据
-const comData = ref([
-  // {
-  //   width: 100,
-  //   height: 100,
-  //   x: 300,
-  //   y: 300
-  // },
-  // {
-  //   width: 100,
-  //   height: 100,
-  //   x: 390,
-  //   y: 50,
-  //   static: true
-  // },
-  // {
-  //   width: 100,
-  //   height: 100,
-  //   x: 50,
-  //   y: 210,
-  //   static: true
-  // },
-  // {
-  //   width: 100,
-  //   height: 100,
-  //   x: 210,
-  //   y: 600,
-  //   static: true
-  // },
-  // {
-  //   width: 100,
-  //   height: 100,
-  //   x: 310,
-  //   y: 500,
-  //   static: true
-  // },
-  // {
-  //   width: 100,
-  //   height: 100,
-  //   x: 700,
-  //   y: 390,
-  //   static: true
-  // },
-  // {
-  //   width: 100,
-  //   height: 100,
-  //   x: 600,
-  //   y: 290,
-  //   static: true
-  // }
-]);
+const comData = ref([]);
 // JQ的closest()方法
 const closest = (ele, selector) => {
   let matchesSelector = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || ele.msMatchesSelector;
@@ -304,6 +255,10 @@ const dragIng = (e) => {
   const y = e.clientY - differY;
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
   const resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
+  const moveX = resultX - comData.value[dragSrc].x;
+  const moveY = resultY - comData.value[dragSrc].y;
+  // 移动方向
+  const direction = `${moveX > 0 ? 'right' : moveX < 0 ? 'left' : ''}_${moveY > 0 ? 'bottom' : moveY < 0 ? 'top' : ''}`;
   if (resultY > comData.value[dragSrc].y && resultY > (pageHeight - comData.value[dragSrc].height - 30)) {
     boxRef.value.scrollBy(0, 20);
   }
@@ -312,31 +267,221 @@ const dragIng = (e) => {
   }
   comData.value[dragSrc].x = resultX;
   comData.value[dragSrc].y = resultY;
-  setTimeout(() => {
-    const obstacleArr = comData.value.filter(item => item.static === true)
-      .filter(item => ((item.x === resultX && item.width === comData.value[dragSrc].width) || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)) || ((item.x + item.width) > resultX && (item.x + item.width) < (resultX + comData.value[dragSrc].width))))
-      .filter(item => ((item.y === resultY && item.height === comData.value[dragSrc].height) || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height)) || ((item.y + item.height) > resultY && (item.y + item.height) < (resultY + comData.value[dragSrc].height))));
-    if (obstacleArr.length === 0) {
-      dragBg.value.x = resultX;
-      dragBg.value.y = resultY;
-    } else {
-      // 主左右移动
-      const obstacleArrX = comData.value.filter(item => item.static === true)
-        .filter(item => ((item.x === resultX && item.width === comData.value[dragSrc].width) || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)) || ((item.x + item.width) > resultX && (item.x + item.width) < (resultX + comData.value[dragSrc].width))))
-        .filter(item => ((item.y === comData.value[dragSrc].y && item.height === comData.value[dragSrc].height) || (item.y > comData.value[dragSrc].y && item.y < (comData.value[dragSrc].y + comData.value[dragSrc].height)) || ((item.y + item.height) > comData.value[dragSrc].y && (item.y + item.height) < (comData.value[dragSrc].y + comData.value[dragSrc].height))));
-      if (obstacleArrX.length === 0) {
-        dragBg.value.x = resultX;
+  // 当前直接接触的组件
+  let obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
+    .filter(item => (item.x < resultX && (item.x + item.width) > resultX) || item.x === resultX || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)))
+    .filter(item => (item.y < resultY && (item.y + item.height) > resultY) || item.y === resultY || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height))));
+  if (obstacleArr.length === 0) {
+    dragBg.value.x = resultX;
+    dragBg.value.y = resultY;
+  }
+  // 与其他组件有重叠 
+  // TODO 未考虑static的情况
+  else {
+    if (direction.indexOf('top') !== -1) {
+      obstacleArr = obstacleArr.filter(item => item.y < dragBg.value.y);
+      // 修复保持上方元素底部在一条水平线上
+      const rightMin = Math.min(...obstacleArr.map(item => (item.y + item.height)));
+      obstacleArr.forEach(item => {
+        if (Math.abs(item.y + item.height - rightMin) < 5) {
+          item.y = rightMin - item.height;
+        }
+      });
+      // 移动距离
+      let num = dragBg.value.y - resultY;
+      // 能移动
+      let needMove = true;
+      // 上方所有接触元素
+      let topArr = [...obstacleArr];
+      // 向上查找挨着的元素
+      const topDeep = (obj) => {
+        const list = deepCopy(comData.value.filter(item => item.move !== true && (item.y + item.height - obj.y) <= (num + 3) && (item.y + item.height - obj.y) >= 0)
+          .filter(item => (item.x < obj.x && (item.x + item.width) > obj.x) || (item.x >= obj.x && item.x < (obj.x + obj.width))));
+        list.forEach(item => {
+          // 修正挨着但是仍然位置有偏差的
+          if ((item.y + item.height) !== obj.y) {
+            item.y = obj.y - item.height;
+          }
+          if (topArr.findIndex(one => one.id === item.id) === -1) {
+            topArr.push(item);
+            topDeep(item);
+          }
+        });
+      };
+      obstacleArr.forEach(item => {
+        topDeep(item);
+      });
+      topArr.sort((a, b) => {
+        const x = a.y;
+        const y = b.y;
+        return x - y;
+      });
+      if (topArr.length === 0 || topArr.filter(item => item.y === 0).length > 0) {
+        needMove = false;
       }
-      // 主上下移动
-      const obstacleArrY = comData.value.filter(item => item.static === true)
-        .filter(item => ((item.x === comData.value[dragSrc].x && item.width === comData.value[dragSrc].width) || (item.x > comData.value[dragSrc].x && item.x < (comData.value[dragSrc].x + comData.value[dragSrc].width)) || ((item.x + item.width) > comData.value[dragSrc].x && (item.x + item.width) < (comData.value[dragSrc].x + comData.value[dragSrc].width))))
-        .filter(item => ((item.y === resultY && item.height === comData.value[dragSrc].height) || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height)) || ((item.y + item.height) > resultY && (item.y + item.height) < (resultY + comData.value[dragSrc].height))));
-      if (obstacleArrY.length === 0) {
-        dragBg.value.y = resultY;
+      // 先看能不能上移
+      if (needMove) {
+        let canMove = 0;
+        const topMax = topArr.filter(item => item.y === topArr[0].y);
+        topMax.forEach(item => {
+          const list = deepCopy(comData.value.filter(one => one.move !== true && (one.y + one.height) < item.y)
+            .filter(one => (one.x < item.x && (one.x + one.width) > item.x) || (one.x >= item.x && one.x < (item.x + item.width))));
+          list.forEach(one => {
+            if ((one.y + one.height) > canMove) {
+              canMove = one.y + one.height;
+            }
+          });
+        });
+        canMove = topArr[0].y - canMove;
+        if (canMove < num) {
+          num = canMove;
+        }
+        topArr.forEach(item => {
+          item.y -= num;
+          comData.value.filter(one => one.id === item.id)[0].y = item.y;
+        });
+        dragBg.value.x = resultX;
+        dragBg.value.y = comData.value.filter(item => item.id === topArr[topArr.length - 1].id)[0].y + comData.value.filter(item => item.id === topArr[topArr.length - 1].id)[0].height;
+      }
+      // 不行再下移 
+      else {
+        const minY = Math.min(...obstacleArr.map(item => item.y));
+        // 进行下移
+        if ((minY - resultY) >= -7 && (minY - resultY) < 7) {
+          // 下移无阻拦
+          obstacleArr.filter(item => item.y < dragBg.value.y).forEach(item => {
+            item.y += comData.value[dragSrc].height;
+            comData.value.filter(one => one.id === item.id)[0].y = item.y;
+            // 递归解除下移出现的重叠（把接触的元素全部下移）
+            const deepDown = (obj) => {
+              const lin = comData.value.filter(one => one.move !== true && one.id !== obj.id)
+                .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+                .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+              lin.forEach(one => {
+                one.y = obj.y + obj.height;
+                deepDown(one);
+              });
+            };
+            deepDown(item);
+          });
+          dragBg.value.x = resultX;
+          dragBg.value.y = minY;
+        }
+      }
+      // 重置接触元素
+      obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
+        .filter(item => (item.x < resultX && (item.x + item.width) > resultX) || item.x === resultX || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)))
+        .filter(item => (item.y < resultY && (item.y + item.height) > resultY) || item.y === resultY || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height))));
+    }
+    if (direction.indexOf('bottom') !== -1) {
+      const maxY = Math.max(...obstacleArr.map(item => (item.y + item.height)));
+      if ((maxY - (resultY + comData.value[dragSrc].height)) >= -7 && (maxY - (resultY + comData.value[dragSrc].height)) < 7) {
+        let moveBg = true;
+        obstacleArr.filter(item => item.y > dragBg.value.y).forEach(item => {
+          item.y -= comData.value[dragSrc].height;
+          comData.value.filter(one => one.id === item.id)[0].y = item.y;
+          // 先把自己下移到不会接触的地方
+          const lin = comData.value.filter(one => one.move !== true && one.id !== item.id)
+            .filter(one => (one.x < item.x && (one.x + one.width) > item.x) || one.x === item.x || (one.x > item.x && one.x < (item.x + item.width)))
+            .filter(one => (one.y < item.y && (one.y + one.height) > item.y) || one.y === item.y || (one.y > item.y && one.y < (item.y + item.height)));
+          if (lin.length > 0) {
+            item.y = Math.max(...lin.map(one => (one.y + one.height)));
+            comData.value.filter(one => one.id === item.id)[0].y = item.y;
+            // 递归解除下移出现的重叠（把接触的元素全部下移）
+            const deepDown = (obj) => {
+              const lin = comData.value.filter(one => one.id !== obj.id)
+                .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+                .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+              lin.forEach(one => {
+                one.y = obj.y + obj.height;
+                if (one.move === true) {
+                  dragBg.value.y = one.y;
+                  moveBg = false;
+                }
+                deepDown(one);
+              });
+            };
+            deepDown(item);
+          }
+        });
+        dragBg.value.x = resultX;
+        if (moveBg) {
+          dragBg.value.y = maxY - comData.value[dragSrc].height;
+        }
+        // 重置接触元素
+        obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
+          .filter(item => (item.x < resultX && (item.x + item.width) > resultX) || item.x === resultX || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)))
+          .filter(item => (item.y < resultY && (item.y + item.height) > resultY) || item.y === resultY || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height))));
       }
     }
-    dealBg();
-  }, 30);
+    if ((((direction.indexOf('top') !== -1 || direction.indexOf('bottom') !== -1) && (direction.indexOf('right') !== -1 || direction.indexOf('left') !== -1) && Math.abs(moveX) > 8) || (direction.indexOf('top') === -1 && direction.indexOf('bottom') === -1 && (direction.indexOf('right') !== -1 || direction.indexOf('left') !== -1))) && obstacleArr.length > 0) {
+      obstacleArr.sort((a, b) => {
+        const x = a.y;
+        const y = b.y;
+        return x - y;
+      });
+      let canTop = true;
+      for (let i = 0; i < obstacleArr.length; i++) {
+        // 先逐个判断够不够上移
+        if (canTop) {
+          const copyData = deepCopy(comData.value);
+          for (let x = 0; x <= i; x++) {
+            let max = null;
+            const topList = copyData.filter(item => item.move !== true && item.y < obstacleArr[x].y)
+              .filter(item => (item.x < obstacleArr[x].x && (item.x + item.width) > obstacleArr[x].x) || item.x === obstacleArr[x].x || (item.x > obstacleArr[x].x && item.x < (obstacleArr[x].x + obstacleArr[x].width)));
+            if (topList.length === 0) {
+              max = 0;
+            } else {
+              max = Math.max(...topList.map(item => (item.y + item.height)));
+            }
+            // 最后一个
+            if (x === i) {
+              if (obstacleArr[x].y - (obstacleArr[x].y + obstacleArr[x].height - resultY) < max) {
+                canTop = false;
+                break;
+              }
+            } else {
+              if (obstacleArr[x].y - obstacleArr[i].height < max) {
+                canTop = false;
+                break;
+              } else {
+                copyData.filter(item => item.id === obstacleArr[x].id)[0].y -= obstacleArr[i].height;
+              }
+            }
+          }
+        }
+        // 可以就上移
+        if (canTop) {
+          obstacleArr[i].y -= obstacleArr[i].y + obstacleArr[i].height - resultY;
+          comData.value.filter(one => one.id === obstacleArr[i].id)[0].y = obstacleArr[i].y;
+          for (let x = i; x > 0; x--) {
+            obstacleArr[i - 1].y -= obstacleArr[i].height;
+            comData.value.filter(one => one.id === obstacleArr[i - 1].id)[0].y = obstacleArr[i - 1].y;
+          }
+        }
+        // 不够就下移
+        else {
+          obstacleArr.filter(item => item.id === obstacleArr[i].id).forEach(item => {
+            item.y += (comData.value[dragSrc].y + comData.value[dragSrc].height - item.y);
+            comData.value.filter(one => one.id === item.id)[0].y = item.y;
+            // 递归解除重叠
+            const deepDown = (obj) => {
+              const lin = comData.value.filter(one => one.move !== true && one.id !== obj.id)
+                .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+                .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+              lin.forEach(one => {
+                one.y = obj.y + obj.height;
+                deepDown(one);
+              });
+            };
+            deepDown(item);
+          });
+        }
+      }
+      dragBg.value.x = resultX;
+    }
+  }
+  dealBg();
 };
 // 结束拖拽
 const dragEnd = () => {
@@ -442,46 +587,145 @@ const resizeIng = (e) => {
   const y_rever = startHeight - (e.clientY - startY);
   const t = startTop + (e.clientY - startY);
   const l = startLeft + (e.clientX - startX);
+  const styles = getComputedStyle(pageRef.value);
+  const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+  const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   switch (resizeDirection) {
     case 'top-left':
       resizeObj.height = y_rever < props.itemMinHeight ? props.itemMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
       resizeObj.y = y_rever < props.itemMinHeight ? (startTop + startHeight - props.itemMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
       resizeObj.width = x_rever < props.itemMinWidth ? props.itemMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
       resizeObj.x = x_rever < props.itemMinWidth ? (startLeft + startWidth - props.itemMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      if (resizeObj.isGroup === true) {
+        const multipleX = resizeObj.width - 2 * borderWidth;
+        const multipleY = resizeObj.height - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+        resizeObj.groupData.forEach(item => {
+          item.width = multipleX * item.groupW;
+          item.x = multipleX * item.groupX;
+          item.height = multipleY * item.groupH;
+          item.y = multipleY * item.groupY;
+        });
+      }
       break;
     case 'top':
       // 原始
       resizeObj.height = y_rever < props.itemMinHeight ? props.itemMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
       resizeObj.y = y_rever < props.itemMinHeight ? (startTop + startHeight - props.itemMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
+      if (resizeObj.isGroup === true) {
+        const multipleY = resizeObj.height - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+        resizeObj.groupData.forEach(item => {
+          item.height = multipleY * item.groupH;
+          item.y = multipleY * item.groupY;
+        });
+      }
       break;
     case 'top-right':
       resizeObj.height = y_rever < props.itemMinHeight ? props.itemMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
       resizeObj.y = y_rever < props.itemMinHeight ? (startTop + startHeight - props.itemMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
       resizeObj.width = x < props.itemMinWidth ? props.itemMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
+      if (resizeObj.isGroup === true) {
+        const multipleX = resizeObj.width - 2 * borderWidth;
+        const multipleY = resizeObj.height - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+        resizeObj.groupData.forEach(item => {
+          item.width = multipleX * item.groupW;
+          item.x = multipleX * item.groupX;
+          item.height = multipleY * item.groupH;
+          item.y = multipleY * item.groupY;
+        });
+      }
       break;
     case 'left':
       // 原始
       resizeObj.width = x_rever < props.itemMinWidth ? props.itemMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
       resizeObj.x = x_rever < props.itemMinWidth ? (startLeft + startWidth - props.itemMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      if (resizeObj.isGroup === true) {
+        const multipleX = resizeObj.width - 2 * borderWidth;
+        resizeObj.groupData.forEach(item => {
+          item.width = multipleX * item.groupW;
+          item.x = multipleX * item.groupX;
+        });
+      }
       break;
     case 'right':
       // 原始
       resizeObj.width = x < props.itemMinWidth ? props.itemMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
+      if (resizeObj.isGroup === true) {
+        const multipleX = resizeObj.width - 2 * borderWidth;
+        resizeObj.groupData.forEach(item => {
+          item.width = multipleX * item.groupW;
+          item.x = multipleX * item.groupX;
+        });
+      }
       break;
     case 'bottom-left':
       resizeObj.height = y < props.itemMinHeight ? props.itemMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
       resizeObj.width = x_rever < props.itemMinWidth ? props.itemMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
       resizeObj.x = x_rever < props.itemMinWidth ? (startLeft + startWidth - props.itemMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      if (resizeObj.isGroup === true) {
+        const multipleX = resizeObj.width - 2 * borderWidth;
+        const multipleY = resizeObj.height - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+        resizeObj.groupData.forEach(item => {
+          item.width = multipleX * item.groupW;
+          item.x = multipleX * item.groupX;
+          item.height = multipleY * item.groupH;
+          item.y = multipleY * item.groupY;
+        });
+      }
       break;
     case 'bottom':
       // 原始
       resizeObj.height = y < props.itemMinHeight ? props.itemMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
+      if (resizeObj.isGroup === true) {
+        const multipleY = resizeObj.height - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+        resizeObj.groupData.forEach(item => {
+          item.height = multipleY * item.groupH;
+          item.y = multipleY * item.groupY;
+        });
+      }
       break;
     case 'bottom-right':
       resizeObj.height = y < props.itemMinHeight ? props.itemMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
       resizeObj.width = x < props.itemMinWidth ? props.itemMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
+      if (resizeObj.isGroup === true) {
+        const multipleX = resizeObj.width - 2 * borderWidth;
+        const multipleY = resizeObj.height - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+        resizeObj.groupData.forEach(item => {
+          item.width = multipleX * item.groupW;
+          item.x = multipleX * item.groupX;
+          item.height = multipleY * item.groupH;
+          item.y = multipleY * item.groupY;
+        });
+      }
       break;
   };
+  // 当前直接接触的组件
+  let obstacleArr = deepCopy(comData.value.filter(item => item.drag !== true)
+    .filter(item => (item.x < resizeObj.x && (item.x + item.width) > resizeObj.x) || item.x === resizeObj.x || (item.x > resizeObj.x && item.x < (resizeObj.x + resizeObj.width)))
+    .filter(item => (item.y < resizeObj.y && (item.y + item.height) > resizeObj.y) || item.y === resizeObj.y || (item.y > resizeObj.y && item.y < (resizeObj.y + resizeObj.height))));
+  if (obstacleArr.length > 0) {
+    obstacleArr.sort((a, b) => {
+      const x = a.y;
+      const y = b.y;
+      return x - y;
+    });
+    for (let i = 0; i < obstacleArr.length; i++) {
+      obstacleArr.filter(item => item.id === obstacleArr[i].id).forEach(item => {
+        item.y += (resizeObj.y + resizeObj.height - item.y);
+        comData.value.filter(one => one.id === item.id)[0].y = item.y;
+        // 递归解除重叠
+        const deepDown = (obj) => {
+          const lin = comData.value.filter(one => one.drag !== true && one.id !== obj.id)
+            .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+            .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+          lin.forEach(one => {
+            one.y = obj.y + obj.height;
+            deepDown(one);
+          });
+        };
+        deepDown(item);
+      });
+    }
+  }
   dealBg();
   boxRef.value.scrollTo(0, heightBg.value - pageHeight);
 };
@@ -512,6 +756,8 @@ const dealResizeMax = (direction) => {
 };
 // 计算占位高度
 const dealBg = () => {
+  // TODO 移除画布组件的纵向空格
+  console.log('删除空格');
   const arr = comData.value.map(item => (item.y + item.height));
   if (arr.length > 0) {
     heightBg.value = Math.max(...arr) + 50;
@@ -537,11 +783,24 @@ const init = (historyData = [], historyWidth = null) => {
     nextTick(() => {
       const obj = pageRef.value.getBoundingClientRect();
       const multiple = obj.width / historyWidth;
+      const styles = getComputedStyle(pageRef.value);
+      const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+      const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
       comData.value.forEach(item => {
         item.width *= multiple;
         item.height *= multiple;
         item.x *= multiple;
         item.y *= multiple;
+        if (item.isGroup === true) {
+          const multipleX = item.width - 2 * borderWidth;
+          const multipleY = item.height - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+          item.groupData.forEach(one => {
+            one.width = multipleX * one.groupW;
+            one.x = multipleX * one.groupX;
+            one.height = multipleY * one.groupH;
+            one.y = multipleY * one.groupY;
+          });
+        }
       });
       dealBg();
     });
@@ -553,34 +812,82 @@ const init = (historyData = [], historyWidth = null) => {
     initIng = false;
   }, 500)
 };
+// 计算新增的一个组件的x,y（画布中数量至少一个）
+const dealMoreItemXY = (item, dataArr, maxWidth) => {
+  const yTopArr = dataArr.map(item => item.y);
+  const yTop = Math.max(...yTopArr);
+  const xArr = dataArr.filter(item => (item.y + item.height) > yTop);
+  xArr.sort((a, b) => {
+    const x = a.x;
+    const y = b.x;
+    return x - y;
+  });
+  for (let i = 0; i < xArr.length; i++) {
+    // 第一个
+    if (i === 0) {
+      if (xArr[i].x >= item.width) {
+        item.y = yTop;
+        item.x = 0;
+        break;
+      }
+    }
+    // 非最后一个，长度大于1
+    if (xArr.length > 1 && i !== (xArr.length - 1)) {
+      if ((xArr[i].x + xArr[i].width + item.width) <= xArr[i + 1].x) {
+        item.y = yTop;
+        item.x = xArr[i].x + xArr[i].width;
+        break;
+      }
+    }
+    // 最后一个
+    if (i === (xArr.length - 1)) {
+      if ((xArr[i].x + xArr[i].width + item.width) <= maxWidth) {
+        item.y = yTop;
+        item.x = xArr[i].x + xArr[i].width;
+        break;
+      }
+    }
+  };
+  if (item.y == undefined) {
+    item.x = 0;
+    const lin = dataArr.map(item => (item.y + item.height));
+    item.y = Math.max(...lin);
+  }
+};
 // 添加一个组件
 const addItem = (obj, pid = null, keepPosition = false) => {
   const item = deepCopy(obj);
+  const pArr = comData.value.filter(item => item.id === pid);
   if (!item.id) {
     item.id = new Date().getTime() + '';
   }
+  if (pid && pArr.length !== 1) {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+    return;
+  }
+  // 重新计算坐标
   if (keepPosition !== true) {
+    delete item.x;
+    delete item.y;
     if (pid) {
-
+      const styles = getComputedStyle(pageRef.value);
+      const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+      dealMoreItemXY(item, pArr[0].groupData, pArr[0].width - 2 * borderWidth);
     } else {
-      item.x = 0;
-      const lin = comData.value.map(item => (item.y + item.height));
-      if (lin.length > 0) {
-        item.y = Math.max(...lin);
-      } else {
+      if (comData.value.length === 0) {
+        item.x = 0;
         item.y = 0;
+      } else {
+        dealMoreItemXY(item, comData.value, pageWidth);
       }
     }
   }
   if (pid) {
-    const pArr = comData.value.filter(item => item.id === pid);
-    if (pArr.length === 1) {
-      pArr[0].groupData.push(item);
-    } else {
-      try {
-        console.error('未找到组件');
-      } catch (error) { }
-    }
+    pArr[0].groupData.push(item);
+    const result = dealGroupSize(pArr[0].groupData, pArr[0]);
+    updateItem(result);
   } else {
     comData.value.push(item);
   }
@@ -600,6 +907,12 @@ const deleteItem = (id, pid = null) => {
   if (index !== -1) {
     if (pid) {
       pArr[0].groupData.splice(index, 1);
+      if (pArr[0].groupData.length === 1) {
+        removeGroup(pid);
+      } else {
+        const result = dealGroupSize(pArr[0].groupData, pArr[0]);
+        updateItem(result);
+      }
     } else {
       comData.value.splice(index, 1);
     }
@@ -646,6 +959,9 @@ const changePageSize = (width, height) => {
   if (width !== null) {
     const multiple = pageWidth ? (width / pageWidth) : 1;
     pageWidth = width;
+    const styles = getComputedStyle(pageRef.value);
+    const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+    const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
     // 防止init时widh监听正好触发
     if (!initIng) {
       comData.value.forEach(item => {
@@ -653,6 +969,16 @@ const changePageSize = (width, height) => {
         item.height *= multiple;
         item.x *= multiple;
         item.y *= multiple;
+        if (item.isGroup === true) {
+          const multipleX = item.width - 2 * borderWidth;
+          const multipleY = item.height - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+          item.groupData.forEach(one => {
+            one.width = multipleX * one.groupW;
+            one.x = multipleX * one.groupX;
+            one.height = multipleY * one.groupH;
+            one.y = multipleY * one.groupY;
+          });
+        }
       });
       dealBg();
     }
@@ -725,6 +1051,71 @@ const changeCheck = (obj) => {
   obj.checked = obj.checked ? false : true;
   emit('updateChecked', comData.value.filter(item => item.checked).length);
 };
+// 计算组合内容区的宽高、内容区的最新位置等信息
+const dealGroupSize = (childData, parentObj) => {
+  const childList = deepCopy(childData);
+  const result = deepCopy(parentObj);
+  // 压缩横坐标
+  childList.sort((a, b) => {
+    const x = a.x;
+    const y = b.x;
+    return x - y;
+  });
+  for (let i = 0; i < (childList.length - 1); i++) {
+    if (i === 0 && childList[i].x > 0) {
+      const space = childList[i].x;
+      for (let x = i; x < childList.length; x++) {
+        childList[x].x -= space;
+      };
+    }
+    if (childList[i + 1].x > (childList[i].x + childList[i].width)) {
+      const space = childList[i + 1].x - (childList[i].x + childList[i].width);
+      for (let x = (i + 1); x < childList.length; x++) {
+        childList[x].x -= space;
+      };
+    }
+  };
+  // 压缩纵坐标
+  childList.sort((a, b) => {
+    const x = a.y;
+    const y = b.y;
+    return x - y;
+  });
+  for (let i = 0; i < (childList.length - 1); i++) {
+    if (i === 0 && childList[i].y > 0) {
+      const space = childList[i].y;
+      for (let x = i; x < childList.length; x++) {
+        childList[x].y -= space;
+      }
+    }
+    if (childList[i + 1].y > (childList[i].y + childList[i].height)) {
+      const space = childList[i + 1].y - (childList[i].y + childList[i].height);
+      for (let x = (i + 1); x < childList.length; x++) {
+        childList[x].y -= space;
+      }
+    }
+  };
+  const linx = childList.map(item => (item.x + item.width));
+  const maxWidth = Math.max(...linx);
+  const liny = childList.map(item => (item.y + item.height));
+  const maxHeight = Math.max(...liny);
+  childList.forEach(item => {
+    if (!item.inGroupId) {
+      item.inGroupId = result.id;
+    }
+    item.groupW = item.width / maxWidth;
+    item.groupH = item.height / maxHeight;
+    item.groupX = item.x / maxWidth;
+    item.groupY = item.y / maxHeight;
+    item.isObstacle = (item.x + item.width) === maxWidth && item.y === 0;
+  });
+  const styles = getComputedStyle(pageRef.value);
+  const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+  result.width = maxWidth + 2 * borderWidth;
+  result.height = maxHeight + 2 * borderWidth;
+  result.groupData = [...childList];
+  return result;
+};
 // 生成组合
 const addGroup = () => {
   const arr = comData.value.filter(item => item.checked);
@@ -732,17 +1123,13 @@ const addGroup = () => {
     const obj = {
       id: new Date().getTime() + 'G',
       isGroup: true,
-      groupTit: '',
-      width: 200,
-      height: 200,
-      groupData: []
+      groupTit: ''
     };
-    arr.forEach(item => {
+    const result = dealGroupSize(arr, obj);
+    result.groupData.forEach(item => {
       deleteItem(item.id);
-      item.inGroupId = obj.id;
-      obj.groupData.push(item);
     });
-    addItem(obj);
+    addItem(result);
     dealBg();
   }
   closeGroup();
@@ -753,13 +1140,19 @@ const removeGroupItem = (id, pid) => {
   if (pObj) {
     const lin = pObj.groupData.filter(item => item.id === id)[0];
     if (lin) {
-      delete lin.inGroupId;
-      addItem(lin);
-      deleteItem(lin.id, pObj.id);
-      if (pObj.groupData.length < 2) {
+      if (pObj.groupData.length === 2) {
         removeGroup(pid);
+      } else {
+        delete lin.inGroupId;
+        delete lin.groupW;
+        delete lin.groupH;
+        delete lin.groupX;
+        delete lin.groupY;
+        delete lin.isObstacle;
+        deleteItem(lin.id, pObj.id);
+        addItem(lin);
+        dealBg();
       }
-      dealBg();
     } else {
       try {
         console.error('未找到组件');
@@ -778,6 +1171,13 @@ const removeGroup = (id) => {
     deleteItem(lin.id);
     lin.groupData.forEach(item => {
       delete item.inGroupId;
+      delete item.groupW;
+      delete item.groupH;
+      delete lin.groupX;
+      delete lin.groupY;
+      delete lin.isObstacle;
+      item.x += lin.x;
+      item.y += lin.y;
       addItem(item, null, true);
     });
     dealBg();
@@ -791,7 +1191,28 @@ const removeGroup = (id) => {
 const changeGroupTit = (tit = '', id) => {
   const lin = comData.value.filter(item => item.id === id)[0];
   if (lin) {
+    if (!lin.groupTit || !tit) {
+      const styles = getComputedStyle(pageRef.value);
+      const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
+      if (lin.groupTit && !tit) {
+        lin.height -= titHeight;
+      }
+      if (!lin.groupTit && tit) {
+        lin.height += titHeight;
+      }
+    }
     lin.groupTit = tit;
+    // 递归解除重叠
+    const deepDown = (obj) => {
+      const lin = comData.value.filter(one => one.id !== obj.id)
+        .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+        .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+      lin.forEach(one => {
+        one.y = obj.y + obj.height;
+        deepDown(one);
+      });
+    };
+    deepDown(lin);
     dealBg();
   } else {
     try {
