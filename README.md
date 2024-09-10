@@ -90,6 +90,8 @@
 
 * `itemMinHeight`：组件项最小高度，校验变量不能小于15-->Number;非必传;默认*15*
 
+* `ySpace`：纵向相邻元素的自动间距，校验变量不能小于0-->Number;非必传;默认*7*
+
 * `settingIcon`：设置图标-->Object;非必传;默认*{icon:'设置'}*
 >
 	attrs的值会v-bind到对应dom上

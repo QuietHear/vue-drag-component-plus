@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-08-27 13:14:00
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-09-10 11:35:10
 */
 <template>
   <div class="demo">
@@ -18,13 +18,14 @@
           </template>
           <template v-else>
             <el-button @click="addOne" type="primary">添加</el-button>
+            <el-input-number v-model="ySpace" :min="0" controls-position="right" title="纵向间距" />
             <el-button @click="getData">查看当前数据</el-button>
             <el-switch v-model="seeModel" active-text="仅查看" inactive-text="正常" />
           </template>
         </div>
         <div class="box">
-          <vueDragComponentPlus ref="comRef" @showGroup="chengGroup" @updateChecked="num => groupNum = num"
-            @showTitPop="showTitPop" :seeModel>
+          <vueDragComponentPlus ref="comRef" :ySpace="ySpace" @showGroup="chengGroup"
+            @updateChecked="num => groupNum = num" @showTitPop="showTitPop" :seeModel>
           </vueDragComponentPlus>
         </div>
       </div>
@@ -47,6 +48,7 @@
 <script setup>
 import vueDragComponentPlus from "~/lib/index.vue";
 const comRef = ref(null);
+const ySpace = ref(12);
 const seeModel = ref(false);
 const addOne = () => {
   comRef.value.addItem({

@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-09 15:28:14
+ * @LastEditTime: 2024-09-10 11:37:21
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -164,6 +164,14 @@ const props = defineProps({
     default: 15,
     validator(value, props) {
       return value >= 15;
+    }
+  },
+  // 纵向相邻元素的自动间距
+  ySpace: {
+    type: Number,
+    default: 7,
+    validator(value, props) {
+      return value >= 0;
     }
   },
   // 设置图标
@@ -481,18 +489,17 @@ const dragIng = (e) => {
       dragBg.value.x = resultX;
     }
   }
-  dealBg();
+  dealBg(false);
 };
 // 结束拖拽
 const dragEnd = () => {
   window.removeEventListener('mousemove', dragIng);
   window.removeEventListener('mouseup', dragEnd);
-  setTimeout(() => {
-    delete comData.value[dragSrc].move;
-    comData.value[dragSrc].x = dragBg.value.x;
-    comData.value[dragSrc].y = dragBg.value.y;
-    dragSrc = null;
-  }, 30);
+  delete comData.value[dragSrc].move;
+  comData.value[dragSrc].x = dragBg.value.x;
+  comData.value[dragSrc].y = dragBg.value.y;
+  dragSrc = null;
+  dealBg();
 };
 // 计算拖拽最大边界
 const dealDragMax = (direction) => {
@@ -726,7 +733,7 @@ const resizeIng = (e) => {
       });
     }
   }
-  dealBg();
+  dealBg(false);
   boxRef.value.scrollTo(0, heightBg.value - pageHeight);
 };
 // 结束收缩
@@ -736,6 +743,7 @@ const resizeEnd = (e) => {
   resizeObj = null;
   window.removeEventListener('mousemove', resizeIng);
   window.removeEventListener('mouseup', resizeEnd);
+  dealBg();
 };
 // 计算收缩最大边界
 const dealResizeMax = (direction) => {
@@ -755,15 +763,55 @@ const dealResizeMax = (direction) => {
   };
 };
 // 计算占位高度
-const dealBg = () => {
-  // TODO 移除画布组件的纵向空格
-  console.log('删除空格');
+const dealBg = (deal = true) => {
+  // 修正横向间距
+  if (deal === true) {
+    dealSpace();
+  }
   const arr = comData.value.map(item => (item.y + item.height));
   if (arr.length > 0) {
     heightBg.value = Math.max(...arr) + 50;
   } else {
     heightBg.value = 0;
   }
+};
+watch(
+  () => props.ySpace,
+  () => {
+    if (props.ySpace >= 0) {
+      dealSpace();
+    }
+  }
+);
+// 修正横向间距
+const dealSpace = () => {
+  comData.value.sort((a, b) => {
+    const x = a.y;
+    const y = b.y;
+    return x - y;
+  });
+  for (let i = 0; i < (comData.value.length - 1); i++) {
+    if (i === 0 && comData.value[i].y > 0) {
+      const space = comData.value[i].y;
+      for (let x = i; x < comData.value.length; x++) {
+        comData.value[x].y -= space;
+      }
+    }
+    if (comData.value[i + 1].y > (comData.value[i].y + comData.value[i].height)) {
+      const space = comData.value[i + 1].y - (comData.value[i].y + comData.value[i].height);
+      for (let x = (i + 1); x < comData.value.length; x++) {
+        comData.value[x].y -= space;
+      }
+    }
+  };
+  for (let i = 0; i < (comData.value.length - 1); i++) {
+    let index = comData.value.findIndex(item => item.y === (comData.value[i].y + comData.value[i].height));
+    if (index !== -1) {
+      for (let x = index; x < comData.value.length; x++) {
+        comData.value[x].y += props.ySpace;
+      }
+    }
+  };
 };
 // 初始化
 onMounted(() => {

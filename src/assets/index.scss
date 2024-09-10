@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-08-26 10:27:52
+ * @LastEditTime: 2024-09-10 11:32:41
 */
 * {
   padding    : 0;
@@ -64,6 +64,12 @@ body,
     >em {
       margin-right  : 10px;
       vertical-align: middle;
+    }
+
+    .el-input-number {
+      vertical-align: middle;
+      margin        : 0 12px;
+      width         : 100px;
     }
 
     .el-switch {
