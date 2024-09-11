@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-11 10:28:12
+ * @LastEditTime: 2024-09-11 10:31:45
 */
 <template>
   <div class="demo">
@@ -17,8 +17,10 @@
             <el-button @click="closeGroup">取消</el-button>
           </template>
           <template v-else>
-            <el-button @click="addOne" type="primary">添加</el-button>
-            <el-input-number v-model="ySpace" :min="0" controls-position="right" title="纵向间距" />
+            <template v-if="!seeModel">
+              <el-button @click="addOne" type="primary">添加</el-button>
+              <el-input-number v-model="ySpace" :min="0" controls-position="right" title="纵向间距" />
+            </template>
             <el-button @click="getData">查看当前数据</el-button>
             <el-switch v-model="seeModel" active-text="仅查看" inactive-text="正常" />
           </template>
