@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2024-09-10 11:37:21
+* @LastEditors: aFei
+* @LastEditTime: 2024-09-11 09:49:34
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -38,8 +38,8 @@
               }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
                 <!-- 内容 -->
                 <slot name="item" :data="one">
-                  <p>{{ one.width }},{{ one.height }}</p>
-                  <p>{{ one.x }},{{ one.y }}</p>
+                  <p>{{ Math.round(one.width * 100) / 100 }},{{ Math.round(one.height * 100) / 100 }}</p>
+                  <p>{{ Math.round(one.x * 100) / 100 }},{{ Math.round(one.y * 100) / 100 }}</p>
                 </slot>
                 <!-- 设置弹窗入口 -->
                 <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
@@ -60,8 +60,8 @@
           <!-- 普通内容 -->
           <template v-else>
             <slot name="item" :data="item">
-              <p>{{ item.width }},{{ item.height }}</p>
-              <p>{{ item.x }},{{ item.y }}</p>
+              <p>{{ Math.round(item.width * 100) / 100 }},{{ Math.round(item.height * 100) / 100 }}</p>
+              <p>{{ Math.round(item.x * 100) / 100 }},{{ Math.round(item.y * 100) / 100 }}</p>
             </slot>
           </template>
           <!-- 组合选择器 -->
@@ -1164,6 +1164,22 @@ const dealGroupSize = (childData, parentObj) => {
   result.groupData = [...childList];
   return result;
 };
+// 组合边框大小改变重新计算组件大小
+const changeGroupBorder = () => {
+  const styles = getComputedStyle(pageRef.value);
+  const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+  const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
+  comData.value.filter(item => item.isGroup === true).forEach(item => {
+    const multipleX = item.width - 2 * borderWidth;
+    const multipleY = item.height - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+    item.groupData.forEach(one => {
+      one.width = multipleX * one.groupW;
+      one.x = multipleX * one.groupX;
+      one.height = multipleY * one.groupH;
+      one.y = multipleY * one.groupY;
+    });
+  });
+};
 // 生成组合
 const addGroup = () => {
   const arr = comData.value.filter(item => item.checked);
@@ -1277,7 +1293,7 @@ onBeforeUnmount(() => {
   resizePageObserver.unobserve(pageRef.value);
   window.removeEventListener('click', closeSettingPop);
 });
-defineExpose({ init, addItem, deleteItem, updateItem, openGroup, closeGroup, addGroup, removeGroupItem, removeGroup, changeGroupTit, getData });
+defineExpose({ init, addItem, deleteItem, updateItem, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, getData });
 </script>
 <style lang="scss">
 @use "style/index.scss" as *;
