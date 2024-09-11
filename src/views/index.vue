@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-10 11:35:10
+ * @LastEditTime: 2024-09-11 10:28:12
 */
 <template>
   <div class="demo">
@@ -25,7 +25,7 @@
         </div>
         <div class="box">
           <vueDragComponentPlus ref="comRef" :ySpace="ySpace" @showGroup="chengGroup"
-            @updateChecked="num => groupNum = num" @showTitPop="showTitPop" :seeModel>
+            @updateChecked="num => groupNum = num" @showTitPop="showTitPop" :seeModel="seeModel">
           </vueDragComponentPlus>
         </div>
       </div>
