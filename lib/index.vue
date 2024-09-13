@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-09-11 09:49:34
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-09-13 11:12:17
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -183,7 +183,7 @@ const props = defineProps({
       };
     },
   },
-  // 不展示内置设置组合标题按钮
+  // 不展示内置组合插槽中的设置组合标题按钮
   hideTit: {
     type: Boolean,
     default: false

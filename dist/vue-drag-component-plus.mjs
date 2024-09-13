@@ -77,7 +77,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         icon: "设置"
       })
     },
-    // 不展示内置设置组合标题按钮
+    // 不展示内置组合插槽中的设置组合标题按钮
     hideTit: {
       type: Boolean,
       default: !1

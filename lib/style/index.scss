@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-09 15:03:16
+ * @LastEditTime: 2024-09-13 13:23:53
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -313,8 +313,9 @@
   }
 
   .drag-bg {
-    background: var(--move-bg);
-    position  : absolute;
+    background   : var(--move-bg);
+    position     : absolute;
+    border-radius: var(--com-item-border-radius);
   }
 
   .com-empty {
