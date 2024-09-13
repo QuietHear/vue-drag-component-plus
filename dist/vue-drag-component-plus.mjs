@@ -1,4 +1,4 @@
-import { resolveComponent as Ut, openBlock as O, createBlock as xt, resolveDynamicComponent as Xt, normalizeProps as zt, mergeProps as ct, withCtx as Jt, createElementBlock as D, toDisplayString as R, watch as St, ref as F, onMounted as Qt, onBeforeUnmount as Zt, createElementVNode as z, Fragment as dt, renderList as bt, unref as G, normalizeClass as lt, normalizeStyle as m, withModifiers as Y, createCommentVNode as C, renderSlot as j, createVNode as Rt, createTextVNode as mt, nextTick as jt } from "vue";
+import { resolveComponent as Ut, openBlock as D, createBlock as xt, resolveDynamicComponent as Xt, normalizeProps as zt, mergeProps as ct, withCtx as Jt, createElementBlock as O, toDisplayString as R, watch as St, ref as F, onMounted as Qt, onBeforeUnmount as Zt, createElementVNode as z, Fragment as dt, renderList as bt, unref as G, normalizeClass as lt, normalizeStyle as m, withModifiers as Y, createCommentVNode as C, renderSlot as j, createVNode as Rt, createTextVNode as mt, nextTick as jt } from "vue";
 const $t = {
   __name: "icon",
   props: {
@@ -10,15 +10,15 @@ const $t = {
   setup(M) {
     return (B, vt) => {
       const U = Ut("el-icon");
-      return M.iconObj.type === "custom" ? (O(), xt(Xt(M.iconObj.icon), zt(ct({ key: 0 }, M.iconObj.attrs)), null, 16)) : M.iconObj.type === "el" ? (O(), xt(U, zt(ct({ key: 1 }, M.iconObj.attrs)), {
+      return M.iconObj.type === "custom" ? (D(), xt(Xt(M.iconObj.icon), zt(ct({ key: 0 }, M.iconObj.attrs)), null, 16)) : M.iconObj.type === "el" ? (D(), xt(U, zt(ct({ key: 1 }, M.iconObj.attrs)), {
         default: Jt(() => [
-          (O(), xt(Xt(M.iconObj.icon)))
+          (D(), xt(Xt(M.iconObj.icon)))
         ]),
         _: 1
-      }, 16)) : M.iconObj.type === "iconfont" ? (O(), D("i", ct({
+      }, 16)) : M.iconObj.type === "iconfont" ? (D(), O("i", ct({
         key: 2,
         class: ["icon iconfont", "icon-" + M.iconObj.icon]
-      }, M.iconObj.attrs), null, 16)) : (O(), D("i", ct({
+      }, M.iconObj.attrs), null, 16)) : (D(), O("i", ct({
         key: 3,
         class: M.iconObj.type
       }, M.iconObj.attrs), R(M.iconObj.icon), 17));
@@ -85,10 +85,10 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
   },
   emits: ["showGroup", "updateChecked", "showTitPop"],
   setup(M, { expose: B, emit: vt }) {
-    const U = vt, v = M, T = (l) => {
+    const U = vt, v = M, P = (l) => {
       let r = l instanceof Array ? [] : {};
       for (let t in l)
-        r[t] = typeof l[t] == "object" ? T(l[t]) : l[t];
+        r[t] = typeof l[t] == "object" ? P(l[t]) : l[t];
       return r;
     }, wt = () => {
       v.insertResizeKeys.forEach((l) => {
@@ -113,13 +113,13 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
     };
     let k = null, Mt = null, kt = null;
     const W = F({}), _t = (l, r) => {
-      et(), k = r, W.value = T(n.value[k]), n.value[k].move = !0;
+      et(), k = r, W.value = P(n.value[k]), n.value[k].move = !0;
       const t = Lt(l.target, ".com-item");
-      Mt = l.clientX - t.offsetLeft, kt = l.clientY - t.offsetTop, window.addEventListener("mousemove", Et), window.addEventListener("mouseup", Ot);
+      Mt = l.clientX - t.offsetLeft, kt = l.clientY - t.offsetTop, window.addEventListener("mousemove", Et), window.addEventListener("mouseup", Dt);
     }, Et = (l) => {
       const r = l.clientX - Mt, t = l.clientY - kt, o = r <= _("left") ? _("left") : r >= _("right") ? _("right") : r, e = t <= _("top") ? _("top") : t >= _("bottom") ? _("bottom") : t, f = o - n.value[k].x, c = e - n.value[k].y, w = `${f > 0 ? "right" : f < 0 ? "left" : ""}_${c > 0 ? "bottom" : c < 0 ? "top" : ""}`;
       e > n.value[k].y && e > rt - n.value[k].height - 30 && tt.value.scrollBy(0, 20), e < n.value[k].y && e - tt.value.scrollTop < 30 && tt.value.scrollBy(0, -20), n.value[k].x = o, n.value[k].y = e;
-      let y = T(n.value.filter((d) => d.move !== !0).filter((d) => d.x < o && d.x + d.width > o || d.x === o || d.x > o && d.x < o + n.value[k].width).filter((d) => d.y < e && d.y + d.height > e || d.y === e || d.y > e && d.y < e + n.value[k].height));
+      let y = P(n.value.filter((d) => d.move !== !0).filter((d) => d.x < o && d.x + d.width > o || d.x === o || d.x > o && d.x < o + n.value[k].width).filter((d) => d.y < e && d.y + d.height > e || d.y === e || d.y > e && d.y < e + n.value[k].height));
       if (y.length === 0)
         W.value.x = o, W.value.y = e;
       else {
@@ -131,7 +131,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           });
           let h = W.value.y - e, i = !0, s = [...y];
           const u = (a) => {
-            T(n.value.filter((g) => g.move !== !0 && g.y + g.height - a.y <= h + 3 && g.y + g.height - a.y >= 0).filter((g) => g.x < a.x && g.x + g.width > a.x || g.x >= a.x && g.x < a.x + a.width)).forEach((g) => {
+            P(n.value.filter((g) => g.move !== !0 && g.y + g.height - a.y <= h + 3 && g.y + g.height - a.y >= 0).filter((g) => g.x < a.x && g.x + g.width > a.x || g.x >= a.x && g.x < a.x + a.width)).forEach((g) => {
               g.y + g.height !== a.y && (g.y = a.y - g.height), s.findIndex((H) => H.id === g.id) === -1 && (s.push(g), u(g));
             });
           };
@@ -143,8 +143,8 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           }), (s.length === 0 || s.filter((a) => a.y === 0).length > 0) && (i = !1), i) {
             let a = 0;
             s.filter((g) => g.y === s[0].y).forEach((g) => {
-              T(n.value.filter((P) => P.move !== !0 && P.y + P.height < g.y).filter((P) => P.x < g.x && P.x + P.width > g.x || P.x >= g.x && P.x < g.x + g.width)).forEach((P) => {
-                P.y + P.height > a && (a = P.y + P.height);
+              P(n.value.filter((T) => T.move !== !0 && T.y + T.height < g.y).filter((T) => T.x < g.x && T.x + T.width > g.x || T.x >= g.x && T.x < g.x + g.width)).forEach((T) => {
+                T.y + T.height > a && (a = T.y + T.height);
               });
             }), a = s[0].y - a, a < h && (h = a), s.forEach((g) => {
               g.y -= h, n.value.filter((H) => H.id === g.id)[0].y = g.y;
@@ -161,7 +161,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
               g(x);
             }), W.value.x = o, W.value.y = a);
           }
-          y = T(n.value.filter((a) => a.move !== !0).filter((a) => a.x < o && a.x + a.width > o || a.x === o || a.x > o && a.x < o + n.value[k].width).filter((a) => a.y < e && a.y + a.height > e || a.y === e || a.y > e && a.y < e + n.value[k].height));
+          y = P(n.value.filter((a) => a.move !== !0).filter((a) => a.x < o && a.x + a.width > o || a.x === o || a.x > o && a.x < o + n.value[k].width).filter((a) => a.y < e && a.y + a.height > e || a.y === e || a.y > e && a.y < e + n.value[k].height));
         }
         if (w.indexOf("bottom") !== -1) {
           const d = Math.max(...y.map((h) => h.y + h.height));
@@ -179,7 +179,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
                 };
                 u(i);
               }
-            }), W.value.x = o, h && (W.value.y = d - n.value[k].height), y = T(n.value.filter((i) => i.move !== !0).filter((i) => i.x < o && i.x + i.width > o || i.x === o || i.x > o && i.x < o + n.value[k].width).filter((i) => i.y < e && i.y + i.height > e || i.y === e || i.y > e && i.y < e + n.value[k].height));
+            }), W.value.x = o, h && (W.value.y = d - n.value[k].height), y = P(n.value.filter((i) => i.move !== !0).filter((i) => i.x < o && i.x + i.width > o || i.x === o || i.x > o && i.x < o + n.value[k].width).filter((i) => i.y < e && i.y + i.height > e || i.y === e || i.y > e && i.y < e + n.value[k].height));
           }
         }
         if (((w.indexOf("top") !== -1 || w.indexOf("bottom") !== -1) && (w.indexOf("right") !== -1 || w.indexOf("left") !== -1) && Math.abs(f) > 8 || w.indexOf("top") === -1 && w.indexOf("bottom") === -1 && (w.indexOf("right") !== -1 || w.indexOf("left") !== -1)) && y.length > 0) {
@@ -190,7 +190,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           let d = !0;
           for (let h = 0; h < y.length; h++) {
             if (d) {
-              const i = T(n.value);
+              const i = P(n.value);
               for (let s = 0; s <= h; s++) {
                 let u = null;
                 const a = i.filter((x) => x.move !== !0 && x.y < y[s].y).filter((x) => x.x < y[s].x && x.x + x.width > y[s].x || x.x === y[s].x || x.x > y[s].x && x.x < y[s].x + y[s].width);
@@ -225,8 +225,8 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         }
       }
       X(!1);
-    }, Ot = () => {
-      window.removeEventListener("mousemove", Et), window.removeEventListener("mouseup", Ot), delete n.value[k].move, n.value[k].x = W.value.x, n.value[k].y = W.value.y, k = null, X();
+    }, Dt = () => {
+      window.removeEventListener("mousemove", Et), window.removeEventListener("mouseup", Dt), delete n.value[k].move, n.value[k].x = W.value.x, n.value[k].y = W.value.y, k = null, X();
     }, _ = (l) => {
       switch (l) {
         case "top":
@@ -249,8 +249,8 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
       const w = e.filter((d) => d.x + d.width <= r.x).map((d) => d.x + d.width);
       w.length > 0 ? Q = Math.max(...w) : Q = 0;
       const y = e.filter((d) => d.x >= r.x + r.width).map((d) => d.x);
-      y.length > 0 ? ht = Math.min(...y) : ht = 0, window.addEventListener("mousemove", Dt), window.addEventListener("mouseup", Gt);
-    }, Dt = (l) => {
+      y.length > 0 ? ht = Math.min(...y) : ht = 0, window.addEventListener("mousemove", Ot), window.addEventListener("mouseup", Gt);
+    }, Ot = (l) => {
       const r = A + (l.clientX - ot), t = N + (l.clientY - st), o = A - (l.clientX - ot), e = N - (l.clientY - st), f = K + (l.clientY - st), c = q + (l.clientX - ot), w = getComputedStyle(S.value), y = parseInt(w.getPropertyValue("--com-item-border-width").trim()), d = parseInt(w.getPropertyValue("--group-tit-height").trim());
       switch (gt) {
         case "top-left":
@@ -318,7 +318,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           }
           break;
       }
-      let h = T(n.value.filter((i) => i.drag !== !0).filter((i) => i.x < p.x && i.x + i.width > p.x || i.x === p.x || i.x > p.x && i.x < p.x + p.width).filter((i) => i.y < p.y && i.y + i.height > p.y || i.y === p.y || i.y > p.y && i.y < p.y + p.height));
+      let h = P(n.value.filter((i) => i.drag !== !0).filter((i) => i.x < p.x && i.x + i.width > p.x || i.x === p.x || i.x > p.x && i.x < p.x + p.width).filter((i) => i.y < p.y && i.y + i.height > p.y || i.y === p.y || i.y > p.y && i.y < p.y + p.height));
       if (h.length > 0) {
         h.sort((i, s) => {
           const u = i.y, a = s.y;
@@ -337,7 +337,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
       }
       X(!1), tt.value.scrollTo(0, it.value - rt);
     }, Gt = (l) => {
-      delete p.drag, gt = "", p = null, window.removeEventListener("mousemove", Dt), window.removeEventListener("mouseup", Gt), X();
+      delete p.drag, gt = "", p = null, window.removeEventListener("mousemove", Ot), window.removeEventListener("mouseup", Gt), X();
     }, E = (l) => {
       switch (l) {
         case "top":
@@ -392,7 +392,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
     });
     let pt = !1;
     const Vt = (l = [], r = null) => {
-      n.value = T(l), r !== null ? jt(() => {
+      n.value = P(l), r !== null ? jt(() => {
         const o = S.value.getBoundingClientRect().width / r, e = getComputedStyle(S.value), f = parseInt(e.getPropertyValue("--com-item-border-width").trim()), c = parseInt(e.getPropertyValue("--group-tit-height").trim());
         n.value.forEach((w) => {
           if (w.width *= o, w.height *= o, w.x *= o, w.y *= o, w.isGroup === !0) {
@@ -431,7 +431,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         l.y = Math.max(...c);
       }
     }, at = (l, r = null, t = !1) => {
-      const o = T(l), e = n.value.filter((f) => f.id === r);
+      const o = P(l), e = n.value.filter((f) => f.id === r);
       if (o.id || (o.id = (/* @__PURE__ */ new Date()).getTime() + ""), r && e.length !== 1) {
         try {
         } catch {
@@ -471,7 +471,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         }
     }, yt = (l) => {
       if (l.id) {
-        const r = T(l);
+        const r = P(l);
         let t = -1;
         const o = n.value.filter((e) => e.id === r.inGroupId);
         if (r.inGroupId ? o.length === 1 && (t = o[0].groupData.findIndex((e) => e.id === r.id)) : t = n.value.findIndex((e) => e.id === r.id), t !== -1)
@@ -511,7 +511,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           delete r.showPop;
         });
       }), window.removeEventListener("click", et);
-    }, b = F(!1), Tt = (l) => {
+    }, b = F(!1), Pt = (l) => {
       const r = n.value.findIndex((t) => t.id === l);
       if (r !== -1)
         n.value[r].checked = !0, n.value[r].disabled = !0, b.value = !0, U("showGroup", b.value);
@@ -519,7 +519,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         try {
         } catch {
         }
-    }, Pt = () => {
+    }, Tt = () => {
       b.value = !1, n.value.forEach((l) => {
         delete l.checked, delete l.disabled, l.groupData && l.groupData.forEach((r) => {
           delete r.checked, delete r.disabled;
@@ -528,7 +528,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
     }, At = (l) => {
       l.checked = !l.checked, U("updateChecked", n.value.filter((r) => r.checked).length);
     }, ft = (l, r) => {
-      const t = T(l), o = T(r);
+      const t = P(l), o = P(r);
       t.sort((h, i) => {
         const s = h.x, u = i.x;
         return s - u;
@@ -587,7 +587,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           Z(o.id);
         }), at(t), X();
       }
-      Pt();
+      Tt();
     }, Yt = (l, r) => {
       const t = n.value.filter((o) => o.id === r)[0];
       if (t) {
@@ -630,10 +630,17 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         try {
         } catch {
         }
-    }, Ft = () => ({ data: T(n.value), width: L });
+    }, Ft = () => {
+      const l = P(n.value);
+      return l.forEach((r) => {
+        delete r.showPop, r.groupData && r.groupData.forEach((t) => {
+          delete t.showPop;
+        });
+      }), { data: l, width: L };
+    };
     return Zt(() => {
       Wt.unobserve(S.value), window.removeEventListener("click", et);
-    }), B({ init: Vt, addItem: at, deleteItem: Z, updateItem: yt, openGroup: Tt, closeGroup: Pt, changeGroupBorder: Nt, addGroup: Kt, removeGroupItem: Yt, removeGroup: ut, changeGroupTit: qt, getData: Ft }), (l, r) => (O(), D("div", {
+    }), B({ init: Vt, addItem: at, deleteItem: Z, updateItem: yt, openGroup: Pt, closeGroup: Tt, changeGroupBorder: Nt, addGroup: Kt, removeGroupItem: Yt, removeGroup: ut, changeGroupTit: qt, getData: Ft }), (l, r) => (D(), O("div", {
       class: "vue-drag-component-plus",
       ref_key: "pageRef",
       ref: S
@@ -643,7 +650,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         ref_key: "boxRef",
         ref: tt
       }, [
-        (O(!0), D(dt, null, bt(G(n), (t, o) => (O(), D("div", {
+        (D(!0), O(dt, null, bt(G(n), (t, o) => (D(), O("div", {
           class: lt(["com-item", M.seeModel || G(b) || t.static === !0 || t.dragable === !1 ? "" : "can-drag", t.move ? "is-move" : "", t.drag ? "is-drag" : "", t.showPop ? "on-top" : "", M.seeModel ? "no-hover" : ""]),
           style: m({
             width: t.width + "px",
@@ -655,8 +662,8 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           onMousedown: Y((e) => M.seeModel || G(b) || t.static === !0 || t.dragable === !1 ? null : _t(e, o), ["prevent"])
         }, [
           z("div", ee, [
-            t.isGroup ? (O(), D(dt, { key: 0 }, [
-              t.groupTit ? (O(), D("div", {
+            t.isGroup ? (D(), O(dt, { key: 0 }, [
+              t.groupTit ? (D(), O("div", {
                 key: 0,
                 class: "group-item-tit",
                 title: t.groupTit
@@ -664,7 +671,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
               z("div", {
                 class: lt(["group-item-content", t.groupTit ? "" : "full"])
               }, [
-                (O(!0), D(dt, null, bt(t.groupData, (e, f) => (O(), D("div", {
+                (D(!0), O(dt, null, bt(t.groupData, (e, f) => (D(), O("div", {
                   class: lt(["com-item-content-child", e.isObstacle ? "else" : ""]),
                   style: m({
                     width: e.width + "px",
@@ -678,7 +685,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
                     z("p", null, R(Math.round(e.width * 100) / 100) + "," + R(Math.round(e.height * 100) / 100), 1),
                     z("p", null, R(Math.round(e.x * 100) / 100) + "," + R(Math.round(e.y * 100) / 100), 1)
                   ]),
-                  !M.seeModel && !G(b) && G(k) === null && G(p) === null ? (O(), D("div", {
+                  !M.seeModel && !G(b) && G(k) === null && G(p) === null ? (D(), O("div", {
                     key: 0,
                     class: "setting-box",
                     style: m({ display: e.showPop ? "flex" : "none" }),
@@ -689,13 +696,13 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
                       onClick: Y((c) => Ct(e), ["prevent", "stop"])
                     }, null, 8, ["iconObj", "onClick"])
                   ], 36)) : C("", !0),
-                  e.showPop ? (O(), D("div", {
+                  e.showPop ? (D(), O("div", {
                     key: 1,
                     class: "setting-box-pop",
                     onMousedown: Y((c) => null, ["prevent", "stop"])
                   }, [
                     j(l.$slots, "setPopNormal", {
-                      data: T(e)
+                      data: P(e)
                     }, () => [
                       z("div", {
                         class: "setting-box-pop-item",
@@ -716,12 +723,12 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
               z("p", null, R(Math.round(t.width * 100) / 100) + "," + R(Math.round(t.height * 100) / 100), 1),
               z("p", null, R(Math.round(t.x * 100) / 100) + "," + R(Math.round(t.y * 100) / 100), 1)
             ]),
-            !t.isGroup && t.notGroup !== !0 && G(b) ? (O(), D("div", {
+            !t.isGroup && t.notGroup !== !0 && G(b) ? (D(), O("div", {
               key: 2,
               class: lt(["group-checkbox", t.checked ? "is-checked" : "", t.disabled ? "disabled" : ""]),
               onClick: (e) => t.disabled ? null : At(t)
             }, null, 10, oe)) : C("", !0),
-            !M.seeModel && !G(b) && G(k) === null && G(p) === null ? (O(), D("div", {
+            !M.seeModel && !G(b) && G(k) === null && G(p) === null ? (D(), O("div", {
               key: 3,
               class: "setting-box",
               style: m({ display: t.showPop ? "flex" : "none" }),
@@ -732,16 +739,16 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
                 onClick: Y((e) => Ct(t), ["prevent", "stop"])
               }, null, 8, ["iconObj", "onClick"])
             ], 36)) : C("", !0),
-            t.showPop ? (O(), D("div", {
+            t.showPop ? (D(), O("div", {
               key: 4,
               class: lt(["setting-box-pop", t.isGroup === !0 ? "special" : ""]),
               onMousedown: Y((e) => null, ["prevent", "stop"])
             }, [
               t.isGroup === !0 ? j(l.$slots, "setPopSpecial", {
                 key: 0,
-                data: T(t)
+                data: P(t)
               }, () => [
-                M.hideTit ? C("", !0) : (O(), D("div", {
+                M.hideTit ? C("", !0) : (D(), O("div", {
                   key: 0,
                   class: "setting-box-pop-item",
                   onClick: (e) => U("showTitPop", t.groupTit, t.id)
@@ -752,12 +759,12 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
                 }, "解除组合", 8, ne)
               ]) : j(l.$slots, "setPopNormal", {
                 key: 1,
-                data: T(t)
+                data: P(t)
               }, () => [
-                t.notGroup !== !0 ? (O(), D("div", {
+                t.notGroup !== !0 ? (D(), O("div", {
                   key: 0,
                   class: "setting-box-pop-item",
-                  onClick: (e) => Tt(t.id)
+                  onClick: (e) => Pt(t.id)
                 }, "组合", 8, he)) : C("", !0),
                 z("div", {
                   class: "setting-box-pop-item",
@@ -766,50 +773,50 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
               ])
             ], 34)) : C("", !0)
           ]),
-          !M.seeModel && !G(b) && !t.move && t.static !== !0 && t.resizable !== !1 ? (O(), D(dt, { key: 0 }, [
-            G($).indexOf("topLeft") !== -1 ? (O(), D("div", {
+          !M.seeModel && !G(b) && !t.move && t.static !== !0 && t.resizable !== !1 ? (D(), O(dt, { key: 0 }, [
+            G($).indexOf("topLeft") !== -1 ? (D(), O("div", {
               key: 0,
               class: "resize-line top-left",
               onMousedown: Y((e) => V(e, t, "top-left"), ["prevent", "stop"])
             }, null, 40, ue)) : C("", !0),
-            G($).indexOf("top") !== -1 ? (O(), D("div", {
+            G($).indexOf("top") !== -1 ? (D(), O("div", {
               key: 1,
               class: "resize-line top",
               onMousedown: Y((e) => V(e, t, "top"), ["prevent", "stop"])
             }, null, 40, ce)) : C("", !0),
-            G($).indexOf("topRight") !== -1 ? (O(), D("div", {
+            G($).indexOf("topRight") !== -1 ? (D(), O("div", {
               key: 2,
               class: "resize-line top-right",
               onMousedown: Y((e) => V(e, t, "top-right"), ["prevent", "stop"])
             }, null, 40, de)) : C("", !0),
-            G($).indexOf("left") !== -1 ? (O(), D("div", {
+            G($).indexOf("left") !== -1 ? (D(), O("div", {
               key: 3,
               class: "resize-line left",
               onMousedown: Y((e) => V(e, t, "left"), ["prevent", "stop"])
             }, null, 40, ge)) : C("", !0),
-            G($).indexOf("right") !== -1 ? (O(), D("div", {
+            G($).indexOf("right") !== -1 ? (D(), O("div", {
               key: 4,
               class: "resize-line right",
               onMousedown: Y((e) => V(e, t, "right"), ["prevent", "stop"])
             }, null, 40, pe)) : C("", !0),
-            G($).indexOf("bottomLeft") !== -1 ? (O(), D("div", {
+            G($).indexOf("bottomLeft") !== -1 ? (D(), O("div", {
               key: 5,
               class: "resize-line bottom-left",
               onMousedown: Y((e) => V(e, t, "bottom-left"), ["prevent", "stop"])
             }, null, 40, ye)) : C("", !0),
-            G($).indexOf("bottom") !== -1 ? (O(), D("div", {
+            G($).indexOf("bottom") !== -1 ? (D(), O("div", {
               key: 6,
               class: "resize-line bottom",
               onMousedown: Y((e) => V(e, t, "bottom"), ["prevent", "stop"])
             }, null, 40, fe)) : C("", !0),
-            G($).indexOf("bottomRight") !== -1 ? (O(), D("div", {
+            G($).indexOf("bottomRight") !== -1 ? (D(), O("div", {
               key: 7,
               class: "resize-line bottom-right",
               onMousedown: Y((e) => V(e, t, "bottom-right"), ["prevent", "stop"])
             }, null, 40, xe)) : C("", !0)
           ], 64)) : C("", !0)
         ], 46, te))), 128)),
-        G(k) !== null ? (O(), D("div", {
+        G(k) !== null ? (D(), O("div", {
           key: 0,
           class: "drag-bg",
           style: m({
@@ -823,7 +830,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           class: "height-bg",
           style: m({ height: G(it) + "px" })
         }, null, 4),
-        G(n).length === 0 ? (O(), D("div", ve, [
+        G(n).length === 0 ? (D(), O("div", ve, [
           j(l.$slots, "empty", {}, () => [
             mt(" 暂无数据 ")
           ])

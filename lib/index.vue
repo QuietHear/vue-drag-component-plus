@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2024-09-13 11:12:17
+* @LastEditors: aFei
+* @LastEditTime: 2024-09-13 14:17:13
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -1286,7 +1286,16 @@ const changeGroupTit = (tit = '', id) => {
 };
 // 获取当前画布数据
 const getData = () => {
-  return { data: deepCopy(comData.value), width: pageWidth };
+  const obj = deepCopy(comData.value);
+  obj.forEach(item => {
+    delete item.showPop;
+    if (item.groupData) {
+      item.groupData.forEach(one => {
+        delete one.showPop;
+      });
+    }
+  });
+  return { data: obj, width: pageWidth };
 };
 onBeforeUnmount(() => {
   // 移除监听
