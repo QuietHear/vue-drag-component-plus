@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-09-13 14:17:13
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-09-14 10:00:22
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -827,6 +827,17 @@ let initIng = false;
 // 初始化画布
 const init = (historyData = [], historyWidth = null) => {
   comData.value = deepCopy(historyData);
+  // 数据修复，这里只考虑减少的情况，新增必须走addItem方法
+  comData.value.filter(item => item.isGroup === true).forEach(item => {
+    if (item.isGroup === true) {
+      if (item.groupData.length < 2) {
+        removeGroup(item.id);
+      } else {
+        const result = dealGroupSize(item.groupData, item);
+        updateItem(result);
+      }
+    }
+  });
   if (historyWidth !== null) {
     nextTick(() => {
       const obj = pageRef.value.getBoundingClientRect();
@@ -1166,17 +1177,19 @@ const dealGroupSize = (childData, parentObj) => {
 };
 // 组合边框大小改变重新计算组件大小
 const changeGroupBorder = () => {
-  const styles = getComputedStyle(pageRef.value);
-  const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
-  const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
-  comData.value.filter(item => item.isGroup === true).forEach(item => {
-    const multipleX = item.width - 2 * borderWidth;
-    const multipleY = item.height - 2 * borderWidth - (item.groupTit ? titHeight : 0);
-    item.groupData.forEach(one => {
-      one.width = multipleX * one.groupW;
-      one.x = multipleX * one.groupX;
-      one.height = multipleY * one.groupH;
-      one.y = multipleY * one.groupY;
+  nextTick(() => {
+    const styles = getComputedStyle(pageRef.value);
+    const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+    const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
+    comData.value.filter(item => item.isGroup === true).forEach(item => {
+      const multipleX = item.width - 2 * borderWidth;
+      const multipleY = item.height - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+      item.groupData.forEach(one => {
+        one.width = multipleX * one.groupW;
+        one.x = multipleX * one.groupX;
+        one.height = multipleY * one.groupH;
+        one.y = multipleY * one.groupY;
+      });
     });
   });
 };
