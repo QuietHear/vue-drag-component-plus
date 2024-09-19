@@ -86,6 +86,8 @@
 
 * `seeModel`：预览模式-->Boolean;非必传;默认*false*
 
+* `seeModelMinBg`：预览模式底部最小留白，校验变量不能小于0-->Number;非必传;默认*50*
+
 * `itemMinWidth`：组件项最小宽度，校验变量不能小于15-->Number;非必传;默认*15*
 
 * `itemMinHeight`：组件项最小高度，校验变量不能小于15-->Number;非必传;默认*15*

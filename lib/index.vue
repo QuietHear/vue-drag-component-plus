@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2024-09-14 10:00:22
+* @LastEditors: aFei
+* @LastEditTime: 2024-09-19 11:05:19
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -117,7 +117,9 @@
         left: dragBg.x + 'px'
       }" v-if="dragSrc !== null"></div>
       <!-- 高度占位，出现滚动条 -->
-      <div class="height-bg" :style="{ height: heightBg + 'px' }"></div>
+      <div class="height-bg"
+        :style="{ height: (heightBg > 0 ? + (heightBg + (seeModel ? seeModelMinBg : 220)) : heightBg) + 'px' }">
+      </div>
       <!-- 空数据 -->
       <div class="com-empty" v-if="comData.length === 0">
         <slot name="empty">
@@ -149,6 +151,14 @@ const props = defineProps({
   seeModel: {
     type: Boolean,
     default: false
+  },
+  // 预览模式底部最小留白
+  seeModelMinBg: {
+    type: Number,
+    default: 50,
+    validator(value, props) {
+      return value >= 0;
+    }
   },
   // 组件项最小宽度
   itemMinWidth: {
@@ -267,12 +277,6 @@ const dragIng = (e) => {
   const moveY = resultY - comData.value[dragSrc].y;
   // 移动方向
   const direction = `${moveX > 0 ? 'right' : moveX < 0 ? 'left' : ''}_${moveY > 0 ? 'bottom' : moveY < 0 ? 'top' : ''}`;
-  if (resultY > comData.value[dragSrc].y && resultY > (pageHeight - comData.value[dragSrc].height - 30)) {
-    boxRef.value.scrollBy(0, 20);
-  }
-  if (resultY < comData.value[dragSrc].y && (resultY - boxRef.value.scrollTop) < 30) {
-    boxRef.value.scrollBy(0, -20);
-  }
   comData.value[dragSrc].x = resultX;
   comData.value[dragSrc].y = resultY;
   // 当前直接接触的组件
@@ -734,7 +738,6 @@ const resizeIng = (e) => {
     }
   }
   dealBg(false);
-  boxRef.value.scrollTo(0, heightBg.value - pageHeight);
 };
 // 结束收缩
 const resizeEnd = (e) => {
@@ -770,7 +773,7 @@ const dealBg = (deal = true) => {
   }
   const arr = comData.value.map(item => (item.y + item.height));
   if (arr.length > 0) {
-    heightBg.value = Math.max(...arr) + 50;
+    heightBg.value = Math.max(...arr);
   } else {
     heightBg.value = 0;
   }
@@ -790,17 +793,21 @@ const dealSpace = () => {
     const y = b.y;
     return x - y;
   });
-  for (let i = 0; i < (comData.value.length - 1); i++) {
+  // 此处最少是一个组件
+  for (let i = 0; i < comData.value.length; i++) {
     if (i === 0 && comData.value[i].y > 0) {
       const space = comData.value[i].y;
       for (let x = i; x < comData.value.length; x++) {
         comData.value[x].y -= space;
       }
     }
-    if (comData.value[i + 1].y > (comData.value[i].y + comData.value[i].height)) {
-      const space = comData.value[i + 1].y - (comData.value[i].y + comData.value[i].height);
-      for (let x = (i + 1); x < comData.value.length; x++) {
-        comData.value[x].y -= space;
+    if (i < (comData.value.length - 1) && comData.value[i + 1].y > (comData.value[i].y + comData.value[i].height)) {
+      const linTop = deepCopy(comData.value.slice(0, i + 1));
+      if (comData.value[i + 1].y > Math.max(...linTop.map(item => (item.y + item.height)))) {
+        const space = comData.value[i + 1].y - Math.max(...linTop.map(item => (item.y + item.height)));
+        for (let x = (i + 1); x < comData.value.length; x++) {
+          comData.value[x].y -= space;
+        }
       }
     }
   };
@@ -869,7 +876,7 @@ const init = (historyData = [], historyWidth = null) => {
   initIng = true;
   setTimeout(() => {
     initIng = false;
-  }, 500)
+  }, 500);
 };
 // 计算新增的一个组件的x,y（画布中数量至少一个）
 const dealMoreItemXY = (item, dataArr, maxWidth) => {
@@ -1128,10 +1135,13 @@ const dealGroupSize = (childData, parentObj) => {
       };
     }
     if (childList[i + 1].x > (childList[i].x + childList[i].width)) {
-      const space = childList[i + 1].x - (childList[i].x + childList[i].width);
-      for (let x = (i + 1); x < childList.length; x++) {
-        childList[x].x -= space;
-      };
+      const linLeft = deepCopy(childList.slice(0, i + 1));
+      if (childList[i + 1].x > Math.max(...linLeft.map(item => (item.x + item.width)))) {
+        const space = childList[i + 1].x - Math.max(...linLeft.map(item => (item.x + item.width)));
+        for (let x = (i + 1); x < childList.length; x++) {
+          childList[x].x -= space;
+        };
+      }
     }
   };
   // 压缩纵坐标
@@ -1140,6 +1150,7 @@ const dealGroupSize = (childData, parentObj) => {
     const y = b.y;
     return x - y;
   });
+  // 此处最少是两个组件
   for (let i = 0; i < (childList.length - 1); i++) {
     if (i === 0 && childList[i].y > 0) {
       const space = childList[i].y;
@@ -1148,9 +1159,12 @@ const dealGroupSize = (childData, parentObj) => {
       }
     }
     if (childList[i + 1].y > (childList[i].y + childList[i].height)) {
-      const space = childList[i + 1].y - (childList[i].y + childList[i].height);
-      for (let x = (i + 1); x < childList.length; x++) {
-        childList[x].y -= space;
+      const linTop = deepCopy(childList.slice(0, i + 1));
+      if (childList[i + 1].y > Math.max(...linTop.map(item => (item.y + item.height)))) {
+        const space = childList[i + 1].y - Math.max(...linTop.map(item => (item.y + item.height)));
+        for (let x = (i + 1); x < childList.length; x++) {
+          childList[x].y -= space;
+        }
       }
     }
   };
