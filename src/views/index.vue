@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-11 10:31:45
+ * @LastEditTime: 2024-09-20 09:34:48
 */
 <template>
   <div class="demo">
@@ -28,6 +28,9 @@
         <div class="box">
           <vueDragComponentPlus ref="comRef" :ySpace="ySpace" @showGroup="chengGroup"
             @updateChecked="num => groupNum = num" @showTitPop="showTitPop" :seeModel="seeModel">
+            <template #item="{ data }">
+              <test v-if="data.x === 0 && data.y === 0" />
+            </template>
           </vueDragComponentPlus>
         </div>
       </div>
@@ -49,13 +52,17 @@
 </template>
 <script setup>
 import vueDragComponentPlus from "~/lib/index.vue";
+import test from "./components/test.vue";
 const comRef = ref(null);
 const ySpace = ref(12);
 const seeModel = ref(false);
 const addOne = () => {
   comRef.value.addItem({
     width: 100,
-    height: 100
+    height: 100,
+    detail: {
+      s: 1
+    }
   });
 };
 const getData = () => {

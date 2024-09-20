@@ -1,4 +1,4 @@
-import { resolveComponent as Jt, openBlock as E, createBlock as yt, resolveDynamicComponent as Yt, normalizeProps as Xt, mergeProps as ct, withCtx as Qt, createElementBlock as G, toDisplayString as R, watch as zt, ref as F, onMounted as Zt, onBeforeUnmount as mt, createElementVNode as z, Fragment as dt, renderList as bt, unref as O, normalizeClass as rt, normalizeStyle as m, withModifiers as Y, createCommentVNode as P, renderSlot as j, createVNode as St, createTextVNode as jt, nextTick as Rt } from "vue";
+import { resolveComponent as Jt, openBlock as k, createBlock as yt, resolveDynamicComponent as Yt, normalizeProps as Xt, mergeProps as ct, withCtx as Qt, createElementBlock as G, toDisplayString as R, watch as bt, ref as F, onMounted as Zt, onBeforeUnmount as mt, createElementVNode as b, Fragment as dt, renderList as zt, unref as O, normalizeClass as it, normalizeStyle as m, withModifiers as Y, createCommentVNode as P, renderSlot as j, createVNode as St, createTextVNode as jt, nextTick as Rt } from "vue";
 const $t = {
   __name: "icon",
   props: {
@@ -10,25 +10,28 @@ const $t = {
   setup(M) {
     return (L, ft) => {
       const U = Jt("el-icon");
-      return M.iconObj.type === "custom" ? (E(), yt(Yt(M.iconObj.icon), Xt(ct({ key: 0 }, M.iconObj.attrs)), null, 16)) : M.iconObj.type === "el" ? (E(), yt(U, Xt(ct({ key: 1 }, M.iconObj.attrs)), {
+      return M.iconObj.type === "custom" ? (k(), yt(Yt(M.iconObj.icon), Xt(ct({ key: 0 }, M.iconObj.attrs)), null, 16)) : M.iconObj.type === "el" ? (k(), yt(U, Xt(ct({ key: 1 }, M.iconObj.attrs)), {
         default: Qt(() => [
-          (E(), yt(Yt(M.iconObj.icon)))
+          (k(), yt(Yt(M.iconObj.icon)))
         ]),
         _: 1
-      }, 16)) : M.iconObj.type === "iconfont" ? (E(), G("i", ct({
+      }, 16)) : M.iconObj.type === "iconfont" ? (k(), G("i", ct({
         key: 2,
         class: ["icon iconfont", "icon-" + M.iconObj.icon]
-      }, M.iconObj.attrs), null, 16)) : (E(), G("i", ct({
+      }, M.iconObj.attrs), null, 16)) : (k(), G("i", ct({
         key: 3,
         class: M.iconObj.type
       }, M.iconObj.attrs), R(M.iconObj.icon), 17));
     };
   }
 };
-const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], re = ["onClick"], ie = ["onClick"], oe = ["onClick"], se = ["onClick"], ne = ["onClick"], ae = ["onClick"], he = ["onClick"], ue = ["onMousedown"], ce = ["onMousedown"], de = ["onMousedown"], ge = ["onMousedown"], pe = ["onMousedown"], ye = ["onMousedown"], fe = ["onMousedown"], xe = ["onMousedown"], ve = {
+const te = ["onMousedown"], ee = { class: "com-item-box" }, le = ["title"], ie = { class: "com-item-box-content" }, re = ["onClick"], oe = ["onClick"], se = {
+  key: 1,
+  class: "com-item-box-content"
+}, ne = ["onClick"], he = ["onClick"], ae = ["onClick"], ue = ["onClick"], ce = ["onClick"], de = ["onMousedown"], ge = ["onMousedown"], pe = ["onMousedown"], ye = ["onMousedown"], fe = ["onMousedown"], xe = ["onMousedown"], ve = ["onMousedown"], we = ["onMousedown"], Me = {
   key: 1,
   class: "com-empty"
-}, we = {
+}, ke = {
   __name: "index",
   props: {
     // 包含收缩方向
@@ -94,16 +97,16 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
   emits: ["showGroup", "updateChecked", "showTitPop"],
   setup(M, { expose: L, emit: ft }) {
     const U = ft, v = M, W = (l) => {
-      let r = l instanceof Array ? [] : {};
+      let i = l instanceof Array ? [] : {};
       for (let t in l)
-        r[t] = typeof l[t] == "object" ? W(l[t]) : l[t];
-      return r;
+        i[t] = typeof l[t] == "object" ? W(l[t]) : l[t];
+      return i;
     }, xt = () => {
       v.insertResizeKeys.forEach((l) => {
         v.excludeResizeKeys.indexOf(l) === -1 && $.value.push(l);
       });
     };
-    zt(
+    bt(
       () => [v.insertResizeKeys, v.excludeResizeKeys],
       () => {
         xt();
@@ -111,83 +114,83 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
     );
     const $ = F([]);
     xt();
-    const b = F(null);
-    let V = null, vt = null;
-    const Lt = F(null), tt = F(0), a = F([]), Vt = (l, r) => {
+    const z = F(null);
+    let _ = null, vt = null;
+    const Lt = F(null), tt = F(0), d = F([]), _t = (l, i) => {
       let t = l.matches || l.webkitMatchesSelector || l.mozMatchesSelector || l.msMatchesSelector;
-      for (; l && !t.call(l, r); )
+      for (; l && !t.call(l, i); )
         l = l.parentElement;
       return l;
     };
     let D = null, wt = null, Mt = null;
-    const I = F({}), _t = (l, r) => {
-      et(), D = r, I.value = W(a.value[D]), a.value[D].move = !0;
-      const t = Vt(l.target, ".com-item");
+    const I = F({}), Vt = (l, i) => {
+      et(), D = i, I.value = W(d.value[D]), d.value[D].move = !0;
+      const t = _t(l.target, ".com-item");
       wt = l.clientX - t.offsetLeft, Mt = l.clientY - t.offsetTop, window.addEventListener("mousemove", kt), window.addEventListener("mouseup", Et);
     }, kt = (l) => {
-      const r = l.clientX - wt, t = l.clientY - Mt, i = r <= _("left") ? _("left") : r >= _("right") ? _("right") : r, e = t <= _("top") ? _("top") : t >= _("bottom") ? _("bottom") : t, f = i - a.value[D].x, c = e - a.value[D].y, w = `${f > 0 ? "right" : f < 0 ? "left" : ""}_${c > 0 ? "bottom" : c < 0 ? "top" : ""}`;
-      a.value[D].x = i, a.value[D].y = e;
-      let y = W(a.value.filter((d) => d.move !== !0).filter((d) => d.x < i && d.x + d.width > i || d.x === i || d.x > i && d.x < i + a.value[D].width).filter((d) => d.y < e && d.y + d.height > e || d.y === e || d.y > e && d.y < e + a.value[D].height));
+      const i = l.clientX - wt, t = l.clientY - Mt, r = i <= V("left") ? V("left") : i >= V("right") ? V("right") : i, e = t <= V("top") ? V("top") : t >= V("bottom") ? V("bottom") : t, f = r - d.value[D].x, u = e - d.value[D].y, w = `${f > 0 ? "right" : f < 0 ? "left" : ""}_${u > 0 ? "bottom" : u < 0 ? "top" : ""}`;
+      d.value[D].x = r, d.value[D].y = e;
+      let y = W(d.value.filter((c) => c.move !== !0).filter((c) => c.x < r && c.x + c.width > r || c.x === r || c.x > r && c.x < r + d.value[D].width).filter((c) => c.y < e && c.y + c.height > e || c.y === e || c.y > e && c.y < e + d.value[D].height));
       if (y.length === 0)
-        I.value.x = i, I.value.y = e;
+        I.value.x = r, I.value.y = e;
       else {
         if (w.indexOf("top") !== -1) {
-          y = y.filter((u) => u.y < I.value.y);
-          const d = Math.min(...y.map((u) => u.y + u.height));
-          y.forEach((u) => {
-            Math.abs(u.y + u.height - d) < 5 && (u.y = d - u.height);
+          y = y.filter((a) => a.y < I.value.y);
+          const c = Math.min(...y.map((a) => a.y + a.height));
+          y.forEach((a) => {
+            Math.abs(a.y + a.height - c) < 5 && (a.y = c - a.height);
           });
           let h = I.value.y - e, o = !0, n = [...y];
-          const s = (u) => {
-            W(a.value.filter((g) => g.move !== !0 && g.y + g.height - u.y <= h + 3 && g.y + g.height - u.y >= 0).filter((g) => g.x < u.x && g.x + g.width > u.x || g.x >= u.x && g.x < u.x + u.width)).forEach((g) => {
-              g.y + g.height !== u.y && (g.y = u.y - g.height), n.findIndex((H) => H.id === g.id) === -1 && (n.push(g), s(g));
+          const s = (a) => {
+            W(d.value.filter((g) => g.move !== !0 && g.y + g.height - a.y <= h + 3 && g.y + g.height - a.y >= 0).filter((g) => g.x < a.x && g.x + g.width > a.x || g.x >= a.x && g.x < a.x + a.width)).forEach((g) => {
+              g.y + g.height !== a.y && (g.y = a.y - g.height), n.findIndex((H) => H.id === g.id) === -1 && (n.push(g), s(g));
             });
           };
-          if (y.forEach((u) => {
-            s(u);
-          }), n.sort((u, x) => {
-            const g = u.y, H = x.y;
+          if (y.forEach((a) => {
+            s(a);
+          }), n.sort((a, x) => {
+            const g = a.y, H = x.y;
             return g - H;
-          }), (n.length === 0 || n.filter((u) => u.y === 0).length > 0) && (o = !1), o) {
-            let u = 0;
+          }), (n.length === 0 || n.filter((a) => a.y === 0).length > 0) && (o = !1), o) {
+            let a = 0;
             n.filter((g) => g.y === n[0].y).forEach((g) => {
-              W(a.value.filter((T) => T.move !== !0 && T.y + T.height < g.y).filter((T) => T.x < g.x && T.x + T.width > g.x || T.x >= g.x && T.x < g.x + g.width)).forEach((T) => {
-                T.y + T.height > u && (u = T.y + T.height);
+              W(d.value.filter((T) => T.move !== !0 && T.y + T.height < g.y).filter((T) => T.x < g.x && T.x + T.width > g.x || T.x >= g.x && T.x < g.x + g.width)).forEach((T) => {
+                T.y + T.height > a && (a = T.y + T.height);
               });
-            }), u = n[0].y - u, u < h && (h = u), n.forEach((g) => {
-              g.y -= h, a.value.filter((H) => H.id === g.id)[0].y = g.y;
-            }), I.value.x = i, I.value.y = a.value.filter((g) => g.id === n[n.length - 1].id)[0].y + a.value.filter((g) => g.id === n[n.length - 1].id)[0].height;
+            }), a = n[0].y - a, a < h && (h = a), n.forEach((g) => {
+              g.y -= h, d.value.filter((H) => H.id === g.id)[0].y = g.y;
+            }), I.value.x = r, I.value.y = d.value.filter((g) => g.id === n[n.length - 1].id)[0].y + d.value.filter((g) => g.id === n[n.length - 1].id)[0].height;
           } else {
-            const u = Math.min(...y.map((x) => x.y));
-            u - e >= -7 && u - e < 7 && (y.filter((x) => x.y < I.value.y).forEach((x) => {
-              x.y += a.value[D].height, a.value.filter((H) => H.id === x.id)[0].y = x.y;
+            const a = Math.min(...y.map((x) => x.y));
+            a - e >= -7 && a - e < 7 && (y.filter((x) => x.y < I.value.y).forEach((x) => {
+              x.y += d.value[D].height, d.value.filter((H) => H.id === x.id)[0].y = x.y;
               const g = (H) => {
-                a.value.filter((C) => C.move !== !0 && C.id !== H.id).filter((C) => C.x < H.x && C.x + C.width > H.x || C.x === H.x || C.x > H.x && C.x < H.x + H.width).filter((C) => C.y < H.y && C.y + C.height > H.y || C.y === H.y || C.y > H.y && C.y < H.y + H.height).forEach((C) => {
+                d.value.filter((C) => C.move !== !0 && C.id !== H.id).filter((C) => C.x < H.x && C.x + C.width > H.x || C.x === H.x || C.x > H.x && C.x < H.x + H.width).filter((C) => C.y < H.y && C.y + C.height > H.y || C.y === H.y || C.y > H.y && C.y < H.y + H.height).forEach((C) => {
                   C.y = H.y + H.height, g(C);
                 });
               };
               g(x);
-            }), I.value.x = i, I.value.y = u);
+            }), I.value.x = r, I.value.y = a);
           }
-          y = W(a.value.filter((u) => u.move !== !0).filter((u) => u.x < i && u.x + u.width > i || u.x === i || u.x > i && u.x < i + a.value[D].width).filter((u) => u.y < e && u.y + u.height > e || u.y === e || u.y > e && u.y < e + a.value[D].height));
+          y = W(d.value.filter((a) => a.move !== !0).filter((a) => a.x < r && a.x + a.width > r || a.x === r || a.x > r && a.x < r + d.value[D].width).filter((a) => a.y < e && a.y + a.height > e || a.y === e || a.y > e && a.y < e + d.value[D].height));
         }
         if (w.indexOf("bottom") !== -1) {
-          const d = Math.max(...y.map((h) => h.y + h.height));
-          if (d - (e + a.value[D].height) >= -7 && d - (e + a.value[D].height) < 7) {
+          const c = Math.max(...y.map((h) => h.y + h.height));
+          if (c - (e + d.value[D].height) >= -7 && c - (e + d.value[D].height) < 7) {
             let h = !0;
             y.filter((o) => o.y > I.value.y).forEach((o) => {
-              o.y -= a.value[D].height, a.value.filter((s) => s.id === o.id)[0].y = o.y;
-              const n = a.value.filter((s) => s.move !== !0 && s.id !== o.id).filter((s) => s.x < o.x && s.x + s.width > o.x || s.x === o.x || s.x > o.x && s.x < o.x + o.width).filter((s) => s.y < o.y && s.y + s.height > o.y || s.y === o.y || s.y > o.y && s.y < o.y + o.height);
+              o.y -= d.value[D].height, d.value.filter((s) => s.id === o.id)[0].y = o.y;
+              const n = d.value.filter((s) => s.move !== !0 && s.id !== o.id).filter((s) => s.x < o.x && s.x + s.width > o.x || s.x === o.x || s.x > o.x && s.x < o.x + o.width).filter((s) => s.y < o.y && s.y + s.height > o.y || s.y === o.y || s.y > o.y && s.y < o.y + o.height);
               if (n.length > 0) {
-                o.y = Math.max(...n.map((u) => u.y + u.height)), a.value.filter((u) => u.id === o.id)[0].y = o.y;
-                const s = (u) => {
-                  a.value.filter((g) => g.id !== u.id).filter((g) => g.x < u.x && g.x + g.width > u.x || g.x === u.x || g.x > u.x && g.x < u.x + u.width).filter((g) => g.y < u.y && g.y + g.height > u.y || g.y === u.y || g.y > u.y && g.y < u.y + u.height).forEach((g) => {
-                    g.y = u.y + u.height, g.move === !0 && (I.value.y = g.y, h = !1), s(g);
+                o.y = Math.max(...n.map((a) => a.y + a.height)), d.value.filter((a) => a.id === o.id)[0].y = o.y;
+                const s = (a) => {
+                  d.value.filter((g) => g.id !== a.id).filter((g) => g.x < a.x && g.x + g.width > a.x || g.x === a.x || g.x > a.x && g.x < a.x + a.width).filter((g) => g.y < a.y && g.y + g.height > a.y || g.y === a.y || g.y > a.y && g.y < a.y + a.height).forEach((g) => {
+                    g.y = a.y + a.height, g.move === !0 && (I.value.y = g.y, h = !1), s(g);
                   });
                 };
                 s(o);
               }
-            }), I.value.x = i, h && (I.value.y = d - a.value[D].height), y = W(a.value.filter((o) => o.move !== !0).filter((o) => o.x < i && o.x + o.width > i || o.x === i || o.x > i && o.x < i + a.value[D].width).filter((o) => o.y < e && o.y + o.height > e || o.y === e || o.y > e && o.y < e + a.value[D].height));
+            }), I.value.x = r, h && (I.value.y = c - d.value[D].height), y = W(d.value.filter((o) => o.move !== !0).filter((o) => o.x < r && o.x + o.width > r || o.x === r || o.x > r && o.x < r + d.value[D].width).filter((o) => o.y < e && o.y + o.height > e || o.y === e || o.y > e && o.y < e + d.value[D].height));
           }
         }
         if (((w.indexOf("top") !== -1 || w.indexOf("bottom") !== -1) && (w.indexOf("right") !== -1 || w.indexOf("left") !== -1) && Math.abs(f) > 8 || w.indexOf("top") === -1 && w.indexOf("bottom") === -1 && (w.indexOf("right") !== -1 || w.indexOf("left") !== -1)) && y.length > 0) {
@@ -195,98 +198,98 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
             const n = h.y, s = o.y;
             return n - s;
           });
-          let d = !0;
+          let c = !0;
           for (let h = 0; h < y.length; h++) {
-            if (d) {
-              const o = W(a.value);
+            if (c) {
+              const o = W(d.value);
               for (let n = 0; n <= h; n++) {
                 let s = null;
-                const u = o.filter((x) => x.move !== !0 && x.y < y[n].y).filter((x) => x.x < y[n].x && x.x + x.width > y[n].x || x.x === y[n].x || x.x > y[n].x && x.x < y[n].x + y[n].width);
-                if (u.length === 0 ? s = 0 : s = Math.max(...u.map((x) => x.y + x.height)), n === h) {
+                const a = o.filter((x) => x.move !== !0 && x.y < y[n].y).filter((x) => x.x < y[n].x && x.x + x.width > y[n].x || x.x === y[n].x || x.x > y[n].x && x.x < y[n].x + y[n].width);
+                if (a.length === 0 ? s = 0 : s = Math.max(...a.map((x) => x.y + x.height)), n === h) {
                   if (y[n].y - (y[n].y + y[n].height - e) < s) {
-                    d = !1;
+                    c = !1;
                     break;
                   }
                 } else if (y[n].y - y[h].height < s) {
-                  d = !1;
+                  c = !1;
                   break;
                 } else
                   o.filter((x) => x.id === y[n].id)[0].y -= y[h].height;
               }
             }
-            if (d) {
-              y[h].y -= y[h].y + y[h].height - e, a.value.filter((o) => o.id === y[h].id)[0].y = y[h].y;
+            if (c) {
+              y[h].y -= y[h].y + y[h].height - e, d.value.filter((o) => o.id === y[h].id)[0].y = y[h].y;
               for (let o = h; o > 0; o--)
-                y[h - 1].y -= y[h].height, a.value.filter((n) => n.id === y[h - 1].id)[0].y = y[h - 1].y;
+                y[h - 1].y -= y[h].height, d.value.filter((n) => n.id === y[h - 1].id)[0].y = y[h - 1].y;
             } else
               y.filter((o) => o.id === y[h].id).forEach((o) => {
-                o.y += a.value[D].y + a.value[D].height - o.y, a.value.filter((s) => s.id === o.id)[0].y = o.y;
+                o.y += d.value[D].y + d.value[D].height - o.y, d.value.filter((s) => s.id === o.id)[0].y = o.y;
                 const n = (s) => {
-                  a.value.filter((x) => x.move !== !0 && x.id !== s.id).filter((x) => x.x < s.x && x.x + x.width > s.x || x.x === s.x || x.x > s.x && x.x < s.x + s.width).filter((x) => x.y < s.y && x.y + x.height > s.y || x.y === s.y || x.y > s.y && x.y < s.y + s.height).forEach((x) => {
+                  d.value.filter((x) => x.move !== !0 && x.id !== s.id).filter((x) => x.x < s.x && x.x + x.width > s.x || x.x === s.x || x.x > s.x && x.x < s.x + s.width).filter((x) => x.y < s.y && x.y + x.height > s.y || x.y === s.y || x.y > s.y && x.y < s.y + s.height).forEach((x) => {
                     x.y = s.y + s.height, n(x);
                   });
                 };
                 n(o);
               });
           }
-          I.value.x = i;
+          I.value.x = r;
         }
       }
       X(!1);
     }, Et = () => {
-      window.removeEventListener("mousemove", kt), window.removeEventListener("mouseup", Et), delete a.value[D].move, a.value[D].x = I.value.x, a.value[D].y = I.value.y, D = null, X();
-    }, _ = (l) => {
+      window.removeEventListener("mousemove", kt), window.removeEventListener("mouseup", Et), delete d.value[D].move, d.value[D].x = I.value.x, d.value[D].y = I.value.y, D = null, X();
+    }, V = (l) => {
       switch (l) {
         case "top":
           return 0;
         case "right":
-          return V - a.value[D].width;
+          return _ - d.value[D].width;
         case "bottom":
           return 999999999;
         case "left":
           return 0;
       }
     };
-    let p = null, gt = "", it = 0, ot = 0, A = 0, N = 0, K = 0, q = 0, J = 0, st = 0, Q = 0, nt = 0;
-    const B = (l, r, t) => {
-      et(), p = r, gt = t, it = l.clientX, ot = l.clientY, A = r.width, N = r.height, K = r.y, q = r.x, p.drag = !0;
-      const i = a.value.filter((d) => d.static === !0 && (d.x < r.x ? d.x + d.width >= r.x : d.x <= r.x + r.width)), e = a.value.filter((d) => d.static === !0 && (d.y < r.y ? d.y + d.height >= r.y : d.y <= r.y + r.height)), f = i.filter((d) => d.y + d.height <= r.y).map((d) => d.y + d.height);
+    let p = null, gt = "", rt = 0, ot = 0, A = 0, N = 0, K = 0, q = 0, J = 0, st = 0, Q = 0, nt = 0;
+    const B = (l, i, t) => {
+      et(), p = i, gt = t, rt = l.clientX, ot = l.clientY, A = i.width, N = i.height, K = i.y, q = i.x, p.drag = !0;
+      const r = d.value.filter((c) => c.static === !0 && (c.x < i.x ? c.x + c.width >= i.x : c.x <= i.x + i.width)), e = d.value.filter((c) => c.static === !0 && (c.y < i.y ? c.y + c.height >= i.y : c.y <= i.y + i.height)), f = r.filter((c) => c.y + c.height <= i.y).map((c) => c.y + c.height);
       f.length > 0 ? J = Math.max(...f) : J = 0;
-      const c = i.filter((d) => d.y >= r.y + r.height).map((d) => d.y);
-      c.length > 0 ? st = Math.min(...c) : st = 0;
-      const w = e.filter((d) => d.x + d.width <= r.x).map((d) => d.x + d.width);
+      const u = r.filter((c) => c.y >= i.y + i.height).map((c) => c.y);
+      u.length > 0 ? st = Math.min(...u) : st = 0;
+      const w = e.filter((c) => c.x + c.width <= i.x).map((c) => c.x + c.width);
       w.length > 0 ? Q = Math.max(...w) : Q = 0;
-      const y = e.filter((d) => d.x >= r.x + r.width).map((d) => d.x);
+      const y = e.filter((c) => c.x >= i.x + i.width).map((c) => c.x);
       y.length > 0 ? nt = Math.min(...y) : nt = 0, window.addEventListener("mousemove", Dt), window.addEventListener("mouseup", Ot);
     }, Dt = (l) => {
-      const r = A + (l.clientX - it), t = N + (l.clientY - ot), i = A - (l.clientX - it), e = N - (l.clientY - ot), f = K + (l.clientY - ot), c = q + (l.clientX - it), w = getComputedStyle(b.value), y = parseInt(w.getPropertyValue("--com-item-border-width").trim()), d = parseInt(w.getPropertyValue("--group-tit-height").trim());
+      const i = A + (l.clientX - rt), t = N + (l.clientY - ot), r = A - (l.clientX - rt), e = N - (l.clientY - ot), f = K + (l.clientY - ot), u = q + (l.clientX - rt), w = getComputedStyle(z.value), y = parseInt(w.getPropertyValue("--com-item-border-width").trim()), c = parseInt(w.getPropertyValue("--group-tit-height").trim());
       switch (gt) {
         case "top-left":
-          if (p.height = e < v.itemMinHeight ? v.itemMinHeight : e > k("top") ? k("top") : e, p.y = e < v.itemMinHeight ? K + N - v.itemMinHeight : e > k("top") ? J : f, p.width = i < v.itemMinWidth ? v.itemMinWidth : i > k("left") ? k("left") : i, p.x = i < v.itemMinWidth ? q + A - v.itemMinWidth : i > k("left") ? Q : c, p.isGroup === !0) {
-            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? d : 0);
+          if (p.height = e < v.itemMinHeight ? v.itemMinHeight : e > E("top") ? E("top") : e, p.y = e < v.itemMinHeight ? K + N - v.itemMinHeight : e > E("top") ? J : f, p.width = r < v.itemMinWidth ? v.itemMinWidth : r > E("left") ? E("left") : r, p.x = r < v.itemMinWidth ? q + A - v.itemMinWidth : r > E("left") ? Q : u, p.isGroup === !0) {
+            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? c : 0);
             p.groupData.forEach((s) => {
               s.width = o * s.groupW, s.x = o * s.groupX, s.height = n * s.groupH, s.y = n * s.groupY;
             });
           }
           break;
         case "top":
-          if (p.height = e < v.itemMinHeight ? v.itemMinHeight : e > k("top") ? k("top") : e, p.y = e < v.itemMinHeight ? K + N - v.itemMinHeight : e > k("top") ? J : f, p.isGroup === !0) {
-            const o = p.height - 2 * y - (p.groupTit ? d : 0);
+          if (p.height = e < v.itemMinHeight ? v.itemMinHeight : e > E("top") ? E("top") : e, p.y = e < v.itemMinHeight ? K + N - v.itemMinHeight : e > E("top") ? J : f, p.isGroup === !0) {
+            const o = p.height - 2 * y - (p.groupTit ? c : 0);
             p.groupData.forEach((n) => {
               n.height = o * n.groupH, n.y = o * n.groupY;
             });
           }
           break;
         case "top-right":
-          if (p.height = e < v.itemMinHeight ? v.itemMinHeight : e > k("top") ? k("top") : e, p.y = e < v.itemMinHeight ? K + N - v.itemMinHeight : e > k("top") ? J : f, p.width = r < v.itemMinWidth ? v.itemMinWidth : r > k("right") ? k("right") : r, p.isGroup === !0) {
-            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? d : 0);
+          if (p.height = e < v.itemMinHeight ? v.itemMinHeight : e > E("top") ? E("top") : e, p.y = e < v.itemMinHeight ? K + N - v.itemMinHeight : e > E("top") ? J : f, p.width = i < v.itemMinWidth ? v.itemMinWidth : i > E("right") ? E("right") : i, p.isGroup === !0) {
+            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? c : 0);
             p.groupData.forEach((s) => {
               s.width = o * s.groupW, s.x = o * s.groupX, s.height = n * s.groupH, s.y = n * s.groupY;
             });
           }
           break;
         case "left":
-          if (p.width = i < v.itemMinWidth ? v.itemMinWidth : i > k("left") ? k("left") : i, p.x = i < v.itemMinWidth ? q + A - v.itemMinWidth : i > k("left") ? Q : c, p.isGroup === !0) {
+          if (p.width = r < v.itemMinWidth ? v.itemMinWidth : r > E("left") ? E("left") : r, p.x = r < v.itemMinWidth ? q + A - v.itemMinWidth : r > E("left") ? Q : u, p.isGroup === !0) {
             const o = p.width - 2 * y;
             p.groupData.forEach((n) => {
               n.width = o * n.groupW, n.x = o * n.groupX;
@@ -294,7 +297,7 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           }
           break;
         case "right":
-          if (p.width = r < v.itemMinWidth ? v.itemMinWidth : r > k("right") ? k("right") : r, p.isGroup === !0) {
+          if (p.width = i < v.itemMinWidth ? v.itemMinWidth : i > E("right") ? E("right") : i, p.isGroup === !0) {
             const o = p.width - 2 * y;
             p.groupData.forEach((n) => {
               n.width = o * n.groupW, n.x = o * n.groupX;
@@ -302,42 +305,42 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           }
           break;
         case "bottom-left":
-          if (p.height = t < v.itemMinHeight ? v.itemMinHeight : t > k("bottom") ? k("bottom") : t, p.width = i < v.itemMinWidth ? v.itemMinWidth : i > k("left") ? k("left") : i, p.x = i < v.itemMinWidth ? q + A - v.itemMinWidth : i > k("left") ? Q : c, p.isGroup === !0) {
-            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? d : 0);
+          if (p.height = t < v.itemMinHeight ? v.itemMinHeight : t > E("bottom") ? E("bottom") : t, p.width = r < v.itemMinWidth ? v.itemMinWidth : r > E("left") ? E("left") : r, p.x = r < v.itemMinWidth ? q + A - v.itemMinWidth : r > E("left") ? Q : u, p.isGroup === !0) {
+            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? c : 0);
             p.groupData.forEach((s) => {
               s.width = o * s.groupW, s.x = o * s.groupX, s.height = n * s.groupH, s.y = n * s.groupY;
             });
           }
           break;
         case "bottom":
-          if (p.height = t < v.itemMinHeight ? v.itemMinHeight : t > k("bottom") ? k("bottom") : t, p.isGroup === !0) {
-            const o = p.height - 2 * y - (p.groupTit ? d : 0);
+          if (p.height = t < v.itemMinHeight ? v.itemMinHeight : t > E("bottom") ? E("bottom") : t, p.isGroup === !0) {
+            const o = p.height - 2 * y - (p.groupTit ? c : 0);
             p.groupData.forEach((n) => {
               n.height = o * n.groupH, n.y = o * n.groupY;
             });
           }
           break;
         case "bottom-right":
-          if (p.height = t < v.itemMinHeight ? v.itemMinHeight : t > k("bottom") ? k("bottom") : t, p.width = r < v.itemMinWidth ? v.itemMinWidth : r > k("right") ? k("right") : r, p.isGroup === !0) {
-            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? d : 0);
+          if (p.height = t < v.itemMinHeight ? v.itemMinHeight : t > E("bottom") ? E("bottom") : t, p.width = i < v.itemMinWidth ? v.itemMinWidth : i > E("right") ? E("right") : i, p.isGroup === !0) {
+            const o = p.width - 2 * y, n = p.height - 2 * y - (p.groupTit ? c : 0);
             p.groupData.forEach((s) => {
               s.width = o * s.groupW, s.x = o * s.groupX, s.height = n * s.groupH, s.y = n * s.groupY;
             });
           }
           break;
       }
-      let h = W(a.value.filter((o) => o.drag !== !0).filter((o) => o.x < p.x && o.x + o.width > p.x || o.x === p.x || o.x > p.x && o.x < p.x + p.width).filter((o) => o.y < p.y && o.y + o.height > p.y || o.y === p.y || o.y > p.y && o.y < p.y + p.height));
+      let h = W(d.value.filter((o) => o.drag !== !0).filter((o) => o.x < p.x && o.x + o.width > p.x || o.x === p.x || o.x > p.x && o.x < p.x + p.width).filter((o) => o.y < p.y && o.y + o.height > p.y || o.y === p.y || o.y > p.y && o.y < p.y + p.height));
       if (h.length > 0) {
         h.sort((o, n) => {
-          const s = o.y, u = n.y;
-          return s - u;
+          const s = o.y, a = n.y;
+          return s - a;
         });
         for (let o = 0; o < h.length; o++)
           h.filter((n) => n.id === h[o].id).forEach((n) => {
-            n.y += p.y + p.height - n.y, a.value.filter((u) => u.id === n.id)[0].y = n.y;
-            const s = (u) => {
-              a.value.filter((g) => g.drag !== !0 && g.id !== u.id).filter((g) => g.x < u.x && g.x + g.width > u.x || g.x === u.x || g.x > u.x && g.x < u.x + u.width).filter((g) => g.y < u.y && g.y + g.height > u.y || g.y === u.y || g.y > u.y && g.y < u.y + u.height).forEach((g) => {
-                g.y = u.y + u.height, s(g);
+            n.y += p.y + p.height - n.y, d.value.filter((a) => a.id === n.id)[0].y = n.y;
+            const s = (a) => {
+              d.value.filter((g) => g.drag !== !0 && g.id !== a.id).filter((g) => g.x < a.x && g.x + g.width > a.x || g.x === a.x || g.x > a.x && g.x < a.x + a.width).filter((g) => g.y < a.y && g.y + g.height > a.y || g.y === a.y || g.y > a.y && g.y < a.y + a.height).forEach((g) => {
+                g.y = a.y + a.height, s(g);
               });
             };
             s(n);
@@ -346,155 +349,155 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
       X(!1);
     }, Ot = (l) => {
       delete p.drag, gt = "", p = null, window.removeEventListener("mousemove", Dt), window.removeEventListener("mouseup", Ot), X();
-    }, k = (l) => {
+    }, E = (l) => {
       switch (l) {
         case "top":
           return K + N - J;
         case "left":
           return q + A - Q;
         case "right":
-          return (nt > 0 ? nt : V) - q;
+          return (nt > 0 ? nt : _) - q;
         case "bottom":
           return st > 0 ? st - K : 999999999;
       }
     }, X = (l = !0) => {
       l === !0 && Gt();
-      const r = a.value.map((t) => t.y + t.height);
-      r.length > 0 ? tt.value = Math.max(...r) : tt.value = 0;
+      const i = d.value.map((t) => t.y + t.height);
+      i.length > 0 ? tt.value = Math.max(...i) : tt.value = 0;
     };
-    zt(
+    bt(
       () => v.ySpace,
       () => {
         v.ySpace >= 0 && Gt();
       }
     );
     const Gt = () => {
-      a.value.sort((l, r) => {
-        const t = l.y, i = r.y;
-        return t - i;
+      const l = W(d.value).sort((i, t) => {
+        const r = i.y, e = t.y;
+        return r - e;
       });
-      for (let l = 0; l < a.value.length; l++) {
-        if (l === 0 && a.value[l].y > 0) {
-          const r = a.value[l].y;
-          for (let t = l; t < a.value.length; t++)
-            a.value[t].y -= r;
+      for (let i = 0; i < l.length; i++) {
+        if (i === 0 && l[i].y > 0) {
+          const t = l[i].y;
+          for (let r = i; r < l.length; r++)
+            l[r].y -= t, d.value.filter((e) => e.id === l[r].id).y = l[r].y;
         }
-        if (l < a.value.length - 1 && a.value[l + 1].y > a.value[l].y + a.value[l].height) {
-          const r = W(a.value.slice(0, l + 1));
-          if (a.value[l + 1].y > Math.max(...r.map((t) => t.y + t.height))) {
-            const t = a.value[l + 1].y - Math.max(...r.map((i) => i.y + i.height));
-            for (let i = l + 1; i < a.value.length; i++)
-              a.value[i].y -= t;
+        if (i < l.length - 1 && l[i + 1].y > l[i].y + l[i].height) {
+          const t = W(l.slice(0, i + 1));
+          if (l[i + 1].y > Math.max(...t.map((r) => r.y + r.height))) {
+            const r = l[i + 1].y - Math.max(...t.map((e) => e.y + e.height));
+            for (let e = i + 1; e < l.length; e++)
+              l[e].y -= r, d.value.filter((f) => f.id === l[e].id).y = l[e].y;
           }
         }
       }
-      for (let l = 0; l < a.value.length - 1; l++) {
-        let r = a.value.findIndex((t) => t.y === a.value[l].y + a.value[l].height);
-        if (r !== -1)
-          for (let t = r; t < a.value.length; t++)
-            a.value[t].y += v.ySpace;
+      for (let i = 0; i < l.length - 1; i++) {
+        let t = l.findIndex((r) => r.y === l[i].y + l[i].height);
+        if (t !== -1)
+          for (let r = t; r < l.length; r++)
+            l[r].y += v.ySpace, d.value.filter((e) => e.id === l[r].id).y = l[r].y;
       }
     };
     Zt(() => {
-      Ht.observe(b.value);
+      Ht.observe(z.value);
     });
     const Ht = new ResizeObserver((l) => {
-      At(V === l[0].contentRect.width ? null : l[0].contentRect.width, vt === l[0].contentRect.height ? null : l[0].contentRect.height);
+      At(_ === l[0].contentRect.width ? null : l[0].contentRect.width, vt === l[0].contentRect.height ? null : l[0].contentRect.height);
     });
     let pt = !1;
-    const Bt = (l = [], r = null) => {
-      a.value = W(l), a.value.filter((t) => t.isGroup === !0).forEach((t) => {
+    const Bt = (l = [], i = null) => {
+      d.value = W(l), d.value.filter((t) => t.isGroup === !0).forEach((t) => {
         if (t.isGroup === !0)
           if (t.groupData.length < 2)
             lt(t.id);
           else {
-            const i = ut(t.groupData, t);
-            ht(i);
+            const r = ut(t.groupData, t);
+            at(r);
           }
-      }), r !== null ? Rt(() => {
-        const i = b.value.getBoundingClientRect().width / r, e = getComputedStyle(b.value), f = parseInt(e.getPropertyValue("--com-item-border-width").trim()), c = parseInt(e.getPropertyValue("--group-tit-height").trim());
-        a.value.forEach((w) => {
-          if (w.width *= i, w.height *= i, w.x *= i, w.y *= i, w.isGroup === !0) {
-            const y = w.width - 2 * f, d = w.height - 2 * f - (w.groupTit ? c : 0);
+      }), i !== null ? Rt(() => {
+        const r = z.value.getBoundingClientRect().width / i, e = getComputedStyle(z.value), f = parseInt(e.getPropertyValue("--com-item-border-width").trim()), u = parseInt(e.getPropertyValue("--group-tit-height").trim());
+        d.value.forEach((w) => {
+          if (w.width *= r, w.height *= r, w.x *= r, w.y *= r, w.isGroup === !0) {
+            const y = w.width - 2 * f, c = w.height - 2 * f - (w.groupTit ? u : 0);
             w.groupData.forEach((h) => {
-              h.width = y * h.groupW, h.x = y * h.groupX, h.height = d * h.groupH, h.y = d * h.groupY;
+              h.width = y * h.groupW, h.x = y * h.groupX, h.height = c * h.groupH, h.y = c * h.groupY;
             });
           }
         }), X();
       }) : X(), pt = !0, setTimeout(() => {
         pt = !1;
       }, 500);
-    }, Wt = (l, r, t) => {
-      const i = r.map((c) => c.y), e = Math.max(...i), f = r.filter((c) => c.y + c.height > e);
-      f.sort((c, w) => {
-        const y = c.x, d = w.x;
-        return y - d;
+    }, Wt = (l, i, t) => {
+      const r = i.map((u) => u.y), e = Math.max(...r), f = i.filter((u) => u.y + u.height > e);
+      f.sort((u, w) => {
+        const y = u.x, c = w.x;
+        return y - c;
       });
-      for (let c = 0; c < f.length; c++) {
-        if (c === 0 && f[c].x >= l.width) {
+      for (let u = 0; u < f.length; u++) {
+        if (u === 0 && f[u].x >= l.width) {
           l.y = e, l.x = 0;
           break;
         }
-        if (f.length > 1 && c !== f.length - 1 && f[c].x + f[c].width + l.width <= f[c + 1].x) {
-          l.y = e, l.x = f[c].x + f[c].width;
+        if (f.length > 1 && u !== f.length - 1 && f[u].x + f[u].width + l.width <= f[u + 1].x) {
+          l.y = e, l.x = f[u].x + f[u].width;
           break;
         }
-        if (c === f.length - 1 && f[c].x + f[c].width + l.width <= t) {
-          l.y = e, l.x = f[c].x + f[c].width;
+        if (u === f.length - 1 && f[u].x + f[u].width + l.width <= t) {
+          l.y = e, l.x = f[u].x + f[u].width;
           break;
         }
       }
       if (l.y == null) {
         l.x = 0;
-        const c = r.map((w) => w.y + w.height);
-        l.y = Math.max(...c);
+        const u = i.map((w) => w.y + w.height);
+        l.y = Math.max(...u);
       }
-    }, at = (l, r = null, t = !1) => {
-      const i = W(l), e = a.value.filter((f) => f.id === r);
-      if (i.id || (i.id = (/* @__PURE__ */ new Date()).getTime() + ""), r && e.length !== 1) {
+    }, ht = (l, i = null, t = !1) => {
+      const r = W(l), e = d.value.filter((f) => f.id === i);
+      if (r.id || (r.id = (/* @__PURE__ */ new Date()).getTime() + ""), i && e.length !== 1) {
         try {
         } catch {
         }
         return;
       }
       if (t !== !0)
-        if (delete i.x, delete i.y, r) {
-          const f = getComputedStyle(b.value), c = parseInt(f.getPropertyValue("--com-item-border-width").trim());
-          Wt(i, e[0].groupData, e[0].width - 2 * c);
+        if (delete r.x, delete r.y, i) {
+          const f = getComputedStyle(z.value), u = parseInt(f.getPropertyValue("--com-item-border-width").trim());
+          Wt(r, e[0].groupData, e[0].width - 2 * u);
         } else
-          a.value.length === 0 ? (i.x = 0, i.y = 0) : Wt(i, a.value, V);
-      if (r) {
-        e[0].groupData.push(i);
+          d.value.length === 0 ? (r.x = 0, r.y = 0) : Wt(r, d.value, _);
+      if (i) {
+        e[0].groupData.push(r);
         const f = ut(e[0].groupData, e[0]);
-        ht(f);
+        at(f);
       } else
-        a.value.push(i);
+        d.value.push(r);
       X();
-    }, Z = (l, r = null) => {
+    }, Z = (l, i = null) => {
       let t = -1;
-      const i = a.value.filter((e) => e.id === r);
-      if (r ? i.length === 1 && (t = i[0].groupData.findIndex((e) => e.id === l)) : t = a.value.findIndex((e) => e.id === l), t !== -1) {
-        if (r)
-          if (i[0].groupData.splice(t, 1), i[0].groupData.length === 1)
-            lt(r);
+      const r = d.value.filter((e) => e.id === i);
+      if (i ? r.length === 1 && (t = r[0].groupData.findIndex((e) => e.id === l)) : t = d.value.findIndex((e) => e.id === l), t !== -1) {
+        if (i)
+          if (r[0].groupData.splice(t, 1), r[0].groupData.length === 1)
+            lt(i);
           else {
-            const e = ut(i[0].groupData, i[0]);
-            ht(e);
+            const e = ut(r[0].groupData, r[0]);
+            at(e);
           }
         else
-          a.value.splice(t, 1);
+          d.value.splice(t, 1);
         X();
       } else
         try {
         } catch {
         }
-    }, ht = (l) => {
+    }, at = (l) => {
       if (l.id) {
-        const r = W(l);
+        const i = W(l);
         let t = -1;
-        const i = a.value.filter((e) => e.id === r.inGroupId);
-        if (r.inGroupId ? i.length === 1 && (t = i[0].groupData.findIndex((e) => e.id === r.id)) : t = a.value.findIndex((e) => e.id === r.id), t !== -1)
-          r.inGroupId ? i[0].groupData[t] = r : a.value[t] = r, X();
+        const r = d.value.filter((e) => e.id === i.inGroupId);
+        if (i.inGroupId ? r.length === 1 && (t = r[0].groupData.findIndex((e) => e.id === i.id)) : t = d.value.findIndex((e) => e.id === i.id), t !== -1)
+          i.inGroupId ? r[0].groupData[t] = i : d.value[t] = i, X();
         else
           try {
           } catch {
@@ -503,51 +506,51 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         try {
         } catch {
         }
-    }, At = (l, r) => {
+    }, At = (l, i) => {
       if (l !== null) {
-        const t = V ? l / V : 1;
-        V = l;
-        const i = getComputedStyle(b.value), e = parseInt(i.getPropertyValue("--com-item-border-width").trim()), f = parseInt(i.getPropertyValue("--group-tit-height").trim());
-        pt || (a.value.forEach((c) => {
-          if (c.width *= t, c.height *= t, c.x *= t, c.y *= t, c.isGroup === !0) {
-            const w = c.width - 2 * e, y = c.height - 2 * e - (c.groupTit ? f : 0);
-            c.groupData.forEach((d) => {
-              d.width = w * d.groupW, d.x = w * d.groupX, d.height = y * d.groupH, d.y = y * d.groupY;
+        const t = _ ? l / _ : 1;
+        _ = l;
+        const r = getComputedStyle(z.value), e = parseInt(r.getPropertyValue("--com-item-border-width").trim()), f = parseInt(r.getPropertyValue("--group-tit-height").trim());
+        pt || (d.value.forEach((u) => {
+          if (u.width *= t, u.height *= t, u.x *= t, u.y *= t, u.isGroup === !0) {
+            const w = u.width - 2 * e, y = u.height - 2 * e - (u.groupTit ? f : 0);
+            u.groupData.forEach((c) => {
+              c.width = w * c.groupW, c.x = w * c.groupX, c.height = y * c.groupH, c.y = y * c.groupY;
             });
           }
         }), X());
       }
-      r !== null && (vt = r);
+      i !== null && (vt = i);
     }, It = (l) => {
-      l.showPop || (a.value.forEach((r) => {
-        delete r.showPop, r.groupData && r.groupData.forEach((t) => {
+      l.showPop || (d.value.forEach((i) => {
+        delete i.showPop, i.groupData && i.groupData.forEach((t) => {
           delete t.showPop;
         });
       }), l.showPop = !0, window.addEventListener("click", et));
     }, et = () => {
-      a.value.forEach((l) => {
-        delete l.showPop, l.groupData && l.groupData.forEach((r) => {
-          delete r.showPop;
+      d.value.forEach((l) => {
+        delete l.showPop, l.groupData && l.groupData.forEach((i) => {
+          delete i.showPop;
         });
       }), window.removeEventListener("click", et);
     }, S = F(!1), Ct = (l) => {
-      const r = a.value.findIndex((t) => t.id === l);
-      if (r !== -1)
-        a.value[r].checked = !0, a.value[r].disabled = !0, S.value = !0, U("showGroup", S.value);
+      const i = d.value.findIndex((t) => t.id === l);
+      if (i !== -1)
+        d.value[i].checked = !0, d.value[i].disabled = !0, S.value = !0, U("showGroup", S.value);
       else
         try {
         } catch {
         }
     }, Pt = () => {
-      S.value = !1, a.value.forEach((l) => {
-        delete l.checked, delete l.disabled, l.groupData && l.groupData.forEach((r) => {
-          delete r.checked, delete r.disabled;
+      S.value = !1, d.value.forEach((l) => {
+        delete l.checked, delete l.disabled, l.groupData && l.groupData.forEach((i) => {
+          delete i.checked, delete i.disabled;
         });
       }), U("showGroup", S.value);
     }, Nt = (l) => {
-      l.checked = !l.checked, U("updateChecked", a.value.filter((r) => r.checked).length);
-    }, ut = (l, r) => {
-      const t = W(l), i = W(r);
+      l.checked = !l.checked, U("updateChecked", d.value.filter((i) => i.checked).length);
+    }, ut = (l, i) => {
+      const t = W(l), r = W(i);
       t.sort((h, o) => {
         const n = h.x, s = o.x;
         return n - s;
@@ -586,41 +589,41 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
           }
         }
       }
-      const e = t.map((h) => h.x + h.width), f = Math.max(...e), c = t.map((h) => h.y + h.height), w = Math.max(...c);
+      const e = t.map((h) => h.x + h.width), f = Math.max(...e), u = t.map((h) => h.y + h.height), w = Math.max(...u);
       t.forEach((h) => {
-        h.inGroupId || (h.inGroupId = i.id), h.groupW = h.width / f, h.groupH = h.height / w, h.groupX = h.x / f, h.groupY = h.y / w, h.isObstacle = h.x + h.width === f && h.y === 0;
+        h.inGroupId || (h.inGroupId = r.id), h.groupW = h.width / f, h.groupH = h.height / w, h.groupX = h.x / f, h.groupY = h.y / w, h.isObstacle = h.x + h.width === f && h.y === 0;
       });
-      const y = getComputedStyle(b.value), d = parseInt(y.getPropertyValue("--com-item-border-width").trim());
-      return i.width = f + 2 * d, i.height = w + 2 * d, i.groupData = [...t], i;
+      const y = getComputedStyle(z.value), c = parseInt(y.getPropertyValue("--com-item-border-width").trim());
+      return r.width = f + 2 * c, r.height = w + 2 * c, r.groupData = [...t], r;
     }, Kt = () => {
       Rt(() => {
-        const l = getComputedStyle(b.value), r = parseInt(l.getPropertyValue("--com-item-border-width").trim()), t = parseInt(l.getPropertyValue("--group-tit-height").trim());
-        a.value.filter((i) => i.isGroup === !0).forEach((i) => {
-          const e = i.width - 2 * r, f = i.height - 2 * r - (i.groupTit ? t : 0);
-          i.groupData.forEach((c) => {
-            c.width = e * c.groupW, c.x = e * c.groupX, c.height = f * c.groupH, c.y = f * c.groupY;
+        const l = getComputedStyle(z.value), i = parseInt(l.getPropertyValue("--com-item-border-width").trim()), t = parseInt(l.getPropertyValue("--group-tit-height").trim());
+        d.value.filter((r) => r.isGroup === !0).forEach((r) => {
+          const e = r.width - 2 * i, f = r.height - 2 * i - (r.groupTit ? t : 0);
+          r.groupData.forEach((u) => {
+            u.width = e * u.groupW, u.x = e * u.groupX, u.height = f * u.groupH, u.y = f * u.groupY;
           });
         });
       });
     }, qt = () => {
-      const l = a.value.filter((r) => r.checked);
+      const l = d.value.filter((i) => i.checked);
       if (l.length > 1) {
-        const r = {
+        const i = {
           id: (/* @__PURE__ */ new Date()).getTime() + "G",
           isGroup: !0,
           groupTit: ""
-        }, t = ut(l, r);
-        t.groupData.forEach((i) => {
-          Z(i.id);
-        }), at(t), X();
+        }, t = ut(l, i);
+        t.groupData.forEach((r) => {
+          Z(r.id);
+        }), ht(t), X();
       }
       Pt();
-    }, Tt = (l, r) => {
-      const t = a.value.filter((i) => i.id === r)[0];
+    }, Tt = (l, i) => {
+      const t = d.value.filter((r) => r.id === i)[0];
       if (t) {
-        const i = t.groupData.filter((e) => e.id === l)[0];
-        if (i)
-          t.groupData.length === 2 ? lt(r) : (delete i.inGroupId, delete i.groupW, delete i.groupH, delete i.groupX, delete i.groupY, delete i.isObstacle, Z(i.id, t.id), at(i), X());
+        const r = t.groupData.filter((e) => e.id === l)[0];
+        if (r)
+          t.groupData.length === 2 ? lt(i) : (delete r.inGroupId, delete r.groupW, delete r.groupH, delete r.groupX, delete r.groupY, delete r.isObstacle, Z(r.id, t.id), ht(r), X());
         else
           try {
           } catch {
@@ -630,76 +633,76 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
         } catch {
         }
     }, lt = (l) => {
-      const r = a.value.filter((t) => t.id === l)[0];
-      if (r)
-        Z(r.id), r.groupData.forEach((t) => {
-          delete t.inGroupId, delete t.groupW, delete t.groupH, delete r.groupX, delete r.groupY, delete r.isObstacle, t.x += r.x, t.y += r.y, at(t, null, !0);
+      const i = d.value.filter((t) => t.id === l)[0];
+      if (i)
+        Z(i.id), i.groupData.forEach((t) => {
+          delete t.inGroupId, delete t.groupW, delete t.groupH, delete i.groupX, delete i.groupY, delete i.isObstacle, t.x += i.x, t.y += i.y, ht(t, null, !0);
         }), X();
       else
         try {
         } catch {
         }
-    }, Ft = (l = "", r) => {
-      const t = a.value.filter((i) => i.id === r)[0];
+    }, Ft = (l = "", i) => {
+      const t = d.value.filter((r) => r.id === i)[0];
       if (t) {
         if (!t.groupTit || !l) {
-          const e = getComputedStyle(b.value), f = parseInt(e.getPropertyValue("--group-tit-height").trim());
+          const e = getComputedStyle(z.value), f = parseInt(e.getPropertyValue("--group-tit-height").trim());
           t.groupTit && !l && (t.height -= f), !t.groupTit && l && (t.height += f);
         }
         t.groupTit = l;
-        const i = (e) => {
-          a.value.filter((c) => c.id !== e.id).filter((c) => c.x < e.x && c.x + c.width > e.x || c.x === e.x || c.x > e.x && c.x < e.x + e.width).filter((c) => c.y < e.y && c.y + c.height > e.y || c.y === e.y || c.y > e.y && c.y < e.y + e.height).forEach((c) => {
-            c.y = e.y + e.height, i(c);
+        const r = (e) => {
+          d.value.filter((u) => u.id !== e.id).filter((u) => u.x < e.x && u.x + u.width > e.x || u.x === e.x || u.x > e.x && u.x < e.x + e.width).filter((u) => u.y < e.y && u.y + u.height > e.y || u.y === e.y || u.y > e.y && u.y < e.y + e.height).forEach((u) => {
+            u.y = e.y + e.height, r(u);
           });
         };
-        i(t), X();
+        r(t), X();
       } else
         try {
         } catch {
         }
     }, Ut = () => {
-      const l = W(a.value);
-      return l.forEach((r) => {
-        delete r.showPop, r.groupData && r.groupData.forEach((t) => {
+      const l = W(d.value);
+      return l.forEach((i) => {
+        delete i.showPop, i.groupData && i.groupData.forEach((t) => {
           delete t.showPop;
         });
-      }), { data: l, width: V };
+      }), { data: l, width: _ };
     };
     return mt(() => {
-      Ht.unobserve(b.value), window.removeEventListener("click", et);
-    }), L({ init: Bt, addItem: at, deleteItem: Z, updateItem: ht, openGroup: Ct, closeGroup: Pt, changeGroupBorder: Kt, addGroup: qt, removeGroupItem: Tt, removeGroup: lt, changeGroupTit: Ft, getData: Ut }), (l, r) => (E(), G("div", {
+      Ht.unobserve(z.value), window.removeEventListener("click", et);
+    }), L({ init: Bt, addItem: ht, deleteItem: Z, updateItem: at, openGroup: Ct, closeGroup: Pt, changeGroupBorder: Kt, addGroup: qt, removeGroupItem: Tt, removeGroup: lt, changeGroupTit: Ft, getData: Ut }), (l, i) => (k(), G("div", {
       class: "vue-drag-component-plus",
       ref_key: "pageRef",
-      ref: b
+      ref: z
     }, [
-      z("div", {
+      b("div", {
         class: "content-box",
         ref_key: "boxRef",
         ref: Lt
       }, [
-        (E(!0), G(dt, null, bt(O(a), (t, i) => (E(), G("div", {
-          class: rt(["com-item", M.seeModel || O(S) || t.static === !0 || t.dragable === !1 ? "" : "can-drag", t.move ? "is-move" : "", t.drag ? "is-drag" : "", t.showPop ? "on-top" : "", M.seeModel ? "no-hover" : ""]),
+        (k(!0), G(dt, null, zt(O(d), (t, r) => (k(), G("div", {
+          class: it(["com-item", M.seeModel || O(S) || t.static === !0 || t.dragable === !1 ? "" : "can-drag", t.move ? "is-move" : "", t.drag ? "is-drag" : "", t.showPop ? "on-top" : "", M.seeModel ? "no-hover" : ""]),
           style: m({
             width: t.width + "px",
             height: t.height + "px",
             top: t.y + "px",
             left: t.x + "px"
           }),
-          key: i,
-          onMousedown: Y((e) => M.seeModel || O(S) || t.static === !0 || t.dragable === !1 ? null : _t(e, i), ["prevent"])
+          key: r,
+          onMousedown: Y((e) => M.seeModel || O(S) || t.static === !0 || t.dragable === !1 ? null : Vt(e, r), ["prevent"])
         }, [
-          z("div", ee, [
-            t.isGroup ? (E(), G(dt, { key: 0 }, [
-              t.groupTit ? (E(), G("div", {
+          b("div", ee, [
+            t.isGroup ? (k(), G(dt, { key: 0 }, [
+              t.groupTit ? (k(), G("div", {
                 key: 0,
                 class: "group-item-tit",
                 title: t.groupTit
               }, R(t.groupTit), 9, le)) : P("", !0),
-              z("div", {
-                class: rt(["group-item-content", t.groupTit ? "" : "full"])
+              b("div", {
+                class: it(["group-item-content", t.groupTit ? "" : "full"])
               }, [
-                (E(!0), G(dt, null, bt(t.groupData, (e, f) => (E(), G("div", {
-                  class: rt(["com-item-content-child", e.isObstacle ? "else" : ""]),
+                (k(!0), G(dt, null, zt(t.groupData, (e, f) => (k(), G("div", {
+                  class: it(["com-item-box-child", e.isObstacle ? "else" : ""]),
                   style: m({
                     width: e.width + "px",
                     height: e.height + "px",
@@ -708,54 +711,55 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
                   }),
                   key: f
                 }, [
-                  j(l.$slots, "item", { data: e }, () => [
-                    z("p", null, R(Math.round(e.width * 100) / 100) + "," + R(Math.round(e.height * 100) / 100), 1),
-                    z("p", null, R(Math.round(e.x * 100) / 100) + "," + R(Math.round(e.y * 100) / 100), 1)
+                  b("div", ie, [
+                    j(l.$slots, "item", { data: e }, () => [
+                      b("p", null, R(Math.round(e.width * 100) / 100) + "," + R(Math.round(e.height * 100) / 100), 1),
+                      b("p", null, R(Math.round(e.x * 100) / 100) + "," + R(Math.round(e.y * 100) / 100), 1)
+                    ])
                   ]),
-                  !M.seeModel && !O(S) && O(D) === null && O(p) === null ? (E(), G("div", {
+                  !M.seeModel && !O(S) && O(D) === null && O(p) === null ? (k(), G("div", {
                     key: 0,
                     class: "setting-box",
                     style: m({ display: e.showPop ? "flex" : "none" }),
-                    onMousedown: Y((c) => null, ["prevent", "stop"])
+                    onMousedown: Y((u) => null, ["prevent", "stop"])
                   }, [
                     St($t, {
                       iconObj: M.settingIcon,
-                      onClick: Y((c) => It(e), ["prevent", "stop"])
+                      onClick: Y((u) => It(e), ["prevent", "stop"])
                     }, null, 8, ["iconObj", "onClick"])
                   ], 36)) : P("", !0),
-                  e.showPop ? (E(), G("div", {
+                  e.showPop ? (k(), G("div", {
                     key: 1,
                     class: "setting-box-pop",
-                    onMousedown: Y((c) => null, ["prevent", "stop"])
+                    onMousedown: Y((u) => null, ["prevent", "stop"])
                   }, [
                     j(l.$slots, "setPopNormal", {
                       data: W(e)
                     }, () => [
-                      z("div", {
+                      b("div", {
                         class: "setting-box-pop-item",
-                        onClick: (c) => Tt(e.id, e.inGroupId)
+                        onClick: (u) => Tt(e.id, e.inGroupId)
                       }, "移出组合", 8, re),
-                      z("div", {
+                      b("div", {
                         class: "setting-box-pop-item",
-                        onClick: (c) => Z(e.id, e.inGroupId)
-                      }, "删除", 8, ie)
+                        onClick: (u) => Z(e.id, e.inGroupId)
+                      }, "删除", 8, oe)
                     ])
                   ], 32)) : P("", !0)
                 ], 6))), 128))
               ], 2)
-            ], 64)) : j(l.$slots, "item", {
-              key: 1,
-              data: t
-            }, () => [
-              z("p", null, R(Math.round(t.width * 100) / 100) + "," + R(Math.round(t.height * 100) / 100), 1),
-              z("p", null, R(Math.round(t.x * 100) / 100) + "," + R(Math.round(t.y * 100) / 100), 1)
-            ]),
-            !t.isGroup && t.notGroup !== !0 && O(S) ? (E(), G("div", {
+            ], 64)) : (k(), G("div", se, [
+              j(l.$slots, "item", { data: t }, () => [
+                b("p", null, R(Math.round(t.width * 100) / 100) + "," + R(Math.round(t.height * 100) / 100), 1),
+                b("p", null, R(Math.round(t.x * 100) / 100) + "," + R(Math.round(t.y * 100) / 100), 1)
+              ])
+            ])),
+            !t.isGroup && t.notGroup !== !0 && O(S) ? (k(), G("div", {
               key: 2,
-              class: rt(["group-checkbox", t.checked ? "is-checked" : "", t.disabled ? "disabled" : ""]),
+              class: it(["group-checkbox", t.checked ? "is-checked" : "", t.disabled ? "disabled" : ""]),
               onClick: (e) => t.disabled ? null : Nt(t)
-            }, null, 10, oe)) : P("", !0),
-            !M.seeModel && !O(S) && O(D) === null && O(p) === null ? (E(), G("div", {
+            }, null, 10, ne)) : P("", !0),
+            !M.seeModel && !O(S) && O(D) === null && O(p) === null ? (k(), G("div", {
               key: 3,
               class: "setting-box",
               style: m({ display: t.showPop ? "flex" : "none" }),
@@ -766,84 +770,84 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
                 onClick: Y((e) => It(t), ["prevent", "stop"])
               }, null, 8, ["iconObj", "onClick"])
             ], 36)) : P("", !0),
-            t.showPop ? (E(), G("div", {
+            t.showPop ? (k(), G("div", {
               key: 4,
-              class: rt(["setting-box-pop", t.isGroup === !0 ? "special" : ""]),
+              class: it(["setting-box-pop", t.isGroup === !0 ? "special" : ""]),
               onMousedown: Y((e) => null, ["prevent", "stop"])
             }, [
               t.isGroup === !0 ? j(l.$slots, "setPopSpecial", {
                 key: 0,
                 data: W(t)
               }, () => [
-                M.hideTit ? P("", !0) : (E(), G("div", {
+                M.hideTit ? P("", !0) : (k(), G("div", {
                   key: 0,
                   class: "setting-box-pop-item",
                   onClick: (e) => U("showTitPop", t.groupTit, t.id)
-                }, " 设置组合标题", 8, se)),
-                z("div", {
+                }, " 设置组合标题", 8, he)),
+                b("div", {
                   class: "setting-box-pop-item",
                   onClick: (e) => lt(t.id)
-                }, "解除组合", 8, ne)
+                }, "解除组合", 8, ae)
               ]) : j(l.$slots, "setPopNormal", {
                 key: 1,
                 data: W(t)
               }, () => [
-                t.notGroup !== !0 ? (E(), G("div", {
+                t.notGroup !== !0 ? (k(), G("div", {
                   key: 0,
                   class: "setting-box-pop-item",
                   onClick: (e) => Ct(t.id)
-                }, "组合", 8, ae)) : P("", !0),
-                z("div", {
+                }, "组合", 8, ue)) : P("", !0),
+                b("div", {
                   class: "setting-box-pop-item",
                   onClick: (e) => Z(t.id)
-                }, "删除", 8, he)
+                }, "删除", 8, ce)
               ])
             ], 34)) : P("", !0)
           ]),
-          !M.seeModel && !O(S) && !t.move && t.static !== !0 && t.resizable !== !1 ? (E(), G(dt, { key: 0 }, [
-            O($).indexOf("topLeft") !== -1 ? (E(), G("div", {
+          !M.seeModel && !O(S) && !t.move && t.static !== !0 && t.resizable !== !1 ? (k(), G(dt, { key: 0 }, [
+            O($).indexOf("topLeft") !== -1 ? (k(), G("div", {
               key: 0,
               class: "resize-line top-left",
               onMousedown: Y((e) => B(e, t, "top-left"), ["prevent", "stop"])
-            }, null, 40, ue)) : P("", !0),
-            O($).indexOf("top") !== -1 ? (E(), G("div", {
+            }, null, 40, de)) : P("", !0),
+            O($).indexOf("top") !== -1 ? (k(), G("div", {
               key: 1,
               class: "resize-line top",
               onMousedown: Y((e) => B(e, t, "top"), ["prevent", "stop"])
-            }, null, 40, ce)) : P("", !0),
-            O($).indexOf("topRight") !== -1 ? (E(), G("div", {
+            }, null, 40, ge)) : P("", !0),
+            O($).indexOf("topRight") !== -1 ? (k(), G("div", {
               key: 2,
               class: "resize-line top-right",
               onMousedown: Y((e) => B(e, t, "top-right"), ["prevent", "stop"])
-            }, null, 40, de)) : P("", !0),
-            O($).indexOf("left") !== -1 ? (E(), G("div", {
+            }, null, 40, pe)) : P("", !0),
+            O($).indexOf("left") !== -1 ? (k(), G("div", {
               key: 3,
               class: "resize-line left",
               onMousedown: Y((e) => B(e, t, "left"), ["prevent", "stop"])
-            }, null, 40, ge)) : P("", !0),
-            O($).indexOf("right") !== -1 ? (E(), G("div", {
+            }, null, 40, ye)) : P("", !0),
+            O($).indexOf("right") !== -1 ? (k(), G("div", {
               key: 4,
               class: "resize-line right",
               onMousedown: Y((e) => B(e, t, "right"), ["prevent", "stop"])
-            }, null, 40, pe)) : P("", !0),
-            O($).indexOf("bottomLeft") !== -1 ? (E(), G("div", {
+            }, null, 40, fe)) : P("", !0),
+            O($).indexOf("bottomLeft") !== -1 ? (k(), G("div", {
               key: 5,
               class: "resize-line bottom-left",
               onMousedown: Y((e) => B(e, t, "bottom-left"), ["prevent", "stop"])
-            }, null, 40, ye)) : P("", !0),
-            O($).indexOf("bottom") !== -1 ? (E(), G("div", {
+            }, null, 40, xe)) : P("", !0),
+            O($).indexOf("bottom") !== -1 ? (k(), G("div", {
               key: 6,
               class: "resize-line bottom",
               onMousedown: Y((e) => B(e, t, "bottom"), ["prevent", "stop"])
-            }, null, 40, fe)) : P("", !0),
-            O($).indexOf("bottomRight") !== -1 ? (E(), G("div", {
+            }, null, 40, ve)) : P("", !0),
+            O($).indexOf("bottomRight") !== -1 ? (k(), G("div", {
               key: 7,
               class: "resize-line bottom-right",
               onMousedown: Y((e) => B(e, t, "bottom-right"), ["prevent", "stop"])
-            }, null, 40, xe)) : P("", !0)
+            }, null, 40, we)) : P("", !0)
           ], 64)) : P("", !0)
         ], 46, te))), 128)),
-        O(D) !== null ? (E(), G("div", {
+        O(D) !== null ? (k(), G("div", {
           key: 0,
           class: "drag-bg",
           style: m({
@@ -853,11 +857,11 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
             left: O(I).x + "px"
           })
         }, null, 4)) : P("", !0),
-        z("div", {
+        b("div", {
           class: "height-bg",
           style: m({ height: (O(tt) > 0 ? +(O(tt) + (M.seeModel ? M.seeModelMinBg : 220)) : O(tt)) + "px" })
         }, null, 4),
-        O(a).length === 0 ? (E(), G("div", ve, [
+        O(d).length === 0 ? (k(), G("div", Me, [
           j(l.$slots, "empty", {}, () => [
             jt(" 暂无数据 ")
           ])
@@ -865,14 +869,14 @@ const te = ["onMousedown"], ee = { class: "com-item-content" }, le = ["title"], 
       ], 512)
     ], 512));
   }
-}, Me = [we], ke = {
+}, Ee = [ke], De = {
   install(M) {
-    Me.forEach((L) => {
+    Ee.forEach((L) => {
       M.component("vueDragComponentPlus", L);
     });
   }
 };
-typeof window < "u" && window.Vue && window.Vue.use(ke);
+typeof window < "u" && window.Vue && window.Vue.use(De);
 export {
-  ke as default
+  De as default
 };

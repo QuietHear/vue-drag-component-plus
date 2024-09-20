@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-09-19 11:05:19
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-09-20 09:48:06
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -20,7 +20,7 @@
           left: item.x + 'px'
         }" v-for="(item, index) in comData" :key="index"
         @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)">
-        <div class="com-item-content">
+        <div class="com-item-box">
           <!-- 组件内容区 -->
           <!-- 组合内容 -->
           <template v-if="item.isGroup">
@@ -30,17 +30,19 @@
             </div>
             <!-- 组合子项内容 -->
             <div :class="['group-item-content', item.groupTit ? '' : 'full']">
-              <div :class="['com-item-content-child', one.isObstacle ? 'else' : '']" :style="{
+              <div :class="['com-item-box-child', one.isObstacle ? 'else' : '']" :style="{
                 width: one.width + 'px',
                 height: one.height + 'px',
                 top: one.y + 'px',
                 left: one.x + 'px'
               }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
                 <!-- 内容 -->
-                <slot name="item" :data="one">
-                  <p>{{ Math.round(one.width * 100) / 100 }},{{ Math.round(one.height * 100) / 100 }}</p>
-                  <p>{{ Math.round(one.x * 100) / 100 }},{{ Math.round(one.y * 100) / 100 }}</p>
-                </slot>
+                <div class="com-item-box-content">
+                  <slot name="item" :data="one">
+                    <p>{{ Math.round(one.width * 100) / 100 }},{{ Math.round(one.height * 100) / 100 }}</p>
+                    <p>{{ Math.round(one.x * 100) / 100 }},{{ Math.round(one.y * 100) / 100 }}</p>
+                  </slot>
+                </div>
                 <!-- 设置弹窗入口 -->
                 <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
                   @mousedown.prevent.stop="null"
@@ -59,10 +61,12 @@
           </template>
           <!-- 普通内容 -->
           <template v-else>
-            <slot name="item" :data="item">
-              <p>{{ Math.round(item.width * 100) / 100 }},{{ Math.round(item.height * 100) / 100 }}</p>
-              <p>{{ Math.round(item.x * 100) / 100 }},{{ Math.round(item.y * 100) / 100 }}</p>
-            </slot>
+            <div class="com-item-box-content">
+              <slot name="item" :data="item">
+                <p>{{ Math.round(item.width * 100) / 100 }},{{ Math.round(item.height * 100) / 100 }}</p>
+                <p>{{ Math.round(item.x * 100) / 100 }},{{ Math.round(item.y * 100) / 100 }}</p>
+              </slot>
+            </div>
           </template>
           <!-- 组合选择器 -->
           <div :class="['group-checkbox', item.checked ? 'is-checked' : '', item.disabled ? 'disabled' : '']"
@@ -788,34 +792,37 @@ watch(
 );
 // 修正横向间距
 const dealSpace = () => {
-  comData.value.sort((a, b) => {
+  const copyData = deepCopy(comData.value).sort((a, b) => {
     const x = a.y;
     const y = b.y;
     return x - y;
   });
   // 此处最少是一个组件
-  for (let i = 0; i < comData.value.length; i++) {
-    if (i === 0 && comData.value[i].y > 0) {
-      const space = comData.value[i].y;
-      for (let x = i; x < comData.value.length; x++) {
-        comData.value[x].y -= space;
+  for (let i = 0; i < copyData.length; i++) {
+    if (i === 0 && copyData[i].y > 0) {
+      const space = copyData[i].y;
+      for (let x = i; x < copyData.length; x++) {
+        copyData[x].y -= space;
+        comData.value.filter(item => item.id === copyData[x].id)[0].y = copyData[x].y;
       }
     }
-    if (i < (comData.value.length - 1) && comData.value[i + 1].y > (comData.value[i].y + comData.value[i].height)) {
-      const linTop = deepCopy(comData.value.slice(0, i + 1));
-      if (comData.value[i + 1].y > Math.max(...linTop.map(item => (item.y + item.height)))) {
-        const space = comData.value[i + 1].y - Math.max(...linTop.map(item => (item.y + item.height)));
-        for (let x = (i + 1); x < comData.value.length; x++) {
-          comData.value[x].y -= space;
+    if (i < (copyData.length - 1) && copyData[i + 1].y > (copyData[i].y + copyData[i].height)) {
+      const linTop = deepCopy(copyData.slice(0, i + 1));
+      if (copyData[i + 1].y > Math.max(...linTop.map(item => (item.y + item.height)))) {
+        const space = copyData[i + 1].y - Math.max(...linTop.map(item => (item.y + item.height)));
+        for (let x = (i + 1); x < copyData.length; x++) {
+          copyData[x].y -= space;
+          comData.value.filter(item => item.id === copyData[x].id)[0].y = copyData[x].y;
         }
       }
     }
   };
-  for (let i = 0; i < (comData.value.length - 1); i++) {
-    let index = comData.value.findIndex(item => item.y === (comData.value[i].y + comData.value[i].height));
+  for (let i = 0; i < (copyData.length - 1); i++) {
+    let index = copyData.findIndex(item => item.y === (copyData[i].y + copyData[i].height));
     if (index !== -1) {
-      for (let x = index; x < comData.value.length; x++) {
-        comData.value[x].y += props.ySpace;
+      for (let x = index; x < copyData.length; x++) {
+        copyData[x].y += props.ySpace;
+        comData.value.filter(item => item.id === copyData[x].id)[0].y = copyData[x].y;
       }
     }
   };
@@ -1114,6 +1121,7 @@ const closeGroup = () => {
 };
 // 改变一条的选中
 const changeCheck = (obj) => {
+  // TODO 加辅助虚线
   obj.checked = obj.checked ? false : true;
   emit('updateChecked', comData.value.filter(item => item.checked).length);
 };
