@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-20 09:34:59
+ * @LastEditTime: 2024-09-20 11:42:42
 */
 <template>
   <div class="">
@@ -23,8 +23,8 @@ const props = defineProps({
 watch(
   () => props.obj,
   () => {
-    console.log('init');
+    console.log(456, 'reset');
   }
 );
-console.log(123);
+console.log(123, 'init');
 </script>

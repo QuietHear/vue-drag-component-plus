@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-20 09:48:06
+ * @LastEditTime: 2024-09-20 11:43:03
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -124,6 +124,17 @@
       <div class="height-bg"
         :style="{ height: (heightBg > 0 ? + (heightBg + (seeModel ? seeModelMinBg : 220)) : heightBg) + 'px' }">
       </div>
+      <!-- 辅助线 -->
+      <template v-if="!hideAuxiliary">
+        <div class="auxiliary-line hor" :style="{ top: auxiliaryTop + 'px', left: '0px' }" v-if="auxiliaryTop !== null">
+        </div>
+        <div class="auxiliary-line hor" :style="{ top: auxiliaryBtoom + 'px', left: '0px' }"
+          v-if="auxiliaryBtoom !== null"></div>
+        <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryLeft + 'px' }" v-if="auxiliaryLeft !== null">
+        </div>
+        <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryRight + 'px' }" v-if="auxiliaryRight !== null">
+        </div>
+      </template>
       <!-- 空数据 -->
       <div class="com-empty" v-if="comData.length === 0">
         <slot name="empty">
@@ -201,7 +212,20 @@ const props = defineProps({
   hideTit: {
     type: Boolean,
     default: false
-  }
+  },
+  // 不显示辅助线
+  hideAuxiliary: {
+    type: Boolean,
+    default: false
+  },
+  // 辅助线显示距离
+  auxiliarySpace: {
+    type: Number,
+    default: 15,
+    validator(value, props) {
+      return value >= 1;
+    }
+  },
 });
 // 深拷贝
 const deepCopy = (obj) => {
@@ -238,6 +262,55 @@ let pageHeight = null;
 const boxRef = ref(null);
 // 占位高度
 const heightBg = ref(0);
+// 上辅助线位置
+const auxiliaryTop = ref(null);
+// 下辅助线位置
+const auxiliaryBtoom = ref(null);
+// 左辅助线位置
+const auxiliaryLeft = ref(null);
+// 右辅助线位置
+const auxiliaryRight = ref(null);
+// 处理辅助线显示位置
+const dealAuxiliary = (obj) => {
+  const position = deepCopy(obj);
+  if (obj === null) {
+    auxiliaryTop.value = null;
+    auxiliaryBtoom.value = null;
+    auxiliaryLeft.value = null;
+    auxiliaryRight.value = null;
+  } else {
+    const styles = getComputedStyle(pageRef.value);
+    const auxiliaryWidth = parseInt(styles.getPropertyValue('--auxiliary-width').trim());
+    const t1 = comData.value.filter(item => item.id !== position.id).map(item => item.y);
+    const t2 = comData.value.filter(item => item.id !== position.id).map(item => (item.y + item.height - 1));
+    const t = [...t1, ...t2];
+    t.sort();
+    if (t.filter(item => (item <= position.y && (position.y - props.auxiliarySpace) < item) || (item >= position.y && (position.y + props.auxiliarySpace) > item)).length > 0) {
+      auxiliaryTop.value = position.y;
+    } else {
+      auxiliaryTop.value = null;
+    }
+    if (t.filter(item => (item <= (position.y + position.height - 1) && (position.y + position.height - 1 - props.auxiliarySpace) < item) || (item >= (position.y + position.height - 1) && (position.y + position.height - 1 + props.auxiliarySpace) > item)).length > 0) {
+      auxiliaryBtoom.value = position.y + position.height - auxiliaryWidth;
+    } else {
+      auxiliaryBtoom.value = null;
+    }
+    const l1 = comData.value.filter(item => item.id !== position.id).map(item => item.x);
+    const l2 = comData.value.filter(item => item.id !== position.id).map(item => (item.x + item.width - 1));
+    const l = [...l1, ...l2];
+    l.sort();
+    if (l.filter(item => (item <= position.x && (position.x - props.auxiliarySpace) < item) || (item >= position.x && (position.x + props.auxiliarySpace) > item)).length > 0) {
+      auxiliaryLeft.value = position.x;
+    } else {
+      auxiliaryLeft.value = null;
+    }
+    if (l.filter(item => (item <= (position.x + position.width - 1) && (position.x + position.width - 1 - props.auxiliarySpace) < item) || (item >= (position.x + position.width - 1) && (position.x + position.width - 1 + props.auxiliarySpace) > item)).length > 0) {
+      auxiliaryRight.value = position.x + position.width - auxiliaryWidth;
+    } else {
+      auxiliaryRight.value = null;
+    }
+  }
+};
 // 组件数据
 const comData = ref([]);
 // JQ的closest()方法
@@ -265,6 +338,7 @@ const dragStart = (e, index) => {
   dragSrc = index;
   dragBg.value = deepCopy(comData.value[dragSrc]);
   comData.value[dragSrc].move = true;
+  dealAuxiliary(comData.value[dragSrc]);
   const parentNode = closest(e.target, '.com-item');
   differX = e.clientX - parentNode.offsetLeft;
   differY = e.clientY - parentNode.offsetTop;
@@ -283,6 +357,7 @@ const dragIng = (e) => {
   const direction = `${moveX > 0 ? 'right' : moveX < 0 ? 'left' : ''}_${moveY > 0 ? 'bottom' : moveY < 0 ? 'top' : ''}`;
   comData.value[dragSrc].x = resultX;
   comData.value[dragSrc].y = resultY;
+  dealAuxiliary(comData.value[dragSrc]);
   // 当前直接接触的组件
   let obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
     .filter(item => (item.x < resultX && (item.x + item.width) > resultX) || item.x === resultX || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)))
@@ -507,6 +582,7 @@ const dragEnd = () => {
   comData.value[dragSrc].x = dragBg.value.x;
   comData.value[dragSrc].y = dragBg.value.y;
   dragSrc = null;
+  dealAuxiliary(null);
   dealBg();
 };
 // 计算拖拽最大边界
@@ -562,6 +638,7 @@ const resizeStart = (e, obj, direction) => {
   startTop = obj.y;
   startLeft = obj.x;
   resizeObj.drag = true;
+  dealAuxiliary(resizeObj);
   // 计算阻碍边界
   const xArr = comData.value.filter(item => item.static === true && (item.x < obj.x ? (item.x + item.width) >= obj.x : item.x <= (obj.x + obj.width)));
   const yArr = comData.value.filter(item => item.static === true && (item.y < obj.y ? (item.y + item.height) >= obj.y : item.y <= (obj.y + obj.height)));
@@ -713,6 +790,7 @@ const resizeIng = (e) => {
       }
       break;
   };
+  dealAuxiliary(resizeObj);
   // 当前直接接触的组件
   let obstacleArr = deepCopy(comData.value.filter(item => item.drag !== true)
     .filter(item => (item.x < resizeObj.x && (item.x + item.width) > resizeObj.x) || item.x === resizeObj.x || (item.x > resizeObj.x && item.x < (resizeObj.x + resizeObj.width)))
@@ -748,6 +826,7 @@ const resizeEnd = (e) => {
   delete resizeObj.drag;
   resizeDirection = '';
   resizeObj = null;
+  dealAuxiliary(null);
   window.removeEventListener('mousemove', resizeIng);
   window.removeEventListener('mouseup', resizeEnd);
   dealBg();
@@ -1059,7 +1138,7 @@ const changePageSize = (width, height) => {
   if (height !== null) {
     pageHeight = height;
   }
-  console.log(pageWidth, pageHeight);
+  console.log(pageWidth, pageHeight, 'pageWidth, pageHeight');
 };
 // 展开一个菜单
 const openSettingPop = (item) => {
@@ -1121,7 +1200,6 @@ const closeGroup = () => {
 };
 // 改变一条的选中
 const changeCheck = (obj) => {
-  // TODO 加辅助虚线
   obj.checked = obj.checked ? false : true;
   emit('updateChecked', comData.value.filter(item => item.checked).length);
 };

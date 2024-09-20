@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-19 16:27:42
+ * @LastEditTime: 2024-09-20 11:09:01
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -32,6 +32,8 @@
   --group-tit-color          : #000;
   --group-tit-size           : 16px;
   --group-tit-height         : 24px;
+  --auxiliary-width          : 2px;
+  --auxiliary-color          : #e6a23c;
   box-sizing                 : border-box;
   width                      : 100%;
   height                     : 100%;
@@ -353,6 +355,22 @@
     background   : var(--move-bg);
     position     : absolute;
     border-radius: var(--com-item-border-radius);
+  }
+
+  .auxiliary-line {
+    position   : absolute;
+    width      : 1px;
+    height     : 100%;
+    border-left: var(--auxiliary-width) dashed var(--auxiliary-color);
+    z-index    : 0;
+    box-sizing : border-box;
+
+    &.hor {
+      width      : 100%;
+      height     : 1px;
+      border-left: 0;
+      border-top : var(--auxiliary-width) dashed var(--auxiliary-color);
+    }
   }
 
   .com-empty {

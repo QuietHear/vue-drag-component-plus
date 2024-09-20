@@ -78,6 +78,10 @@
 
 * `--group-tit-height`：24px;-->组合标题高度
 
+* `--auxiliary-width`：2px;-->辅助线宽度
+
+* `--auxiliary-color`：#e6a23c;-->辅助线颜色
+
 
 ## 1. 参数
 * `insertResizeKeys`：包含收缩方向-->Array;非必传;默认*['topLeft', 'top', 'topRight', 'left', 'right', 'bottomLeft', 'bottom', 'bottomRight']*
@@ -105,6 +109,10 @@
 >
 
 * `hideTit`：不展示内置组合插槽中的设置组合标题按钮-->Boolean;非必传;默认*false*
+
+* `hideAuxiliary`：不展示辅助线-->Boolean;非必传;默认*false*
+
+* `auxiliarySpace`：辅助线显示距离，校验变量不能小于1-->Number;非必传;默认*15*
 
 
 ## 2. 方法
