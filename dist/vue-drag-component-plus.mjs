@@ -1,4 +1,4 @@
-import { resolveComponent as te, openBlock as E, createBlock as Mt, resolveDynamicComponent as Rt, normalizeProps as Lt, mergeProps as xt, withCtx as ee, createElementBlock as D, toDisplayString as $, watch as $t, ref as z, onMounted as le, onBeforeUnmount as ie, createElementVNode as X, Fragment as at, renderList as Vt, unref as k, normalizeClass as ht, normalizeStyle as L, withModifiers as T, createCommentVNode as H, renderSlot as tt, createVNode as _t, createTextVNode as re, nextTick as Bt } from "vue";
+import { resolveComponent as te, openBlock as E, createBlock as Mt, resolveDynamicComponent as Rt, normalizeProps as Lt, mergeProps as xt, withCtx as ee, createElementBlock as D, toDisplayString as $, watch as $t, ref as b, onMounted as le, onBeforeUnmount as ie, createElementVNode as X, Fragment as at, renderList as Vt, unref as k, normalizeClass as ht, normalizeStyle as L, withModifiers as T, createCommentVNode as H, renderSlot as tt, createVNode as _t, createTextVNode as re, nextTick as Bt } from "vue";
 const At = {
   __name: "icon",
   props: {
@@ -125,28 +125,28 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
         Et();
       }
     );
-    const _ = z([]);
+    const _ = b([]);
     Et();
-    const b = z(null);
+    const z = b(null);
     let B = null, Dt = null;
-    const Nt = z(null), et = z(0), lt = z(null), it = z(null), rt = z(null), ot = z(null), Q = (i) => {
+    const Nt = b(null), et = b(0), lt = b(null), it = b(null), rt = b(null), ot = b(null), Q = (i) => {
       const e = I(i);
       if (i === null)
         lt.value = null, it.value = null, rt.value = null, ot.value = null;
       else {
-        const t = getComputedStyle(b.value), r = parseInt(t.getPropertyValue("--auxiliary-width").trim()), l = u.value.filter((o) => o.id !== e.id).map((o) => o.y), f = u.value.filter((o) => o.id !== e.id).map((o) => o.y + o.height - 1), c = [...l, ...f];
+        const t = getComputedStyle(z.value), r = parseInt(t.getPropertyValue("--auxiliary-width").trim()), l = u.value.filter((o) => o.id !== e.id).map((o) => o.y), f = u.value.filter((o) => o.id !== e.id).map((o) => o.y + o.height - 1), c = [...l, ...f];
         c.sort(), c.filter((o) => o <= e.y && e.y - x.auxiliarySpace < o || o >= e.y && e.y + x.auxiliarySpace > o).length > 0 ? lt.value = e.y : lt.value = null, c.filter((o) => o <= e.y + e.height - 1 && e.y + e.height - 1 - x.auxiliarySpace < o || o >= e.y + e.height - 1 && e.y + e.height - 1 + x.auxiliarySpace > o).length > 0 ? it.value = e.y + e.height - r : it.value = null;
         const w = u.value.filter((o) => o.id !== e.id).map((o) => o.x), g = u.value.filter((o) => o.id !== e.id).map((o) => o.x + o.width - 1), d = [...w, ...g];
         d.sort(), d.filter((o) => o <= e.x && e.x - x.auxiliarySpace < o || o >= e.x && e.x + x.auxiliarySpace > o).length > 0 ? rt.value = e.x : rt.value = null, d.filter((o) => o <= e.x + e.width - 1 && e.x + e.width - 1 - x.auxiliarySpace < o || o >= e.x + e.width - 1 && e.x + e.width - 1 + x.auxiliarySpace > o).length > 0 ? ot.value = e.x + e.width - r : ot.value = null;
       }
-    }, u = z([]), Kt = (i, e) => {
+    }, u = b([]), Kt = (i, e) => {
       let t = i.matches || i.webkitMatchesSelector || i.mozMatchesSelector || i.msMatchesSelector;
       for (; i && !t.call(i, e); )
         i = i.parentElement;
       return i;
     };
     let O = null, Ot = null, Gt = null;
-    const C = z({}), qt = (i, e) => {
+    const C = b({}), qt = (i, e) => {
       nt(), O = e, C.value = I(u.value[O]), u.value[O].move = !0, Q(u.value[O]);
       const t = Kt(i.target, ".com-item");
       Ot = i.clientX - t.offsetLeft, Gt = i.clientY - t.offsetTop, window.addEventListener("mousemove", Wt), window.addEventListener("mouseup", Ht);
@@ -285,7 +285,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
       const g = l.filter((d) => d.x >= e.x + e.width).map((d) => d.x);
       g.length > 0 ? pt = Math.min(...g) : pt = 0, window.addEventListener("mousemove", It), window.addEventListener("mouseup", Ct);
     }, It = (i) => {
-      const e = K + (i.clientX - ut), t = q + (i.clientY - ct), r = K - (i.clientX - ut), l = q - (i.clientY - ct), f = F + (i.clientY - ct), c = U + (i.clientX - ut), w = getComputedStyle(b.value), g = parseInt(w.getPropertyValue("--com-item-border-width").trim()), d = parseInt(w.getPropertyValue("--group-tit-height").trim());
+      const e = K + (i.clientX - ut), t = q + (i.clientY - ct), r = K - (i.clientX - ut), l = q - (i.clientY - ct), f = F + (i.clientY - ct), c = U + (i.clientX - ut), w = getComputedStyle(z.value), g = parseInt(w.getPropertyValue("--com-item-border-width").trim()), d = parseInt(w.getPropertyValue("--group-tit-height").trim());
       switch (vt) {
         case "top-left":
           if (y.height = l < x.itemMinHeight ? x.itemMinHeight : l > G("top") ? G("top") : l, y.y = l < x.itemMinHeight ? F + q - x.itemMinHeight : l > G("top") ? Z : f, y.width = r < x.itemMinWidth ? x.itemMinWidth : r > G("left") ? G("left") : r, y.x = r < x.itemMinWidth ? U + K - x.itemMinWidth : r > G("left") ? m : c, y.isGroup === !0) {
@@ -423,7 +423,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
       }
     };
     le(() => {
-      St.observe(b.value);
+      St.observe(z.value);
     });
     const St = new ResizeObserver((i) => {
       Ut(B === i[0].contentRect.width ? null : i[0].contentRect.width, Dt === i[0].contentRect.height ? null : i[0].contentRect.height);
@@ -439,7 +439,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
             gt(r);
           }
       }), e !== null ? Bt(() => {
-        const r = b.value.getBoundingClientRect().width / e, l = getComputedStyle(b.value), f = parseInt(l.getPropertyValue("--com-item-border-width").trim()), c = parseInt(l.getPropertyValue("--group-tit-height").trim());
+        const r = z.value.getBoundingClientRect().width / e, l = getComputedStyle(z.value), f = parseInt(l.getPropertyValue("--com-item-border-width").trim()), c = parseInt(l.getPropertyValue("--group-tit-height").trim());
         u.value.forEach((w) => {
           if (w.width *= r, w.height *= r, w.x *= r, w.y *= r, w.isGroup === !0) {
             const g = w.width - 2 * f, d = w.height - 2 * f - (w.groupTit ? c : 0);
@@ -486,7 +486,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
       }
       if (t !== !0)
         if (delete r.x, delete r.y, e) {
-          const f = getComputedStyle(b.value), c = parseInt(f.getPropertyValue("--com-item-border-width").trim());
+          const f = getComputedStyle(z.value), c = parseInt(f.getPropertyValue("--com-item-border-width").trim());
           Tt(r, l[0].groupData, l[0].width - 2 * c);
         } else
           u.value.length === 0 ? (r.x = 0, r.y = 0) : Tt(r, u.value, B);
@@ -534,7 +534,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
       if (i !== null) {
         const t = B ? i / B : 1;
         B = i;
-        const r = getComputedStyle(b.value), l = parseInt(r.getPropertyValue("--com-item-border-width").trim()), f = parseInt(r.getPropertyValue("--group-tit-height").trim());
+        const r = getComputedStyle(z.value), l = parseInt(r.getPropertyValue("--com-item-border-width").trim()), f = parseInt(r.getPropertyValue("--group-tit-height").trim());
         wt || (u.value.forEach((c) => {
           if (c.width *= t, c.height *= t, c.x *= t, c.y *= t, c.isGroup === !0) {
             const w = c.width - 2 * l, g = c.height - 2 * l - (c.groupTit ? f : 0);
@@ -557,7 +557,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
           delete e.showPop;
         });
       }), window.removeEventListener("click", nt);
-    }, R = z(!1), Xt = (i) => {
+    }, R = b(!1), Xt = (i) => {
       const e = u.value.findIndex((t) => t.id === i);
       if (e !== -1)
         u.value[e].checked = !0, u.value[e].disabled = !0, R.value = !0, J("showGroup", R.value);
@@ -565,7 +565,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
         try {
         } catch {
         }
-    }, bt = () => {
+    }, zt = () => {
       R.value = !1, u.value.forEach((i) => {
         delete i.checked, delete i.disabled, i.groupData && i.groupData.forEach((e) => {
           delete e.checked, delete e.disabled;
@@ -617,11 +617,11 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
       t.forEach((o) => {
         o.inGroupId || (o.inGroupId = r.id), o.groupW = o.width / f, o.groupH = o.height / w, o.groupX = o.x / f, o.groupY = o.y / w, o.isObstacle = o.x + o.width === f && o.y === 0;
       });
-      const g = getComputedStyle(b.value), d = parseInt(g.getPropertyValue("--com-item-border-width").trim());
+      const g = getComputedStyle(z.value), d = parseInt(g.getPropertyValue("--com-item-border-width").trim());
       return r.width = f + 2 * d, r.height = w + 2 * d, r.groupData = [...t], r;
     }, Qt = () => {
       Bt(() => {
-        const i = getComputedStyle(b.value), e = parseInt(i.getPropertyValue("--com-item-border-width").trim()), t = parseInt(i.getPropertyValue("--group-tit-height").trim());
+        const i = getComputedStyle(z.value), e = parseInt(i.getPropertyValue("--com-item-border-width").trim()), t = parseInt(i.getPropertyValue("--group-tit-height").trim());
         u.value.filter((r) => r.isGroup === !0).forEach((r) => {
           const l = r.width - 2 * e, f = r.height - 2 * e - (r.groupTit ? t : 0);
           r.groupData.forEach((c) => {
@@ -641,8 +641,8 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
           j(r.id);
         }), yt(t), Y();
       }
-      bt();
-    }, zt = (i, e) => {
+      zt();
+    }, bt = (i, e) => {
       const t = u.value.filter((r) => r.id === e)[0];
       if (t) {
         const r = t.groupData.filter((l) => l.id === i)[0];
@@ -670,7 +670,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
       const t = u.value.filter((r) => r.id === e)[0];
       if (t) {
         if (!t.groupTit || !i) {
-          const l = getComputedStyle(b.value), f = parseInt(l.getPropertyValue("--group-tit-height").trim());
+          const l = getComputedStyle(z.value), f = parseInt(l.getPropertyValue("--group-tit-height").trim());
           t.groupTit && !i && (t.height -= f), !t.groupTit && i && (t.height += f);
         }
         t.groupTit = i;
@@ -684,20 +684,17 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
         try {
         } catch {
         }
-    }, jt = () => {
-      const i = I(u.value);
-      return i.forEach((e) => {
-        delete e.showPop, e.groupData && e.groupData.forEach((t) => {
-          delete t.showPop;
-        });
-      }), { data: i, width: B };
-    };
+    }, jt = () => (u.value.forEach((i) => {
+      delete i.showPop, i.groupData && i.groupData.forEach((e) => {
+        delete e.showPop;
+      });
+    }), { data: I(u.value), width: B });
     return ie(() => {
-      St.unobserve(b.value), window.removeEventListener("click", nt);
-    }), V({ init: Ft, addItem: yt, deleteItem: j, updateItem: gt, openGroup: Xt, closeGroup: bt, changeGroupBorder: Qt, addGroup: Zt, removeGroupItem: zt, removeGroup: st, changeGroupTit: mt, getData: jt }), (i, e) => (E(), D("div", {
+      St.unobserve(z.value), window.removeEventListener("click", nt);
+    }), V({ init: Ft, addItem: yt, deleteItem: j, updateItem: gt, openGroup: Xt, closeGroup: zt, changeGroupBorder: Qt, addGroup: Zt, removeGroupItem: bt, removeGroup: st, changeGroupTit: mt, getData: jt }), (i, e) => (E(), D("div", {
       class: "vue-drag-component-plus",
       ref_key: "pageRef",
-      ref: b
+      ref: z
     }, [
       X("div", {
         class: "content-box",
@@ -762,7 +759,7 @@ const oe = ["onMousedown"], ne = { class: "com-item-box" }, se = ["title"], ae =
                     }, () => [
                       X("div", {
                         class: "setting-box-pop-item",
-                        onClick: (c) => zt(l.id, l.inGroupId)
+                        onClick: (c) => bt(l.id, l.inGroupId)
                       }, "移出组合", 8, he),
                       X("div", {
                         class: "setting-box-pop-item",
