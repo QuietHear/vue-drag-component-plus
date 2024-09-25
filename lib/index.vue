@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-25 15:18:32
+ * @LastEditTime: 2024-09-25 17:40:18
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -1090,6 +1090,13 @@ const deleteItem = (id, pid = null) => {
 const updateItem = (obj) => {
   if (obj.id) {
     const item = deepCopy(obj);
+    // 删除多余浮窗信息
+    delete item.showPop;
+    if (item.groupData) {
+      item.groupData.forEach(one => {
+        delete one.showPop;
+      });
+    }
     let index = -1;
     const pArr = comData.value.filter(one => one.id === item.inGroupId);
     if (item.inGroupId) {
