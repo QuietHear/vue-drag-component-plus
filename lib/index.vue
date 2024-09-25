@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-09-20 15:36:47
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-09-25 15:18:32
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -1040,6 +1040,17 @@ const addItem = (obj, pid = null, keepPosition = false) => {
     pArr[0].groupData.push(item);
     const result = dealGroupSize(pArr[0].groupData, pArr[0]);
     updateItem(result);
+    // 递归解除重叠
+    const deepDown = (obj) => {
+      const lin = comData.value.filter(one => one.id !== obj.id)
+        .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+        .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+      lin.forEach(one => {
+        one.y = obj.y + obj.height;
+        deepDown(one);
+      });
+    };
+    deepDown(result);
   } else {
     comData.value.push(item);
   }
