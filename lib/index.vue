@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-12 17:07:40
+ * @LastEditTime: 2024-10-12 17:19:08
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -236,7 +236,7 @@ const deepCopy = (obj) => {
     }
     return result;
   } else {
-    return obj
+    return obj;
   }
 };
 // 计算当前应该生效的缩放key
