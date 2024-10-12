@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-25 17:40:18
+ * @LastEditTime: 2024-10-12 17:07:40
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -229,11 +229,15 @@ const props = defineProps({
 });
 // 深拷贝
 const deepCopy = (obj) => {
-  let result = obj instanceof Array ? [] : {};
-  for (let key in obj) {
-    result[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
+  if (typeof obj === 'object' && !isVNode(obj) && obj !== null && !obj instanceof Date) {
+    let result = obj instanceof Array ? [] : {};
+    for (let key in obj) {
+      result[key] = typeof obj[key] === 'object' && !isVNode(obj[key]) && obj[key] !== null && !obj[key] instanceof Date ? deepCopy(obj[key]) : obj[key];
+    }
+    return result;
+  } else {
+    return obj
   }
-  return result;
 };
 // 计算当前应该生效的缩放key
 const dealResizeKeys = () => {
