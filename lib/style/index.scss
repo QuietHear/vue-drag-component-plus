@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-18 09:53:17
+ * @LastEditTime: 2024-10-19 10:13:40
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -68,7 +68,6 @@
     position     : absolute;
     background   : var(--com-item-bg);
     border       : var(--com-item-border-width) var(--com-item-border-type) var(--com-item-border-color);
-    box-shadow   : var(--com-item-shadow-x) var(--com-item-shadow-y) var(--com-item-shadow-blur) var(--com-item-shadow-spread) var(--com-item-shadow-color);
     border-radius: var(--com-item-border-radius);
     box-sizing   : border-box;
     user-select  : none;
@@ -81,7 +80,7 @@
     &.is-move,
     &.is-drag,
     &:hover {
-      z-index: 2;
+      z-index: 3;
 
       &::after {
         content      : '';
@@ -98,7 +97,7 @@
     }
 
     &.on-top {
-      z-index: 3;
+      z-index: 4;
     }
 
     &.no-hover {
@@ -114,7 +113,7 @@
       height    : 100%;
       box-sizing: border-box;
       position  : relative;
-      z-index   : 5;
+      z-index   : 6;
 
       &:hover {
         >.setting-box {
@@ -352,6 +351,18 @@
         right : calc(0px - var(--com-item-border-width));
         cursor: se-resize;
       }
+    }
+  }
+
+  .shadow-bg {
+    position     : absolute;
+    box-shadow   : var(--com-item-shadow-x) var(--com-item-shadow-y) var(--com-item-shadow-blur) var(--com-item-shadow-spread) var(--com-item-shadow-color);
+    border-radius: var(--com-item-border-radius);
+    box-sizing   : border-box;
+    z-index      : 0;
+
+    &.is-move {
+      z-index: 2;
     }
   }
 

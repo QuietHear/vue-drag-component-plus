@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-19 09:38:37
+ * @LastEditTime: 2024-10-19 15:49:12
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -113,6 +113,13 @@
           </div>
         </template>
       </div>
+      <!-- shadow阴影 -->
+      <div :class="['shadow-bg', item.move ? 'is-move' : '']" :style="{
+        width: item.width + 'px',
+        height: item.height + 'px',
+        top: item.y + 'px',
+        left: item.x + 'px'
+      }" v-for="(item, index) in comData" :key="index"></div>
       <!-- 拖拽背景占位 -->
       <div class="drag-bg" :style="{
         width: dragBg.width + 'px',
@@ -358,7 +365,7 @@ const dragIng = (e) => {
   const moveX = resultX - comData.value[dragSrc].x;
   const moveY = resultY - comData.value[dragSrc].y;
   // 移动方向
-  const direction = `${moveX > 0 ? 'right' : moveX < 0 ? 'left' : ''}_${moveY > 0 ? 'bottom' : moveY < 0 ? 'top' : ''}`;
+  const direction = `${moveX > 3 ? 'right' : moveX < -3 ? 'left' : ''}_${moveY > 0 ? 'bottom' : moveY < 0 ? 'top' : ''}`;
   comData.value[dragSrc].x = resultX;
   comData.value[dragSrc].y = resultY;
   dealAuxiliary(comData.value[dragSrc]);
@@ -366,7 +373,6 @@ const dragIng = (e) => {
   let obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
     .filter(item => (item.x < resultX && (item.x + item.width) > resultX) || item.x === resultX || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)))
     .filter(item => (item.y < resultY && (item.y + item.height) > resultY) || item.y === resultY || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height))));
-  console.log(obstacleArr, 'obstacleArr');
   if (obstacleArr.length === 0) {
     dragBg.value.x = resultX;
     dragBg.value.y = resultY;
@@ -374,7 +380,6 @@ const dragIng = (e) => {
   // 与其他组件有重叠 
   // TODO 未考虑static的情况
   else {
-    console.log(direction, 'direction');
     if (direction.indexOf('top') !== -1) {
       obstacleArr = obstacleArr.filter(item => item.y < dragBg.value.y);
       // 修复保持上方元素底部在一条水平线上
@@ -471,11 +476,23 @@ const dragIng = (e) => {
         .filter(item => (item.y < resultY && (item.y + item.height) > resultY) || item.y === resultY || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height))));
     }
     if (direction.indexOf('bottom') !== -1) {
-      const maxY = Math.max(...obstacleArr.map(item => (item.y + item.height)));
-      if ((maxY - (resultY + comData.value[dragSrc].height)) >= -7 && (maxY - (resultY + comData.value[dragSrc].height)) < 7) {
+      // 上移需要的最小Y
+      let linYArr = 0;
+      obstacleArr.forEach(item => {
+        // 上方阻碍
+        const topArr = comData.value.filter(one => one.move !== true)
+          .filter(one => (one.x < item.x && (one.x + one.width) > item.x) || one.x === item.x || (one.x > item.x && one.x < (item.x + item.width)))
+          .filter(one => (one.y + one.height) < item.y);
+        if (topArr.length > 0) {
+          linYArr = Math.max(...topArr.map(one => (one.y + one.height)));
+        }
+      });
+      const maxY = linYArr + (Math.max(...obstacleArr.map(item => (item.height + item.y))) - Math.min(...obstacleArr.map(item => item.y)));
+      const needMove = Math.min(...obstacleArr.map(item => item.y)) - linYArr;
+      if (resultY >= maxY) {
         let moveBg = true;
         obstacleArr.filter(item => item.y > dragBg.value.y).forEach(item => {
-          item.y -= comData.value[dragSrc].height;
+          item.y -= needMove;
           comData.value.filter(one => one.id === item.id)[0].y = item.y;
           // 先把自己下移到不会接触的地方
           const lin = comData.value.filter(one => one.move !== true && one.id !== item.id)
@@ -503,7 +520,7 @@ const dragIng = (e) => {
         });
         dragBg.value.x = resultX;
         if (moveBg) {
-          dragBg.value.y = maxY - comData.value[dragSrc].height;
+          dragBg.value.y = maxY;
         }
         // 重置接触元素
         obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
@@ -911,6 +928,8 @@ const dealSpace = () => {
       }
     }
   };
+  // 给顶部加间距
+  comData.value.forEach(item => item.y += props.ySpace);
 };
 // 初始化
 onMounted(() => {
@@ -1077,7 +1096,6 @@ const deleteItem = (id, pid = null) => {
     if (pid) {
       pArr[0].groupData.splice(index, 1);
       if (pArr[0].groupData.length === 1) {
-        console.log(1111);
         removeGroup(pid);
       } else {
         const result = dealGroupSize(pArr[0].groupData, pArr[0]);
