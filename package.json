@@ -1,7 +1,7 @@
 {
   "name": "vue-drag-component-plus",
   "description": "拖拽卡片布局组件 vue3版组件",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "author": "aFei <1106728884@qq.com>",
   "license": "MIT",
   "main": "dist/vue-drag-component-plus.umd.js",
@@ -30,7 +30,7 @@
   "repository": "https://github.com/QuietHear/vue-drag-component-plus",
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
-    "element-plus": "^2.7.8",
+    "element-plus": "^2.8.4",
     "sass": "^1.77.8",
     "unplugin-auto-import": "^0.18.2",
     "vite": "^4.3.9",

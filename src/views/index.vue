@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-20 09:34:48
+ * @LastEditTime: 2024-10-18 16:43:17
 */
 <template>
   <div class="demo">
@@ -35,7 +35,8 @@
         </div>
       </div>
       <el-dialog v-model="pop" title="设置组合标题" width="420px">
-        <el-form :model="popMsg">
+        <!-- W3C标准 当form中只有一个输入框时，回车就是提交 -->
+        <el-form :model="popMsg" @submit.native.prevent>
           <el-form-item prop="title" label="标题">
             <el-input v-model.trim="popMsg.title" placeholder="请输入" />
           </el-form-item>

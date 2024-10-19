@@ -74,7 +74,11 @@
 
 * `--group-tit-color`：#000;-->组合标题颜色
 
-* `--group-tit-size`：16px;-->组合标题高度
+* `--group-tit-size`：16px;-->组合标题大小
+
+* `--group-tit-bold`：normal;-->组合标题粗细
+
+* `--group-tit-style`：normal;-->组合标题斜体
 
 * `--group-tit-height`：24px;-->组合标题高度
 

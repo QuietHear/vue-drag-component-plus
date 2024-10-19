@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-18 17:38:18
+ * @LastEditTime: 2024-10-19 09:38:37
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -366,6 +366,7 @@ const dragIng = (e) => {
   let obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
     .filter(item => (item.x < resultX && (item.x + item.width) > resultX) || item.x === resultX || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)))
     .filter(item => (item.y < resultY && (item.y + item.height) > resultY) || item.y === resultY || (item.y > resultY && item.y < (resultY + comData.value[dragSrc].height))));
+  console.log(obstacleArr, 'obstacleArr');
   if (obstacleArr.length === 0) {
     dragBg.value.x = resultX;
     dragBg.value.y = resultY;
@@ -373,6 +374,7 @@ const dragIng = (e) => {
   // 与其他组件有重叠 
   // TODO 未考虑static的情况
   else {
+    console.log(direction, 'direction');
     if (direction.indexOf('top') !== -1) {
       obstacleArr = obstacleArr.filter(item => item.y < dragBg.value.y);
       // 修复保持上方元素底部在一条水平线上
@@ -1075,6 +1077,7 @@ const deleteItem = (id, pid = null) => {
     if (pid) {
       pArr[0].groupData.splice(index, 1);
       if (pArr[0].groupData.length === 1) {
+        console.log(1111);
         removeGroup(pid);
       } else {
         const result = dealGroupSize(pArr[0].groupData, pArr[0]);
@@ -1367,7 +1370,6 @@ const removeGroupItem = (id, pid) => {
 const removeGroup = (id) => {
   const lin = comData.value.filter(item => item.id === id)[0];
   if (lin) {
-    deleteItem(lin.id);
     lin.groupData.forEach(item => {
       delete item.inGroupId;
       delete item.groupW;
@@ -1379,6 +1381,8 @@ const removeGroup = (id) => {
       item.y += lin.y;
       addItem(item, null, true);
     });
+    // 先删除的话，后面的会移动上去
+    deleteItem(lin.id);
     dealBg();
   } else {
     try {
