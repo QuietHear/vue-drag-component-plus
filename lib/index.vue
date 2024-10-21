@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2024-10-19 15:49:12
+* @LastEditors: aFei
+* @LastEditTime: 2024-10-21 14:59:14
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -74,7 +74,7 @@
             v-if="!item.isGroup && item.notGroup !== true && isGrouping">
           </div>
           <!-- 设置弹窗入口 -->
-          <div class="setting-box" :style="{ display: item.showPop ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
+          <div :class="['setting-box', item.isGroup === true ? 'only-g' : '']" :style="{ display: item.showPop ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
             v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
             <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
           </div>
@@ -168,6 +168,11 @@ const props = defineProps({
     default: () => {
       return [];
     }
+  },
+  // 顶部组件添加ySpace间距
+  addFirstSpace: {
+    type: Boolean,
+    default: false
   },
   // 预览模式
   seeModel: {
@@ -928,8 +933,10 @@ const dealSpace = () => {
       }
     }
   };
-  // 给顶部加间距
-  comData.value.forEach(item => item.y += props.ySpace);
+  if (props.addFirstSpace) {
+    // 给顶部加间距
+    comData.value.forEach(item => item.y += props.ySpace);
+  }
 };
 // 初始化
 onMounted(() => {

@@ -56,6 +56,22 @@
 
 * `--setting-icon-color`：#000;-->设置按钮的颜色
 
+* `--setting-icon-color-act`：#0068ff;-->设置按钮的激活颜色
+
+* `--setting-icon-top`：5px;-->设置按钮的top
+
+* `--setting-icon-group-color`：#fff;-->组合的设置按钮的颜色
+
+* `--setting-icon-group-top`：1px;-->组合的设置按钮的top
+
+* `--setting-icon-group-width`：28px;-->组合的设置按钮的宽度
+
+* `--setting-icon-group-height`：20px;-->组合的设置按钮的高度
+
+* `--setting-icon-group-bg`：#0068FF;-->组合的设置按钮的背景色
+
+* `--setting-icon-group-radius`：0px 4px 4px 0px;-->组合的设置按钮的边框倒角
+
 * `--setting-icon-size`：12px;-->设置按钮的字体大小
 
 * `--setting-pop-width`：80px;-->设置弹窗的宽度
@@ -91,6 +107,11 @@
 * `insertResizeKeys`：包含收缩方向-->Array;非必传;默认*['topLeft', 'top', 'topRight', 'left', 'right', 'bottomLeft', 'bottom', 'bottomRight']*
 
 * `excludeResizeKeys`：排除收缩方向-->Array;非必传;默认*[]*
+
+* `addFirstSpace`：顶部组件添加ySpace间距-->Boolean;非必传;默认*false*
+>
+	开启后顶部也会添加上间距逻辑，顶部对齐会比较麻烦
+>
 
 * `seeModel`：预览模式-->Boolean;非必传;默认*false*
 

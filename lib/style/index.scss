@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-19 10:13:40
+ * @LastEditTime: 2024-10-21 16:15:57
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -21,6 +21,14 @@
   --com-item-shadow-color    : #000;
   --move-bg                  : rgba(245, 108, 108, .8);
   --setting-icon-color       : #000;
+  --setting-icon-color-act   : #0068ff;
+  --setting-icon-top         : 5px;
+  --setting-icon-group-color : #fff;
+  --setting-icon-group-top   : 1px;
+  --setting-icon-group-width : 28px;
+  --setting-icon-group-height: 20px;
+  --setting-icon-group-bg    : #0068FF;
+  --setting-icon-group-radius: 0px 4px 4px 0px;
   --setting-icon-size        : 12px;
   --setting-pop-width        : 80px;
   --setting-pop-special-width: 120px;
@@ -159,17 +167,16 @@
         position: relative;
 
         &.full {
-          height: 100%;
-
-          .com-item-box-child.else {
-            .setting-box {
-              right: 20px;
-            }
-
-            .setting-box-pop {
-              right: 25px;
-            }
-          }
+          height      : 100%;
+          // 组合中右上角元素
+          // .com-item-box-child.else {
+          //   .setting-box {
+          //     right: 20px;
+          //   }
+          //   .setting-box-pop {
+          //     right: 25px;
+          //   }
+          // }
         }
 
         .com-item-box-child {
@@ -253,18 +260,34 @@
       .setting-box {
         position   : absolute;
         right      : 5px;
-        top        : 5px;
+        top        : var(--setting-icon-top);
         line-height: 1;
         cursor     : pointer;
         color      : var(--setting-icon-color);
         font-size  : var(--setting-icon-size);
         display    : none;
         z-index    : 10;
+
+        &:hover {
+          color: var(--setting-icon-color-act);
+        }
+
+        &.only-g {
+          right          : calc(-1 * var(--setting-icon-group-width));
+          width          : var(--setting-icon-group-width);
+          height         : var(--setting-icon-group-height);
+          background     : var(--setting-icon-group-bg);
+          border-radius  : var(--setting-icon-group-radius);
+          color          : var(--setting-icon-group-color);
+          top            : var(--setting-icon-group-top);
+          align-items    : center;
+          justify-content: center;
+        }
       }
 
       .setting-box-pop {
         position     : absolute;
-        top          : calc(var(--setting-icon-size) + 11px);
+        top          : calc(var(--setting-icon-size) + var(--setting-icon-top) + 6px);
         right        : 10px;
         width        : var(--setting-pop-width);
         background   : #FFFFFF;
@@ -276,6 +299,7 @@
 
         &.special {
           width: var(--setting-pop-special-width);
+          right: calc(-1 * var(--setting-icon-group-width) / 2);
         }
 
         .setting-box-pop-item {
