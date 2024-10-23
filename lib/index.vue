@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-10-21 14:59:14
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-10-23 14:02:33
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -19,7 +19,9 @@
           top: item.y + 'px',
           left: item.x + 'px'
         }" v-for="(item, index) in comData" :key="index"
-        @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)">
+        @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
+        @mouseenter="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : showGroupSet($event, item)"
+        @mouseleave="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : hideGroupSet($event, item)">
         <div class="com-item-box">
           <!-- 组件内容区 -->
           <!-- 组合内容 -->
@@ -74,7 +76,8 @@
             v-if="!item.isGroup && item.notGroup !== true && isGrouping">
           </div>
           <!-- 设置弹窗入口 -->
-          <div :class="['setting-box', item.isGroup === true ? 'only-g' : '']" :style="{ display: item.showPop ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
+          <div :class="['setting-box', item.isGroup === true ? 'only-g' : '']"
+            :style="{ display: item.showPop || item.showSet ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
             v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
             <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
           </div>
@@ -452,27 +455,39 @@ const dragIng = (e) => {
       }
       // 不行再下移 
       else {
-        const minY = Math.min(...obstacleArr.map(item => item.y));
+        // 下移需要的最大Y
+        let linYArr = 0;
+        obstacleArr.forEach(item => {
+          // 下方阻碍
+          const bottomArr = comData.value.filter(one => one.move !== true)
+            .filter(one => (one.x < item.x && (one.x + one.width) > item.x) || one.x === item.x || (one.x > item.x && one.x < (item.x + item.width)))
+            .filter(one => one.y > (item.y + item.height));
+          if (bottomArr.length > 0) {
+            linYArr = Math.min(...bottomArr.map(one => one.y));
+          }
+        });
+        const minY = linYArr === 0 ? 0 : (linYArr - dragBg.value.height - (Math.max(...obstacleArr.map(item => (item.y + item.height))) - Math.min(...obstacleArr.map(item => item.y))));
+        const needMove = minY === 0 ? (resultY + dragBg.value.height - Math.min(...obstacleArr.map(item => item.y))) : (linYArr - Math.min(...obstacleArr.map(item => item.y)) - (Math.max(...obstacleArr.map(item => (item.y + item.height))) - Math.min(...obstacleArr.map(item => item.y))));
         // 进行下移
-        if ((minY - resultY) >= -7 && (minY - resultY) < 7) {
+        if (minY === 0 || resultY <= minY) {
           // 下移无阻拦
           obstacleArr.filter(item => item.y < dragBg.value.y).forEach(item => {
-            item.y += comData.value[dragSrc].height;
+            item.y += needMove;
             comData.value.filter(one => one.id === item.id)[0].y = item.y;
-            // 递归解除下移出现的重叠（把接触的元素全部下移）
-            const deepDown = (obj) => {
-              const lin = comData.value.filter(one => one.move !== true && one.id !== obj.id)
-                .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
-                .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
-              lin.forEach(one => {
-                one.y = obj.y + obj.height;
-                deepDown(one);
-              });
-            };
-            deepDown(item);
           });
           dragBg.value.x = resultX;
-          dragBg.value.y = minY;
+          dragBg.value.y = resultY;
+          // 递归解除下移出现的重叠（把接触的元素全部下移）
+          const deepDown = (obj) => {
+            const lin = comData.value.filter(one => one.move !== true && one.id !== obj.id)
+              .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+              .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+            lin.forEach(one => {
+              one.y = obj.y + obj.height;
+              deepDown(one);
+            });
+          };
+          comData.value.forEach(item => deepDown(item));
         }
       }
       // 重置接触元素
@@ -506,27 +521,27 @@ const dragIng = (e) => {
           if (lin.length > 0) {
             item.y = Math.max(...lin.map(one => (one.y + one.height)));
             comData.value.filter(one => one.id === item.id)[0].y = item.y;
-            // 递归解除下移出现的重叠（把接触的元素全部下移）
-            const deepDown = (obj) => {
-              const lin = comData.value.filter(one => one.id !== obj.id)
-                .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
-                .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
-              lin.forEach(one => {
-                one.y = obj.y + obj.height;
-                if (one.move === true) {
-                  dragBg.value.y = one.y;
-                  moveBg = false;
-                }
-                deepDown(one);
-              });
-            };
-            deepDown(item);
           }
         });
         dragBg.value.x = resultX;
         if (moveBg) {
           dragBg.value.y = maxY;
         }
+        // 递归解除下移出现的重叠（把接触的元素全部下移）
+        const deepDown = (obj) => {
+          const lin = comData.value.filter(one => one.id !== obj.id)
+            .filter(one => (one.x < obj.x && (one.x + one.width) > obj.x) || one.x === obj.x || (one.x > obj.x && one.x < (obj.x + obj.width)))
+            .filter(one => (one.y < obj.y && (one.y + one.height) > obj.y) || one.y === obj.y || (one.y > obj.y && one.y < (obj.y + obj.height)));
+          lin.forEach(one => {
+            one.y = obj.y + obj.height;
+            if (one.move === true) {
+              dragBg.value.y = one.y;
+              moveBg = false;
+            }
+            deepDown(one);
+          });
+        };
+        comData.value.forEach(item => deepDown(item));
         // 重置接触元素
         obstacleArr = deepCopy(comData.value.filter(item => item.move !== true)
           .filter(item => (item.x < resultX && (item.x + item.width) > resultX) || item.x === resultX || (item.x > resultX && item.x < (resultX + comData.value[dragSrc].width)))
@@ -996,6 +1011,14 @@ const init = (historyData = [], historyWidth = null) => {
     initIng = false;
   }, 500);
 };
+// 显示组合设置按钮
+const showGroupSet = (e, item) => {
+  item.showSet = true;
+};
+// 隐藏组合设置按钮
+const hideGroupSet = (e, item) => {
+  delete item.showSet;
+};
 // 计算新增的一个组件的x,y（画布中数量至少一个）
 const dealMoreItemXY = (item, dataArr, maxWidth) => {
   const yTopArr = dataArr.map(item => item.y);
@@ -1124,9 +1147,11 @@ const updateItem = (obj) => {
     const item = deepCopy(obj);
     // 删除多余浮窗信息
     delete item.showPop;
+    delete item.showSet;
     if (item.groupData) {
       item.groupData.forEach(one => {
         delete one.showPop;
+        delete one.showSet;
       });
     }
     let index = -1;
@@ -1452,9 +1477,11 @@ const changeGroupTit = (tit = '', id) => {
 const getData = () => {
   comData.value.forEach(item => {
     delete item.showPop;
+    delete item.showSet;
     if (item.groupData) {
       item.groupData.forEach(one => {
         delete one.showPop;
+        delete one.showSet;
       });
     }
   });
