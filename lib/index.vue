@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-23 14:02:33
+ * @LastEditTime: 2024-10-25 10:57:55
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -156,7 +156,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
-const emit = defineEmits(["showGroup", "updateChecked", "showTitPop"]);
+const emit = defineEmits(["dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "updateChecked", "showTitPop"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -356,6 +356,7 @@ const dragStart = (e, index) => {
   closeSettingPop();
   dragSrc = index;
   dragBg.value = deepCopy(comData.value[dragSrc]);
+  emit('dragStart', deepCopy(comData.value[dragSrc]));
   comData.value[dragSrc].move = true;
   dealAuxiliary(comData.value[dragSrc]);
   const parentNode = closest(e.target, '.com-item');
@@ -616,6 +617,7 @@ const dragIng = (e) => {
     }
   }
   dealBg(false);
+  emit('dragIng', deepCopy(comData.value[dragSrc]));
 };
 // 结束拖拽
 const dragEnd = () => {
@@ -624,9 +626,10 @@ const dragEnd = () => {
   delete comData.value[dragSrc].move;
   comData.value[dragSrc].x = dragBg.value.x;
   comData.value[dragSrc].y = dragBg.value.y;
-  dragSrc = null;
   dealAuxiliary(null);
   dealBg();
+  emit('dragEnd', deepCopy(comData.value[dragSrc]));
+  dragSrc = null;
 };
 // 计算拖拽最大边界
 const dealDragMax = (direction) => {
@@ -673,6 +676,7 @@ let rightObstacle = 0;
 const resizeStart = (e, obj, direction) => {
   closeSettingPop();
   resizeObj = obj;
+  emit('resizeStart', deepCopy(resizeObj));
   resizeDirection = direction;
   startX = e.clientX;
   startY = e.clientY;
@@ -863,16 +867,18 @@ const resizeIng = (e) => {
     }
   }
   dealBg(false);
+  emit('resizeIng', deepCopy(resizeObj));
 };
 // 结束收缩
 const resizeEnd = (e) => {
   delete resizeObj.drag;
   resizeDirection = '';
-  resizeObj = null;
   dealAuxiliary(null);
   window.removeEventListener('mousemove', resizeIng);
   window.removeEventListener('mouseup', resizeEnd);
   dealBg();
+  emit('resizeEnd', deepCopy(resizeObj));
+  resizeObj = null;
 };
 // 计算收缩最大边界
 const dealResizeMax = (direction) => {
@@ -1383,8 +1389,11 @@ const addGroup = () => {
     });
     addItem(result);
     dealBg();
+    closeGroup();
+    return deepCopy(result);
   }
   closeGroup();
+  return null;
 };
 // 从组合中移出某一项
 const removeGroupItem = (id, pid) => {

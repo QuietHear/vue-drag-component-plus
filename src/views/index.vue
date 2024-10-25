@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-18 16:43:17
+ * @LastEditTime: 2024-10-25 11:00:23
 */
 <template>
   <div class="demo">
@@ -76,7 +76,8 @@ const chengGroup = (type) => {
   groupNum.value = 1;
 };
 const addGroup = () => {
-  comRef.value.addGroup();
+  const res = comRef.value.addGroup();
+  console.log(res, 'res');
 };
 const closeGroup = () => {
   comRef.value.closeGroup();
