@@ -671,7 +671,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
         }, t = xt(i, e);
         return t.groupData.forEach((o) => {
           et(o.id);
-        }), gt(t), Y(), kt(), G(t);
+        }), gt(t), Y(), kt(), G(u.value.filter((o) => o.id === t.id)[0]);
       }
       return kt(), null;
     }, $t = (i, e) => {

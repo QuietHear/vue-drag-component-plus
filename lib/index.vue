@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2024-10-25 10:57:55
+* @LastEditors: aFei
+* @LastEditTime: 2024-10-25 14:14:51
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -1390,7 +1390,7 @@ const addGroup = () => {
     addItem(result);
     dealBg();
     closeGroup();
-    return deepCopy(result);
+    return deepCopy(comData.value.filter(item => item.id === result.id)[0]);
   }
   closeGroup();
   return null;
