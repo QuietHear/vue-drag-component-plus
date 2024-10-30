@@ -1,4 +1,4 @@
-import { resolveComponent as re, openBlock as D, createBlock as Et, resolveDynamicComponent as Vt, normalizeProps as At, mergeProps as vt, withCtx as oe, createElementBlock as S, toDisplayString as B, watch as Bt, ref as V, onMounted as ae, onBeforeUnmount as se, createElementVNode as X, Fragment as lt, renderList as Dt, unref as M, normalizeClass as Z, normalizeStyle as A, withModifiers as T, createCommentVNode as H, renderSlot as it, createVNode as Nt, createTextVNode as ne, isVNode as _t, nextTick as bt } from "vue";
+import { resolveComponent as re, openBlock as D, createBlock as Et, resolveDynamicComponent as Vt, normalizeProps as At, mergeProps as vt, withCtx as oe, createElementBlock as S, toDisplayString as B, watch as Bt, ref as V, onMounted as ae, onBeforeUnmount as se, createElementVNode as R, Fragment as lt, renderList as Dt, unref as M, normalizeClass as Z, normalizeStyle as A, withModifiers as T, createCommentVNode as H, renderSlot as it, createVNode as Nt, createTextVNode as ne, isVNode as _t, nextTick as bt } from "vue";
 const Kt = {
   __name: "icon",
   props: {
@@ -9,8 +9,8 @@ const Kt = {
   },
   setup(E) {
     return (N, St) => {
-      const R = re("el-icon");
-      return E.iconObj.type === "custom" ? (D(), Et(Vt(E.iconObj.icon), At(vt({ key: 0 }, E.iconObj.attrs)), null, 16)) : E.iconObj.type === "el" ? (D(), Et(R, At(vt({ key: 1 }, E.iconObj.attrs)), {
+      const X = re("el-icon");
+      return E.iconObj.type === "custom" ? (D(), Et(Vt(E.iconObj.icon), At(vt({ key: 0 }, E.iconObj.attrs)), null, 16)) : E.iconObj.type === "el" ? (D(), Et(X, At(vt({ key: 1 }, E.iconObj.attrs)), {
         default: oe(() => [
           (D(), Et(Vt(E.iconObj.icon)))
         ]),
@@ -112,9 +112,9 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
       }
     }
   },
-  emits: ["dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "updateChecked", "showTitPop"],
+  emits: ["dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop"],
   setup(E, { expose: N, emit: St }) {
-    const R = St, v = E, G = (i) => {
+    const X = St, v = E, G = (i) => {
       if (typeof i == "object" && !_t(i) && i !== null && !(i instanceof Date)) {
         let e = i instanceof Array ? [] : {};
         for (let t in i)
@@ -155,7 +155,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
     };
     let I = null, It = null, Wt = null;
     const P = V({}), Ut = (i, e) => {
-      ht(), I = e, P.value = G(u.value[I]), R("dragStart", G(u.value[I])), u.value[I].move = !0, m(u.value[I]);
+      ht(), I = e, P.value = G(u.value[I]), X("dragStart", G(u.value[I])), u.value[I].move = !0, m(u.value[I]);
       const t = qt(i.target, ".com-item");
       It = i.clientX - t.offsetLeft, Wt = i.clientY - t.offsetTop, window.addEventListener("mousemove", Ht), window.addEventListener("mouseup", Pt);
     }, Ht = (i) => {
@@ -276,9 +276,9 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
           P.value.x = o;
         }
       }
-      Y(!1), R("dragIng", G(u.value[I]));
+      Y(!1), X("dragIng", G(u.value[I]));
     }, Pt = () => {
-      window.removeEventListener("mousemove", Ht), window.removeEventListener("mouseup", Pt), delete u.value[I].move, u.value[I].x = P.value.x, u.value[I].y = P.value.y, m(null), Y(), R("dragEnd", G(u.value[I])), I = null;
+      window.removeEventListener("mousemove", Ht), window.removeEventListener("mouseup", Pt), delete u.value[I].move, u.value[I].x = P.value.x, u.value[I].y = P.value.y, m(null), Y(), X("dragEnd", G(u.value[I])), I = null;
     }, K = (i) => {
       switch (i) {
         case "top":
@@ -293,7 +293,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
     };
     let p = null, wt = "", dt = 0, ct = 0, q = 0, U = 0, J = 0, Q = 0, j = 0, yt = 0, tt = 0, pt = 0;
     const F = (i, e, t) => {
-      ht(), p = e, R("resizeStart", G(p)), wt = t, dt = i.clientX, ct = i.clientY, q = e.width, U = e.height, J = e.y, Q = e.x, p.drag = !0, m(p);
+      ht(), p = e, X("resizeStart", G(p)), wt = t, dt = i.clientX, ct = i.clientY, q = e.width, U = e.height, J = e.y, Q = e.x, p.drag = !0, m(p);
       const o = u.value.filter((n) => n.static === !0 && (n.x < e.x ? n.x + n.width >= e.x : n.x <= e.x + e.width)), l = u.value.filter((n) => n.static === !0 && (n.y < e.y ? n.y + n.height >= e.y : n.y <= e.y + e.height)), f = o.filter((n) => n.y + n.height <= e.y).map((n) => n.y + n.height);
       f.length > 0 ? j = Math.max(...f) : j = 0;
       const c = o.filter((n) => n.y >= e.y + e.height).map((n) => n.y);
@@ -388,9 +388,9 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
             d(s);
           });
       }
-      Y(!1), R("resizeIng", G(p));
+      Y(!1), X("resizeIng", G(p));
     }, Ct = (i) => {
-      delete p.drag, wt = "", m(null), window.removeEventListener("mousemove", zt), window.removeEventListener("mouseup", Ct), Y(), R("resizeEnd", G(p)), p = null;
+      delete p.drag, wt = "", m(null), window.removeEventListener("mousemove", zt), window.removeEventListener("mouseup", Ct), Y(), X("resizeEnd", G(p)), p = null;
     }, W = (i) => {
       switch (i) {
         case "top":
@@ -582,7 +582,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
         delete e.showPop, e.groupData && e.groupData.forEach((t) => {
           delete t.showPop;
         });
-      }), i.showPop = !0, window.addEventListener("click", ht));
+      }), X("openSetMenu", G(i)), i.showPop = !0, window.addEventListener("click", ht));
     }, ht = () => {
       u.value.forEach((i) => {
         delete i.showPop, i.groupData && i.groupData.forEach((e) => {
@@ -592,7 +592,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
     }, $ = V(!1), Lt = (i) => {
       const e = u.value.findIndex((t) => t.id === i);
       if (e !== -1)
-        u.value[e].checked = !0, u.value[e].disabled = !0, $.value = !0, R("showGroup", $.value);
+        u.value[e].checked = !0, u.value[e].disabled = !0, $.value = !0, X("showGroup", $.value);
       else
         try {
         } catch {
@@ -602,9 +602,9 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
         delete i.checked, delete i.disabled, i.groupData && i.groupData.forEach((e) => {
           delete e.checked, delete e.disabled;
         });
-      }), R("showGroup", $.value);
+      }), X("showGroup", $.value);
     }, jt = (i) => {
-      i.checked = !i.checked, R("updateChecked", u.value.filter((e) => e.checked).length);
+      i.checked = !i.checked, X("updateChecked", u.value.filter((e) => e.checked).length);
     }, xt = (i, e) => {
       const t = G(i), o = G(e);
       t.sort((a, y) => {
@@ -728,7 +728,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
       ref_key: "pageRef",
       ref: L
     }, [
-      X("div", {
+      R("div", {
         class: "content-box",
         ref_key: "boxRef",
         ref: Ft
@@ -746,14 +746,14 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
           onMouseenter: (l) => E.seeModel || M($) || M(I) || M(p) || !t.isGroup ? null : Qt(l, t),
           onMouseleave: (l) => E.seeModel || M($) || M(I) || M(p) || !t.isGroup ? null : Zt(l, t)
         }, [
-          X("div", ue, [
+          R("div", ue, [
             t.isGroup ? (D(), S(lt, { key: 0 }, [
               t.groupTit ? (D(), S("div", {
                 key: 0,
                 class: "group-item-tit",
                 title: t.groupTit
               }, B(t.groupTit), 9, de)) : H("", !0),
-              X("div", {
+              R("div", {
                 class: Z(["group-item-content", t.groupTit ? "" : "full"])
               }, [
                 (D(!0), S(lt, null, Dt(t.groupData, (l, f) => (D(), S("div", {
@@ -766,10 +766,10 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
                   }),
                   key: f
                 }, [
-                  X("div", ce, [
+                  R("div", ce, [
                     it(i.$slots, "item", { data: l }, () => [
-                      X("p", null, B(Math.round(l.width * 100) / 100) + "," + B(Math.round(l.height * 100) / 100), 1),
-                      X("p", null, B(Math.round(l.x * 100) / 100) + "," + B(Math.round(l.y * 100) / 100), 1)
+                      R("p", null, B(Math.round(l.width * 100) / 100) + "," + B(Math.round(l.height * 100) / 100), 1),
+                      R("p", null, B(Math.round(l.x * 100) / 100) + "," + B(Math.round(l.y * 100) / 100), 1)
                     ])
                   ]),
                   !E.seeModel && !M($) && M(I) === null && M(p) === null ? (D(), S("div", {
@@ -791,11 +791,11 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
                     it(i.$slots, "setPopNormal", {
                       data: G(l)
                     }, () => [
-                      X("div", {
+                      R("div", {
                         class: "setting-box-pop-item",
                         onClick: (c) => $t(l.id, l.inGroupId)
                       }, "移出组合", 8, ye),
-                      X("div", {
+                      R("div", {
                         class: "setting-box-pop-item",
                         onClick: (c) => et(l.id, l.inGroupId)
                       }, "删除", 8, pe)
@@ -805,8 +805,8 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
               ], 2)
             ], 64)) : (D(), S("div", ge, [
               it(i.$slots, "item", { data: t }, () => [
-                X("p", null, B(Math.round(t.width * 100) / 100) + "," + B(Math.round(t.height * 100) / 100), 1),
-                X("p", null, B(Math.round(t.x * 100) / 100) + "," + B(Math.round(t.y * 100) / 100), 1)
+                R("p", null, B(Math.round(t.width * 100) / 100) + "," + B(Math.round(t.height * 100) / 100), 1),
+                R("p", null, B(Math.round(t.x * 100) / 100) + "," + B(Math.round(t.y * 100) / 100), 1)
               ])
             ])),
             !t.isGroup && t.notGroup !== !0 && M($) ? (D(), S("div", {
@@ -837,9 +837,9 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
                 E.hideTit ? H("", !0) : (D(), S("div", {
                   key: 0,
                   class: "setting-box-pop-item",
-                  onClick: (l) => R("showTitPop", t.groupTit, t.id)
+                  onClick: (l) => X("showTitPop", t.groupTit, t.id)
                 }, " 设置组合标题", 8, xe)),
-                X("div", {
+                R("div", {
                   class: "setting-box-pop-item",
                   onClick: (l) => ut(t.id)
                 }, "解除组合", 8, ve)
@@ -852,7 +852,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
                   class: "setting-box-pop-item",
                   onClick: (l) => Lt(t.id)
                 }, "组合", 8, we)) : H("", !0),
-                X("div", {
+                R("div", {
                   class: "setting-box-pop-item",
                   onClick: (l) => et(t.id)
                 }, "删除", 8, Me)
@@ -922,7 +922,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
             left: M(P).x + "px"
           })
         }, null, 4)) : H("", !0),
-        X("div", {
+        R("div", {
           class: "height-bg",
           style: A({ height: (M(rt) > 0 ? +(M(rt) + (E.seeModel ? E.seeModelMinBg : 220)) : M(rt)) + "px" })
         }, null, 4),

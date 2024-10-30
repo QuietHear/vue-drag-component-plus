@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-10-25 14:14:51
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-10-30 16:46:05
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -156,7 +156,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
-const emit = defineEmits(["dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "updateChecked", "showTitPop"]);
+const emit = defineEmits(["dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -1224,14 +1224,15 @@ const changePageSize = (width, height) => {
 // 展开一个菜单
 const openSettingPop = (item) => {
   if (!item.showPop) {
-    comData.value.forEach(item => {
-      delete item.showPop;
-      if (item.groupData) {
-        item.groupData.forEach(one => {
-          delete one.showPop;
+    comData.value.forEach(one => {
+      delete one.showPop;
+      if (one.groupData) {
+        one.groupData.forEach(two => {
+          delete two.showPop;
         });
       }
     });
+    emit('openSetMenu', deepCopy(item));
     item.showPop = true;
     window.addEventListener('click', closeSettingPop);
   }
