@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-30 16:46:05
+ * @LastEditTime: 2024-10-31 16:34:29
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -96,7 +96,7 @@
           </div>
         </div>
         <!-- 缩放触发器 -->
-        <template v-if="!seeModel && !isGrouping && !item.move && item.static !== true && item.resizable !== false">
+        <template v-if="!seeModel && !isGrouping && !item.showPop && !item.move && item.static !== true && item.resizable !== false">
           <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
             v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
           <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"

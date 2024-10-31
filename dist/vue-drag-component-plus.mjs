@@ -859,7 +859,7 @@ const he = ["onMousedown", "onMouseenter", "onMouseleave"], ue = { class: "com-i
               ])
             ], 34)) : H("", !0)
           ]),
-          !E.seeModel && !M($) && !t.move && t.static !== !0 && t.resizable !== !1 ? (D(), S(lt, { key: 0 }, [
+          !E.seeModel && !M($) && !t.showPop && !t.move && t.static !== !0 && t.resizable !== !1 ? (D(), S(lt, { key: 0 }, [
             M(_).indexOf("topLeft") !== -1 ? (D(), S("div", {
               key: 0,
               class: "resize-line top-left",
