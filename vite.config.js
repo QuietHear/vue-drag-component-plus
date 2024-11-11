@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-12 17:07:00
+ * @LastEditTime: 2024-11-11 09:55:13
 */
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -48,7 +48,8 @@ export default defineConfig(({ command, mode }) => ({
   css: {
     preprocessorOptions: {
       scss: {
-        javascriptEnabled: true
+        javascriptEnabled: true,
+        silenceDeprecations: ["legacy-js-api"]
       }
     }
   }
