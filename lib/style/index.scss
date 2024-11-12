@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-21 16:15:57
+ * @LastEditTime: 2024-11-12 10:20:20
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -131,7 +131,9 @@
 
       > {
         ::-webkit-scrollbar {
-          width: 3px;
+          // 设置的比拖动元素区域大3px（可以自行调整），防止被盖住无法拖动
+          width : 8px;
+          height: 8px;
         }
 
         ::-webkit-scrollbar-track {
@@ -139,7 +141,7 @@
         }
 
         ::-webkit-scrollbar-thumb {
-          border-radius   : 3px;
+          border-radius   : 4px;
           background-color: rgba(144, 147, 153, .3);
         }
       }
@@ -190,7 +192,9 @@
 
           > {
             ::-webkit-scrollbar {
-              width: 3px;
+              // 设置的比拖动元素区域大3px（可以自行调整），防止被盖住无法拖动
+              width : 8px;
+              height: 8px;
             }
 
             ::-webkit-scrollbar-track {
@@ -198,7 +202,7 @@
             }
 
             ::-webkit-scrollbar-thumb {
-              border-radius   : 3px;
+              border-radius   : 4px;
               background-color: rgba(144, 147, 153, .3);
             }
           }
