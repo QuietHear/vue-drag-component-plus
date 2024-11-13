@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-10-31 16:34:29
+ * @LastEditTime: 2024-11-13 13:44:09
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -96,7 +96,8 @@
           </div>
         </div>
         <!-- 缩放触发器 -->
-        <template v-if="!seeModel && !isGrouping && !item.showPop && !item.move && item.static !== true && item.resizable !== false">
+        <template
+          v-if="!seeModel && !isGrouping && !item.showPop && !item.move && item.static !== true && item.resizable !== false">
           <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
             v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
           <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
@@ -1403,7 +1404,8 @@ const removeGroupItem = (id, pid) => {
     const lin = pObj.groupData.filter(item => item.id === id)[0];
     if (lin) {
       if (pObj.groupData.length === 2) {
-        removeGroup(pid);
+        const result = removeGroup(pid);
+        return result;
       } else {
         delete lin.inGroupId;
         delete lin.groupW;
@@ -1414,22 +1416,31 @@ const removeGroupItem = (id, pid) => {
         deleteItem(lin.id, pObj.id);
         addItem(lin);
         dealBg();
+        return [deepCopy(comData.value.filter(item => item.id === id)[0])];
       }
     } else {
       try {
         console.error('未找到组件');
-      } catch (error) { }
+      } catch (error) {
+      } finally {
+        return [];
+      }
     }
   } else {
     try {
       console.error('未找到组件');
-    } catch (error) { }
+    } catch (error) {
+    } finally {
+      return [];
+    }
   }
 };
 // 解除组合
 const removeGroup = (id) => {
   const lin = comData.value.filter(item => item.id === id)[0];
   if (lin) {
+    // 记录子组件id
+    let ids = [];
     lin.groupData.forEach(item => {
       delete item.inGroupId;
       delete item.groupW;
@@ -1439,15 +1450,24 @@ const removeGroup = (id) => {
       delete lin.isObstacle;
       item.x += lin.x;
       item.y += lin.y;
+      ids.push(item.id);
       addItem(item, null, true);
     });
     // 先删除的话，后面的会移动上去
     deleteItem(lin.id);
     dealBg();
+    let result = [];
+    ids.forEach(item => {
+      result.push(deepCopy(comData.value.filter(one => one.id === item)[0]));
+    });
+    return result;
   } else {
     try {
       console.error('未找到组件');
-    } catch (error) { }
+    } catch (error) {
+    } finally {
+      return [];
+    }
   }
 };
 // 设置组合标题
