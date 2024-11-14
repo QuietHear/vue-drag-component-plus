@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-11-13 13:44:09
+ * @LastEditTime: 2024-11-14 14:33:32
 */
 <template>
   <div class="vue-drag-component-plus" ref="pageRef">
@@ -1353,8 +1353,9 @@ const dealGroupSize = (childData, parentObj) => {
   });
   const styles = getComputedStyle(pageRef.value);
   const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+  const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   result.width = maxWidth + 2 * borderWidth;
-  result.height = maxHeight + 2 * borderWidth;
+  result.height = maxHeight + 2 * borderWidth + (result.groupTit ? titHeight : 0);
   result.groupData = [...childList];
   return result;
 };
