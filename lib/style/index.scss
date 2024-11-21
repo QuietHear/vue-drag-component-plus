@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-11-12 10:20:20
+ * @LastEditTime: 2024-11-20 14:57:57
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@
   --setting-icon-group-width : 28px;
   --setting-icon-group-height: 20px;
   --setting-icon-group-bg    : #0068FF;
-  --setting-icon-group-radius: 0px 4px 4px 0px;
+  --setting-icon-group-radius: 4px;
   --setting-icon-size        : 12px;
   --setting-pop-width        : 80px;
   --setting-pop-special-width: 120px;
@@ -281,11 +281,23 @@
           width          : var(--setting-icon-group-width);
           height         : var(--setting-icon-group-height);
           background     : var(--setting-icon-group-bg);
-          border-radius  : var(--setting-icon-group-radius);
+          border-radius  : 0px var(--setting-icon-group-radius) var(--setting-icon-group-radius) 0px;
           color          : var(--setting-icon-group-color);
           top            : var(--setting-icon-group-top);
           align-items    : center;
           justify-content: center;
+
+          &.l {
+            right        : unset;
+            left         : calc(-1 * var(--setting-icon-group-width));
+            border-radius: var(--setting-icon-group-radius) 0px 0px var(--setting-icon-group-radius);
+          }
+
+          &.c {
+            right        : unset;
+            left         : 0;
+            border-radius: 0;
+          }
         }
       }
 

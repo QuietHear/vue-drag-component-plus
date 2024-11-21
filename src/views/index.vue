@@ -3,31 +3,37 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2024-10-25 11:00:23
+* @LastEditors: aFei
+* @LastEditTime: 2024-11-21 15:37:20
 */
 <template>
   <div class="demo">
     <el-scrollbar>
       <div class="con-box">
-        <div class="con">
-          <template v-if="isGroup">
-            <em>已选择 {{ groupNum }} 个组件</em>
-            <el-button @click="addGroup" type="primary">合并</el-button>
-            <el-button @click="closeGroup">取消</el-button>
-          </template>
-          <template v-else>
+        <div class="group-con" v-if="isGroup">
+          <em>已选择 {{ groupNum }} 个组件</em>
+          <el-button @click="addGroup" type="primary">合并</el-button>
+          <el-button @click="closeGroup">取消</el-button>
+        </div>
+        <template v-else>
+          <div class="con">
             <template v-if="!seeModel">
               <el-button @click="addOne" type="primary">添加</el-button>
               <el-input-number v-model="ySpace" :min="0" controls-position="right" title="纵向间距" />
+              <el-button @click="initTest" type="primary" plain>init</el-button>
             </template>
             <el-button @click="getData">查看当前数据</el-button>
+          </div>
+          <div class="con">
             <el-switch v-model="seeModel" active-text="仅查看" inactive-text="正常" />
-          </template>
-        </div>
+            <em>基准宽度：{{ baseWidth ? (baseWidth + 'px') : 'null' }}；</em>
+            <em>当前缩放：{{ nowScle }}</em>
+          </div>
+        </template>
         <div class="box">
           <vueDragComponentPlus ref="comRef" :ySpace="ySpace" @showGroup="chengGroup"
-            @updateChecked="num => groupNum = num" @showTitPop="showTitPop" :seeModel="seeModel">
+            @updateChecked="num => groupNum = num" @showTitPop="showTitPop" @baseWidthInit="num => baseWidth = num"
+            @changeScle="num => nowScle = num" :seeModel="seeModel">
             <template #item="{ data }">
               <test v-if="data.x === 0 && data.y === 0" />
             </template>
@@ -57,6 +63,8 @@ import test from "./components/test.vue";
 const comRef = ref(null);
 const ySpace = ref(12);
 const seeModel = ref(false);
+const baseWidth = ref(null);
+const nowScle = ref(1);
 const addOne = () => {
   comRef.value.addItem({
     width: 100,
@@ -65,6 +73,9 @@ const addOne = () => {
       s: 1
     }
   });
+};
+const initTest = () => {
+  comRef.value.init([]);
 };
 const getData = () => {
   console.log(comRef.value.getData());

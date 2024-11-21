@@ -4,10 +4,10 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-11-14 14:33:32
+ * @LastEditTime: 2024-11-21 15:41:25
 */
 <template>
-  <div class="vue-drag-component-plus" ref="pageRef">
+  <div class="vue-drag-component-plus" :style="{ '--css-scle': nowScle }" ref="pageRef">
     <!-- 滚动区 -->
     <div class="content-box" ref="boxRef">
       <!-- 组件项 -->
@@ -76,7 +76,8 @@
             v-if="!item.isGroup && item.notGroup !== true && isGrouping">
           </div>
           <!-- 设置弹窗入口 -->
-          <div :class="['setting-box', item.isGroup === true ? 'only-g' : '']"
+          <div
+            :class="['setting-box', item.isGroup === true ? item.btnPosition === 'right' ? 'only-g' : item.btnPosition === 'left' ? 'only-g l' : item.btnPosition === 'center' ? 'only-g c' : '' : '']"
             :style="{ display: item.showPop || item.showSet ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
             v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
             <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
@@ -157,7 +158,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
-const emit = defineEmits(["dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop"]);
+const emit = defineEmits(["baseWidthInit", "changeScle", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -274,9 +275,23 @@ const resizeKeys = ref([]);
 dealResizeKeys();
 // 画布ref
 const pageRef = ref(null);
-// 画布宽度
+// 基准宽度
+let baseWidth = null;
+// 设置基准宽度
+const setBaseWidth = (val) => {
+  baseWidth = val;
+  emit('baseWidthInit', baseWidth);
+};
+// 当前缩放比例
+const nowScle = ref(1);
+// 设置缩放比例
+const setNowScle = (val) => {
+  nowScle.value = val;
+  emit('changeScle', nowScle.value);
+};
+// 当前画布宽度
 let pageWidth = null;
-// 画布高度
+// 当前画布高度
 let pageHeight = null;
 // 画布容器ref
 const boxRef = ref(null);
@@ -900,10 +915,12 @@ const dealResizeMax = (direction) => {
 };
 // 计算占位高度
 const dealBg = (deal = true) => {
-  // 修正横向间距
+  // 修正横向间距，计算组合按钮位置
   if (deal === true) {
     dealSpace();
+    dealGroupSetting();
   }
+  // 计算背景高度
   const arr = comData.value.map(item => (item.y + item.height));
   if (arr.length > 0) {
     heightBg.value = Math.max(...arr);
@@ -921,43 +938,72 @@ watch(
 );
 // 修正横向间距
 const dealSpace = () => {
+  // 按y从小到大排列
   const copyData = deepCopy(comData.value).sort((a, b) => {
     const x = a.y;
     const y = b.y;
     return x - y;
   });
-  // 此处最少是一个组件
+  // 删除间隙
   for (let i = 0; i < copyData.length; i++) {
-    if (i === 0 && copyData[i].y > 0) {
-      const space = copyData[i].y;
-      for (let x = i; x < copyData.length; x++) {
-        copyData[x].y -= space;
-        comData.value.filter(item => item.id === copyData[x].id)[0].y = copyData[x].y;
-      }
-    }
-    if (i < (copyData.length - 1) && copyData[i + 1].y > (copyData[i].y + copyData[i].height)) {
-      const linTop = deepCopy(copyData.slice(0, i + 1));
-      if (copyData[i + 1].y > Math.max(...linTop.map(item => (item.y + item.height)))) {
-        const space = copyData[i + 1].y - Math.max(...linTop.map(item => (item.y + item.height)));
-        for (let x = (i + 1); x < copyData.length; x++) {
-          copyData[x].y -= space;
-          comData.value.filter(item => item.id === copyData[x].id)[0].y = copyData[x].y;
-        }
-      }
+    // 在上面阻碍的元素
+    const topArr = copyData.filter(item => (item.x <= copyData[i].x && (item.x + item.width) > copyData[i].x) || (item.x > copyData[i].x && item.x < (copyData[i].x + copyData[i].width)))
+      .filter(item => item.y + item.height <= copyData[i].y);
+    if (topArr.length > 0) {
+      copyData[i].y = Math.max(...topArr.map(item => (item.y + item.height)));
+    } else {
+      copyData[i].y = 0;
     }
   };
+  // 按y从小到大排列
+  copyData.sort((a, b) => {
+    const x = a.y;
+    const y = b.y;
+    return x - y;
+  });
+  // 重置间隙(向后一个处理，所以不用处理最后一个)
   for (let i = 0; i < (copyData.length - 1); i++) {
-    let index = copyData.findIndex(item => item.y === (copyData[i].y + copyData[i].height));
-    if (index !== -1) {
-      for (let x = index; x < copyData.length; x++) {
-        copyData[x].y += props.ySpace;
-        comData.value.filter(item => item.id === copyData[x].id)[0].y = copyData[x].y;
-      }
-    }
+    // 记录相邻的id
+    const ids = [];
+    const deep = (obj) => {
+      const arr = copyData.filter(item => (item.x <= obj.x && (item.x + item.width) > obj.x) || (item.x > obj.x && item.x < (obj.x + obj.width)))
+        .filter(item => item.y === (obj.y + obj.height));
+      arr.forEach(item => {
+        ids.push(item.id);
+        deep(item);
+      });
+    };
+    deep(copyData[i]);
+    ids.forEach(item => {
+      copyData.filter(one => one.id === item)[0].y += props.ySpace;
+    });
   };
+  // 原数据赋值
+  copyData.forEach(item => {
+    comData.value.filter(one => one.id === item.id)[0].y = item.y;
+  });
+  // 给顶部加间距
   if (props.addFirstSpace) {
-    // 给顶部加间距
     comData.value.forEach(item => item.y += props.ySpace);
+  }
+};
+// 计算组合按钮位置
+const dealGroupSetting = () => {
+  const arr = comData.value.filter(item => item.isGroup === true);
+  if (arr.length > 0) {
+    const styles = getComputedStyle(pageRef.value);
+    const settingWidth = parseInt(styles.getPropertyValue('--setting-icon-group-width').trim());
+    arr.forEach(item => {
+      if ((item.x + item.width + settingWidth) > pageWidth) {
+        if ((item.x - settingWidth < 0)) {
+          item.btnPosition = 'center';
+        } else {
+          item.btnPosition = 'left';
+        }
+      } else {
+        item.btnPosition = 'right';
+      }
+    });
   }
 };
 // 初始化
@@ -974,20 +1020,21 @@ let initIng = false;
 // 初始化画布
 const init = (historyData = [], historyWidth = null) => {
   comData.value = deepCopy(historyData);
-  // 数据修复，这里只考虑减少的情况，新增必须走addItem方法
+  // 组合数据修复，这里只考虑减少的情况，新增必须走addItem方法
   comData.value.filter(item => item.isGroup === true).forEach(item => {
-    if (item.isGroup === true) {
-      if (item.groupData.length < 2) {
-        removeGroup(item.id);
-      } else {
-        const result = dealGroupSize(item.groupData, item);
-        updateItem(result);
-      }
+    if (item.groupData.length < 2) {
+      removeGroup(item.id);
+    } else {
+      const result = dealGroupSize(item.groupData, item);
+      updateItem(result);
     }
   });
-  if (historyWidth !== null) {
-    nextTick(() => {
-      const obj = pageRef.value.getBoundingClientRect();
+  initIng = true;
+  nextTick(() => {
+    const obj = pageRef.value.getBoundingClientRect();
+    if (historyWidth !== null) {
+      setBaseWidth(historyWidth);
+      setNowScle(obj.width / historyWidth);
       const multiple = obj.width / historyWidth;
       const styles = getComputedStyle(pageRef.value);
       const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
@@ -1009,14 +1056,15 @@ const init = (historyData = [], historyWidth = null) => {
         }
       });
       dealBg();
-    });
-  } else {
-    dealBg();
-  }
-  initIng = true;
-  setTimeout(() => {
-    initIng = false;
-  }, 500);
+    } else {
+      setBaseWidth(obj.width);
+      setNowScle(1);
+      dealBg();
+    }
+    setTimeout(() => {
+      initIng = false;
+    }, 500);
+  });
 };
 // 显示组合设置按钮
 const showGroupSet = (e, item) => {
@@ -1114,6 +1162,9 @@ const addItem = (obj, pid = null, keepPosition = false) => {
     };
     deepDown(result);
   } else {
+    if (comData.value.length === 0) {
+      setBaseWidth(pageWidth);
+    }
     comData.value.push(item);
   }
   dealBg();
@@ -1140,6 +1191,10 @@ const deleteItem = (id, pid = null) => {
       }
     } else {
       comData.value.splice(index, 1);
+      if (comData.value.length === 0) {
+        setBaseWidth(null);
+        setNowScle(1);
+      }
     }
     dealBg();
   } else {
@@ -1155,6 +1210,7 @@ const updateItem = (obj) => {
     // 删除多余浮窗信息
     delete item.showPop;
     delete item.showSet;
+    delete item.btnPosition;
     if (item.groupData) {
       item.groupData.forEach(one => {
         delete one.showPop;
@@ -1193,11 +1249,12 @@ const changePageSize = (width, height) => {
   if (width !== null) {
     const multiple = pageWidth ? (width / pageWidth) : 1;
     pageWidth = width;
-    const styles = getComputedStyle(pageRef.value);
-    const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
-    const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
     // 防止init时widh监听正好触发
     if (!initIng) {
+      setNowScle(baseWidth && pageWidth ? (width / baseWidth) : 1);
+      const styles = getComputedStyle(pageRef.value);
+      const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
+      const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
       comData.value.forEach(item => {
         item.width *= multiple;
         item.height *= multiple;
@@ -1509,6 +1566,7 @@ const getData = () => {
   comData.value.forEach(item => {
     delete item.showPop;
     delete item.showSet;
+    delete item.btnPosition;
     if (item.groupData) {
       item.groupData.forEach(one => {
         delete one.showPop;
@@ -1516,7 +1574,11 @@ const getData = () => {
       });
     }
   });
-  return { data: deepCopy(comData.value), width: pageWidth };
+  const data = deepCopy(comData.value);
+  data.forEach(item => {
+    delete item.btnPosition;
+  });
+  return { data, width: baseWidth };
 };
 onBeforeUnmount(() => {
   // 移除监听

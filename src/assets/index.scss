@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-09-10 11:32:41
+ * @LastEditTime: 2024-11-20 10:59:06
 */
 * {
   padding    : 0;
@@ -58,13 +58,22 @@ body,
 }
 
 .con-box {
-  .con {
+  .group-con {
+    height       : 74px;
     margin-bottom: 10px;
+    display      : flex;
+    align-items  : center;
 
     >em {
       margin-right  : 10px;
       vertical-align: middle;
     }
+  }
+
+  .con {
+    margin-bottom: 10px;
+    display      : flex;
+    align-items  : center;
 
     .el-input-number {
       vertical-align: middle;
@@ -73,11 +82,16 @@ body,
     }
 
     .el-switch {
-      margin-left: 12px;
+      margin-right: 12px;
+    }
+
+    >em {
+      line-height: 1;
+      vertical-align: middle;
     }
   }
 
   .box {
-    height: calc(100vh - 82px);
+    height: calc(100vh - 124px);
   }
 }
