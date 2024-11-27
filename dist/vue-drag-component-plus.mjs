@@ -455,9 +455,9 @@ const Pt = ["onMousedown", "onMouseenter", "onMouseleave"], It = { class: "com-i
         }
       }), He = !0, lt(() => {
         const e = T.value.getBoundingClientRect();
-        t !== null ? (xe(t), we(e.width / t), r.value.forEach((l) => {
+        t != null ? (xe(t), we(e.width / t)) : (xe(e.width), we(1)), r.value.forEach((l) => {
           se(l);
-        })) : (xe(e.width), we(1)), L(), setTimeout(() => {
+        }), L(), setTimeout(() => {
           He = !1;
         }, 500);
       });

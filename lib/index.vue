@@ -4,7 +4,7 @@
 */
 /*
 * @LastEditors: aFei
-* @LastEditTime: 2024-11-27 15:38:27
+* @LastEditTime: 2024-11-27 17:37:18
 */
 <template>
   <div class="vue-drag-component-plus" :style="{ '--css-scle': nowScle }" ref="pageRef">
@@ -1042,16 +1042,16 @@ const init = (historyData = [], historyWidth = null) => {
   initIng = true;
   nextTick(() => {
     const obj = pageRef.value.getBoundingClientRect();
-    if (historyWidth !== null) {
+    if (historyWidth !== null && historyWidth !== undefined) {
       setBaseWidth(historyWidth);
       setNowScle(obj.width / historyWidth);
-      comData.value.forEach(item => {
-        dealItemScleWH(item);
-      });
     } else {
       setBaseWidth(obj.width);
       setNowScle(1);
     }
+    comData.value.forEach(item => {
+      dealItemScleWH(item);
+    });
     dealBg();
     setTimeout(() => {
       initIng = false;
