@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-11-20 14:57:57
+ * @LastEditTime: 2024-11-22 10:50:40
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -316,6 +316,17 @@
         &.special {
           width: var(--setting-pop-special-width);
           right: calc(-1 * var(--setting-icon-group-width) / 2);
+          top  : calc(var(--setting-icon-group-height) + var(--setting-icon-group-top) + 2px);
+
+          &.l {
+            right: unset;
+            left : calc(-1 * var(--setting-icon-group-width) / 2);
+          }
+
+          &.c {
+            right: unset;
+            left : calc(var(--setting-icon-group-width) / 2);
+          }
         }
 
         .setting-box-pop-item {

@@ -4,7 +4,7 @@
 */
 /*
 * @LastEditors: aFei
-* @LastEditTime: 2024-11-21 15:37:20
+* @LastEditTime: 2024-11-26 13:52:08
 */
 <template>
   <div class="demo">
@@ -75,10 +75,111 @@ const addOne = () => {
   });
 };
 const initTest = () => {
-  comRef.value.init([]);
+  comRef.value.init([
+    {
+      width: 100,
+      height: 100,
+      detail: {
+        s: 1
+      },
+      id: "1732599286368",
+      y: 0,
+      x: 200
+    },
+    {
+      id: "1732599290360G",
+      isGroup: true,
+      groupTit: "",
+      width: 202,
+      height: 202,
+      groupData: [
+        {
+          detail: {
+            s: 1
+          },
+          id: "1732599285864",
+          x: 0,
+          y: 0,
+          inGroupId: "1732599290360G",
+          groupW: 0.5,
+          groupH: 0.5,
+          groupX: 0,
+          groupY: 0,
+          isObstacle: false,
+          width: 100,
+          height: 100
+        },
+        {
+          detail: {
+            s: 1
+          },
+          id: "1732599286144",
+          y: 0,
+          x: 100,
+          inGroupId: "1732599290360G",
+          groupW: 0.5,
+          groupH: 0.5,
+          groupX: 0.5,
+          groupY: 0,
+          isObstacle: false,
+          width: 100,
+          height: 100
+        },
+        {
+          detail: {
+            s: 1
+          },
+          id: "1732599292840",
+          inGroupId: "1732599290360G",
+          groupW: 0.5,
+          groupH: 0.5,
+          groupX: 0,
+          groupY: 0.5,
+          isObstacle: false,
+          x: 0,
+          y: 100,
+          width: 100,
+          height: 100
+        }
+      ],
+      y: 0,
+      x: 300
+    },
+    {
+      width: 100,
+      height: 100,
+      detail: {
+        s: 1
+      },
+      id: "1732599296656",
+      y: 0,
+      x: 0
+    },
+    {
+      width: 100,
+      height: 100,
+      detail: {
+        s: 1
+      },
+      id: "1732599297921",
+      y: 214,
+      x: 302
+    },
+    {
+      width: 100,
+      height: 100,
+      detail: {
+        s: 1
+      },
+      id: "1732599303688",
+      y: 0,
+      x: 581
+    }
+  ], 1000);
 };
-const getData = () => {
-  console.log(comRef.value.getData());
+const getData = async () => {
+  const res = await comRef.value.getData();
+  console.log(res);
 };
 const isGroup = ref(false);
 const groupNum = ref(0);
