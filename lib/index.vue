@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-11-27 17:37:18
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-11-28 13:32:16
 */
 <template>
   <div class="vue-drag-component-plus" :style="{ '--css-scle': nowScle }" ref="pageRef">
@@ -40,7 +40,7 @@
               }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
                 <!-- 内容 -->
                 <div class="com-item-box-content">
-                  <slot name="item" :data="one">
+                  <slot name="item" :data="outDataInit(one)">
                     <p>{{ Math.round(one.s_width * 100) / 100 }},{{ Math.round(one.s_height * 100) / 100 }}</p>
                     <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
                   </slot>
@@ -53,7 +53,7 @@
                 </div>
                 <!-- 设置弹窗 -->
                 <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
-                  <slot name="setPopNormal" :data="deepCopy(one)">
+                  <slot name="setPopNormal" :data="outDataInit(one)">
                     <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
                     <div class="setting-box-pop-item" @click="copyItem(one.id, one.inGroupId)">复制</div>
                     <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
@@ -65,7 +65,7 @@
           <!-- 普通内容 -->
           <template v-else>
             <div class="com-item-box-content">
-              <slot name="item" :data="item">
+              <slot name="item" :data="outDataInit(item)">
                 <p>{{ Math.round(item.s_width * 100) / 100 }},{{ Math.round(item.s_height * 100) / 100 }}</p>
                 <p>{{ Math.round(item.s_x * 100) / 100 }},{{ Math.round(item.s_y * 100) / 100 }}</p>
               </slot>
@@ -87,12 +87,12 @@
           <div
             :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'center' ? 'special c' : '' : '']"
             @mousedown.prevent.stop="null" v-if="item.showPop">
-            <slot name="setPopSpecial" :data="deepCopy(item)" v-if="item.isGroup === true">
+            <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
               <div class="setting-box-pop-item" @click="emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
                 设置组合标题</div>
               <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
             </slot>
-            <slot name="setPopNormal" :data="deepCopy(item)" v-else>
+            <slot name="setPopNormal" :data="outDataInit(item)" v-else>
               <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
               <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
               <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
@@ -296,6 +296,35 @@ const dealComStacking = (orginArr, filters = (arr) => arr, scle = false) => {
     comData.value.filter(one => one.id === item.id)[0][scle ? 's_y' : 'y'] = item[scle ? 's_y' : 'y'];
   });
 };
+// 抛出对象格式化
+const outDataInit = (obj) => {
+  const result = deepCopy(obj);
+  delete result.showPop;
+  delete result.showSet;
+  if (result.groupData) {
+    result.groupData.forEach(item => {
+      delete item.showPop;
+      delete item.showSet;
+      // 反推原始尺寸
+      dealGroupItemWH(item, result);
+      delete item.s_width;
+      delete item.s_height;
+      delete item.s_x;
+      delete item.s_y;
+    });
+  } else if (result.inGroupId) {
+    delete result.showPop;
+    delete result.showSet;
+    // 反推原始尺寸
+    dealGroupItemWH(result, comData.value.filter(item => item.id === result.inGroupId)[0]);
+  }
+  delete result.btnPosition;
+  delete result.s_width;
+  delete result.s_height;
+  delete result.s_x;
+  delete result.s_y;
+  return result;
+};
 // 计算当前应该生效的缩放key
 const dealResizeKeys = () => {
   props.insertResizeKeys.forEach(item => {
@@ -460,7 +489,7 @@ const dragStart = (e, index) => {
   closeSettingPop();
   dragSrc = index;
   dragBg.value = deepCopy(comData.value[dragSrc]);
-  emit('dragStart', deepCopy(comData.value[dragSrc]));
+  emit('dragStart', outDataInit(comData.value[dragSrc]));
   comData.value[dragSrc].move = true;
   dealAuxiliary(comData.value[dragSrc]);
   const parentNode = closest(e.target, '.com-item');
@@ -686,7 +715,7 @@ const dragIng = (e) => {
     dealItemScleReverseXY(item);
   });
   dealBg(false);
-  emit('dragIng', deepCopy(comData.value[dragSrc]));
+  emit('dragIng', outDataInit(comData.value[dragSrc]));
 };
 // 结束拖拽（缩放尺寸）
 const dragEnd = () => {
@@ -701,7 +730,7 @@ const dragEnd = () => {
     dealItemScleReverseXY(item);
   });
   dealBg();
-  emit('dragEnd', deepCopy(comData.value[dragSrc]));
+  emit('dragEnd', outDataInit(comData.value[dragSrc]));
   dragSrc = null;
 };
 // 计算拖拽最大边界（缩放尺寸）
@@ -749,7 +778,7 @@ let rightObstacle = 0;
 const resizeStart = (e, obj, direction) => {
   closeSettingPop();
   resizeObj = obj;
-  emit('resizeStart', deepCopy(resizeObj));
+  emit('resizeStart', outDataInit(resizeObj));
   resizeDirection = direction;
   startX = e.clientX;
   startY = e.clientY;
@@ -887,7 +916,7 @@ const resizeIng = (e) => {
     dealItemScleReverseXY(item);
   });
   dealBg(false);
-  emit('resizeIng', deepCopy(resizeObj));
+  emit('resizeIng', outDataInit(resizeObj));
 };
 // 结束收缩（缩放尺寸）
 const resizeEnd = (e) => {
@@ -897,7 +926,7 @@ const resizeEnd = (e) => {
   window.removeEventListener('mousemove', resizeIng);
   window.removeEventListener('mouseup', resizeEnd);
   dealBg();
-  emit('resizeEnd', deepCopy(resizeObj));
+  emit('resizeEnd', outDataInit(resizeObj));
   resizeObj = null;
 };
 // 计算收缩最大边界（缩放尺寸）
@@ -1189,9 +1218,9 @@ const copyItem = (id, pid = null, nid = null) => {
       addItem(obj);
     }
     if (pid) {
-      return deepCopy(comData.value.filter(item => item.id === pid)[0].groupData.filter(item => item.id === obj.id)[0]);
+      return outDataInit(comData.value.filter(item => item.id === pid)[0].groupData.filter(item => item.id === obj.id)[0]);
     } else {
-      return deepCopy(comData.value.filter(item => item.id === obj.id)[0]);
+      return outDataInit(comData.value.filter(item => item.id === obj.id)[0]);
     }
   } else {
     try {
@@ -1314,7 +1343,7 @@ const openSettingPop = (item) => {
         });
       }
     });
-    emit('openSetMenu', deepCopy(item));
+    emit('openSetMenu', outDataInit(item));
     item.showPop = true;
     window.addEventListener('click', closeSettingPop);
   }
@@ -1474,7 +1503,7 @@ const addGroup = () => {
     });
     addItem(result);
     closeGroup();
-    return deepCopy(comData.value.filter(item => item.id === result.id)[0]);
+    return outDataInit(comData.value.filter(item => item.id === result.id)[0]);
   } else {
     closeGroup();
     return null;
@@ -1500,7 +1529,7 @@ const removeGroupItem = (id, pid) => {
         delete lin.isObstacle;
         deleteItem(lin.id, pObj.id);
         addItem(lin);
-        return [deepCopy(comData.value.filter(item => item.id === id)[0])];
+        return [outDataInit(comData.value.filter(item => item.id === id)[0])];
       }
     } else {
       try {
