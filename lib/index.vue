@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-11-28 13:32:16
+ * @LastEditTime: 2024-11-29 10:05:47
 */
 <template>
   <div class="vue-drag-component-plus" :style="{ '--css-scle': nowScle }" ref="pageRef">
@@ -40,7 +40,7 @@
               }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
                 <!-- 内容 -->
                 <div class="com-item-box-content">
-                  <slot name="item" :data="outDataInit(one)">
+                  <slot name="item" :data="one">
                     <p>{{ Math.round(one.s_width * 100) / 100 }},{{ Math.round(one.s_height * 100) / 100 }}</p>
                     <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
                   </slot>
@@ -53,7 +53,7 @@
                 </div>
                 <!-- 设置弹窗 -->
                 <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
-                  <slot name="setPopNormal" :data="outDataInit(one)">
+                  <slot name="setPopNormal" :data="one">
                     <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
                     <div class="setting-box-pop-item" @click="copyItem(one.id, one.inGroupId)">复制</div>
                     <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
@@ -65,7 +65,7 @@
           <!-- 普通内容 -->
           <template v-else>
             <div class="com-item-box-content">
-              <slot name="item" :data="outDataInit(item)">
+              <slot name="item" :data="item">
                 <p>{{ Math.round(item.s_width * 100) / 100 }},{{ Math.round(item.s_height * 100) / 100 }}</p>
                 <p>{{ Math.round(item.s_x * 100) / 100 }},{{ Math.round(item.s_y * 100) / 100 }}</p>
               </slot>
@@ -87,12 +87,12 @@
           <div
             :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'center' ? 'special c' : '' : '']"
             @mousedown.prevent.stop="null" v-if="item.showPop">
-            <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
+            <slot name="setPopSpecial" :data="item" v-if="item.isGroup === true">
               <div class="setting-box-pop-item" @click="emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
                 设置组合标题</div>
               <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
             </slot>
-            <slot name="setPopNormal" :data="outDataInit(item)" v-else>
+            <slot name="setPopNormal" :data="item" v-else>
               <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
               <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
               <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
