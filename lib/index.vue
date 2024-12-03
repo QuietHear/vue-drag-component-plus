@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-11-29 10:05:47
+ * @LastEditTime: 2024-12-03 13:41:55
 */
 <template>
   <div class="vue-drag-component-plus" :style="{ '--css-scle': nowScle }" ref="pageRef">
@@ -547,12 +547,8 @@ const dragIng = (e) => {
         let topArr = [...obstacleArr];
         // 向上查找挨着的元素
         const topDeep = (obj) => {
-          const list = filterCrossXArr(deepCopy(comData.value.filter(item => item.move !== true && (item.s_y + item.s_height - obj.s_y) <= (num + 3) && (item.s_y + item.s_height - obj.s_y) >= 0)), obj, true);
+          const list = filterCrossXArr(deepCopy(comData.value.filter(item => item.move !== true && Math.abs(item.s_y + item.s_height - obj.s_y) <= 3)), obj, true);
           list.forEach(item => {
-            // 修正挨着但是仍然位置有偏差的
-            if ((item.s_y + item.s_height) !== obj.s_y) {
-              item.s_y = obj.s_y - item.s_height;
-            }
             if (topArr.findIndex(one => one.id === item.id) === -1) {
               topArr.push(item);
               topDeep(item);

@@ -1,4 +1,4 @@
-import { resolveComponent as bt, openBlock as w, createBlock as Ye, resolveDynamicComponent as et, normalizeProps as tt, mergeProps as me, withCtx as Et, createElementBlock as b, toDisplayString as V, watch as st, ref as A, onMounted as St, onBeforeUnmount as Dt, normalizeStyle as X, unref as f, createElementVNode as O, Fragment as ce, renderList as Re, normalizeClass as se, withModifiers as z, createCommentVNode as I, renderSlot as de, createVNode as ot, createTextVNode as Pt, isVNode as lt, nextTick as rt } from "vue";
+import { resolveComponent as bt, openBlock as w, createBlock as Ye, resolveDynamicComponent as et, normalizeProps as tt, mergeProps as Ce, withCtx as Et, createElementBlock as b, toDisplayString as V, watch as st, ref as A, onMounted as St, onBeforeUnmount as Dt, normalizeStyle as X, unref as f, createElementVNode as O, Fragment as ce, renderList as Re, normalizeClass as se, withModifiers as z, createCommentVNode as I, renderSlot as de, createVNode as ot, createTextVNode as Pt, isVNode as lt, nextTick as rt } from "vue";
 const it = {
   __name: "icon",
   props: {
@@ -10,22 +10,22 @@ const it = {
   setup(_) {
     return (B, Ae) => {
       const H = bt("el-icon");
-      return _.iconObj.type === "custom" ? (w(), Ye(et(_.iconObj.icon), tt(me({ key: 0 }, _.iconObj.attrs)), null, 16)) : _.iconObj.type === "el" ? (w(), Ye(H, tt(me({ key: 1 }, _.iconObj.attrs)), {
+      return _.iconObj.type === "custom" ? (w(), Ye(et(_.iconObj.icon), tt(Ce({ key: 0 }, _.iconObj.attrs)), null, 16)) : _.iconObj.type === "el" ? (w(), Ye(H, tt(Ce({ key: 1 }, _.iconObj.attrs)), {
         default: Et(() => [
           (w(), Ye(et(_.iconObj.icon)))
         ]),
         _: 1
-      }, 16)) : _.iconObj.type === "iconfont" ? (w(), b("i", me({
+      }, 16)) : _.iconObj.type === "iconfont" ? (w(), b("i", Ce({
         key: 2,
         class: ["icon iconfont", "icon-" + _.iconObj.icon]
-      }, _.iconObj.attrs), null, 16)) : (w(), b("i", me({
+      }, _.iconObj.attrs), null, 16)) : (w(), b("i", Ce({
         key: 3,
         class: _.iconObj.type
       }, _.iconObj.attrs), V(_.iconObj.icon), 17));
     };
   }
 };
-const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-item-box" }, Ct = ["title"], mt = { class: "com-item-box-content" }, Wt = ["onClick"], Ht = ["onClick"], Ot = ["onClick"], zt = {
+const It = ["onMousedown", "onMouseenter", "onMouseleave"], mt = { class: "com-item-box" }, Gt = ["title"], Ct = { class: "com-item-box-content" }, Wt = ["onClick"], Ht = ["onClick"], Ot = ["onClick"], zt = {
   key: 1,
   class: "com-item-box-content"
 }, Tt = ["onClick"], Yt = ["onClick"], Rt = ["onClick"], At = ["onClick"], Xt = ["onClick"], Lt = ["onClick"], $t = ["onMousedown"], Vt = ["onMousedown"], Bt = ["onMousedown"], Nt = ["onMousedown"], Kt = ["onMousedown"], Ft = ["onMousedown"], qt = ["onMousedown"], Ut = ["onMousedown"], Jt = {
@@ -114,16 +114,16 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
   },
   emits: ["baseWidthInit", "changeScle", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop"],
   setup(_, { expose: B, emit: Ae }) {
-    const H = Ae, d = _, G = (s) => {
+    const H = Ae, d = _, m = (s) => {
       if (typeof s == "object" && !lt(s) && s !== null && !(s instanceof Date)) {
         let t = s instanceof Array ? [] : {};
         for (let e in s)
-          t[e] = typeof s[e] == "object" && !lt(s[e]) && s[e] !== null && !(s[e] instanceof Date) ? G(s[e]) : s[e];
+          t[e] = typeof s[e] == "object" && !lt(s[e]) && s[e] !== null && !(s[e] instanceof Date) ? m(s[e]) : s[e];
         return t;
       } else
         return s;
     }, xe = (s, t, e = !1) => nt(K(s, t, e), t, e), K = (s, t, e = !1) => s.filter((l) => l[e ? "s_x" : "x"] <= t[e ? "s_x" : "x"] && l[e ? "s_x" : "x"] + l[e ? "s_width" : "width"] > t[e ? "s_x" : "x"] || l[e ? "s_x" : "x"] > t[e ? "s_x" : "x"] && l[e ? "s_x" : "x"] < t[e ? "s_x" : "x"] + t[e ? "s_width" : "width"]), nt = (s, t, e = !1) => s.filter((l) => l[e ? "s_y" : "y"] <= t[e ? "s_y" : "y"] && l[e ? "s_y" : "y"] + l[e ? "s_height" : "height"] > t[e ? "s_y" : "y"] || l[e ? "s_y" : "y"] > t[e ? "s_y" : "y"] && l[e ? "s_y" : "y"] < t[e ? "s_y" : "y"] + t[e ? "s_height" : "height"]), Q = (s, t = (l) => l, e = !1) => {
-      const l = G(r.value), o = G(s);
+      const l = m(r.value), o = m(s);
       o.sort((i, E) => {
         const c = i[e ? "s_y" : "y"], g = E[e ? "s_y" : "y"];
         return c - g;
@@ -137,7 +137,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
         r.value.filter((E) => E.id === i.id)[0][e ? "s_y" : "y"] = i[e ? "s_y" : "y"];
       });
     }, L = (s) => {
-      const t = G(s);
+      const t = m(s);
       return delete t.showPop, delete t.showSet, t.groupData ? t.groupData.forEach((e) => {
         delete e.showPop, delete e.showSet, J(e, t), delete e.s_width, delete e.s_height, delete e.s_x, delete e.s_y;
       }) : t.inGroupId && (delete t.showPop, delete t.showSet, J(t, r.value.filter((e) => e.id === t.inGroupId)[0])), delete t.btnPosition, delete t.s_width, delete t.s_height, delete t.s_x, delete t.s_y, t;
@@ -185,7 +185,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
     };
     let F = null, Le = null;
     const ht = A(null), ke = A(0), pe = A(null), ge = A(null), fe = A(null), ye = A(null), re = (s) => {
-      const t = G(s);
+      const t = m(s);
       if (s === null)
         pe.value = null, ge.value = null, fe.value = null, ye.value = null;
       else {
@@ -201,29 +201,29 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
       return s;
     };
     let P = null, $e = null, Ve = null;
-    const C = A({}), dt = (s, t) => {
-      _e(), P = t, C.value = G(r.value[P]), H("dragStart", L(r.value[P])), r.value[P].move = !0, re(r.value[P]);
+    const G = A({}), dt = (s, t) => {
+      _e(), P = t, G.value = m(r.value[P]), H("dragStart", L(r.value[P])), r.value[P].move = !0, re(r.value[P]);
       const e = ct(s.target, ".com-item");
       $e = s.clientX - e.offsetLeft, Ve = s.clientY - e.offsetTop, window.addEventListener("mousemove", Be), window.addEventListener("mouseup", Ne);
     }, Be = (s) => {
       const t = s.clientX - $e, e = s.clientY - Ve, l = t <= q("left") ? q("left") : t >= q("right") ? q("right") : t, o = e <= q("top") ? q("top") : e >= q("bottom") ? q("bottom") : e, a = l - r.value[P].s_x, i = o - r.value[P].s_y;
       let E = "";
       i > 0 ? E = "bottom" : i < 0 ? E = "top" : a > 2 ? E = "right" : a < -2 && (E = "left"), r.value[P].s_x = l, r.value[P].s_y = o, re(r.value[P]);
-      let c = xe(G(r.value.filter((g) => g.move !== !0)), r.value[P], !0);
+      let c = xe(m(r.value.filter((g) => g.move !== !0)), r.value[P], !0);
       if (c.length === 0)
-        C.value.s_x = l, C.value.s_y = o;
+        G.value.s_x = l, G.value.s_y = o;
       else
         switch (E) {
           case "top":
-            c = c.filter((n) => n.s_y < C.value.s_y);
+            c = c.filter((n) => n.s_y < G.value.s_y);
             const g = Math.min(...c.map((n) => n.s_y + n.s_height));
             c.forEach((n) => {
               Math.abs(n.s_y + n.s_height - g) < 5 && (n.s_y = g - n.s_height);
             });
-            let p = C.value.s_y - o, h = !0, x = [...c];
+            let p = G.value.s_y - o, h = !0, x = [...c];
             const M = (n) => {
-              K(G(r.value.filter((u) => u.move !== !0 && u.s_y + u.s_height - n.s_y <= p + 3 && u.s_y + u.s_height - n.s_y >= 0)), n, !0).forEach((u) => {
-                u.s_y + u.s_height !== n.s_y && (u.s_y = n.s_y - u.s_height), x.findIndex((y) => y.id === u.id) === -1 && (x.push(u), M(u));
+              K(m(r.value.filter((u) => u.move !== !0 && Math.abs(u.s_y + u.s_height - n.s_y) <= 3)), n, !0).forEach((u) => {
+                x.findIndex((y) => y.id === u.id) === -1 && (x.push(u), M(u));
               });
             };
             if (c.forEach((n) => {
@@ -234,22 +234,22 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
             }), (x.length === 0 || x.filter((n) => n.s_y === 0).length > 0) && (h = !1), h) {
               let n = 0;
               x.filter((u) => u.s_y === x[0].s_y).forEach((u) => {
-                K(G(r.value.filter((m) => m.move !== !0 && m.s_y + m.s_height < u.s_y)), u, !0).forEach((m) => {
-                  m.s_y + m.s_height > n && (n = m.s_y + m.s_height);
+                K(m(r.value.filter((C) => C.move !== !0 && C.s_y + C.s_height < u.s_y)), u, !0).forEach((C) => {
+                  C.s_y + C.s_height > n && (n = C.s_y + C.s_height);
                 });
               }), n = x[0].s_y - n, n < p && (p = n), x.forEach((u) => {
                 u.s_y -= p, r.value.filter((y) => y.id === u.id)[0].s_y = u.s_y;
-              }), C.value.s_x = l, C.value.s_y = r.value.filter((u) => u.id === x[x.length - 1].id)[0].s_y + r.value.filter((u) => u.id === x[x.length - 1].id)[0].s_height;
+              }), G.value.s_x = l, G.value.s_y = r.value.filter((u) => u.id === x[x.length - 1].id)[0].s_y + r.value.filter((u) => u.id === x[x.length - 1].id)[0].s_height;
             } else {
               let n = 0;
               c.forEach((y) => {
-                const m = K(r.value.filter((W) => W.move !== !0), y, !0).filter((W) => W.s_y > y.s_y + y.s_height);
-                m.length > 0 && (n = Math.min(...m.map((W) => W.s_y)));
+                const C = K(r.value.filter((W) => W.move !== !0), y, !0).filter((W) => W.s_y > y.s_y + y.s_height);
+                C.length > 0 && (n = Math.min(...C.map((W) => W.s_y)));
               });
-              const S = n === 0 ? 0 : n - C.value.s_height - (Math.max(...c.map((y) => y.s_y + y.s_height)) - Math.min(...c.map((y) => y.s_y))), u = S === 0 ? o + C.value.s_height - Math.min(...c.map((y) => y.s_y)) : n - Math.min(...c.map((y) => y.s_y)) - (Math.max(...c.map((y) => y.s_y + y.s_height)) - Math.min(...c.map((y) => y.s_y)));
-              (S === 0 || o <= S) && (c.filter((y) => y.s_y < C.value.s_y).forEach((y) => {
-                y.s_y += u, r.value.filter((m) => m.id === y.id)[0].s_y = y.s_y;
-              }), C.value.s_x = l, C.value.s_y = o, Q(r.value, (y, m) => y.filter((W) => W.move !== !0 && W.id !== m.id), !0));
+              const S = n === 0 ? 0 : n - G.value.s_height - (Math.max(...c.map((y) => y.s_y + y.s_height)) - Math.min(...c.map((y) => y.s_y))), u = S === 0 ? o + G.value.s_height - Math.min(...c.map((y) => y.s_y)) : n - Math.min(...c.map((y) => y.s_y)) - (Math.max(...c.map((y) => y.s_y + y.s_height)) - Math.min(...c.map((y) => y.s_y)));
+              (S === 0 || o <= S) && (c.filter((y) => y.s_y < G.value.s_y).forEach((y) => {
+                y.s_y += u, r.value.filter((C) => C.id === y.id)[0].s_y = y.s_y;
+              }), G.value.s_x = l, G.value.s_y = o, Q(r.value, (y, C) => y.filter((W) => W.move !== !0 && W.id !== C.id), !0));
             }
             break;
           case "bottom":
@@ -258,12 +258,12 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
               const S = K(r.value.filter((u) => u.move !== !0), n, !0).filter((u) => u.s_y + u.s_height < n.s_y);
               S.length > 0 && (k = Math.max(...S.map((u) => u.s_y + u.s_height)));
             });
-            const he = k + (Math.max(...c.map((n) => n.s_height + n.s_y)) - Math.min(...c.map((n) => n.s_y))), Ge = Math.min(...c.map((n) => n.s_y)) - k;
-            o >= he && (c.filter((n) => n.s_y > C.value.s_y).forEach((n) => {
-              n.s_y -= Ge, r.value.filter((u) => u.id === n.id)[0].s_y = n.s_y;
+            const he = k + (Math.max(...c.map((n) => n.s_height + n.s_y)) - Math.min(...c.map((n) => n.s_y))), me = Math.min(...c.map((n) => n.s_y)) - k;
+            o >= he && (c.filter((n) => n.s_y > G.value.s_y).forEach((n) => {
+              n.s_y -= me, r.value.filter((u) => u.id === n.id)[0].s_y = n.s_y;
               const S = xe(r.value.filter((u) => u.move !== !0 && u.id !== n.id), n, !0);
               S.length > 0 && (n.s_y = Math.max(...S.map((u) => u.s_y + u.s_height)), r.value.filter((u) => u.id === n.id)[0].s_y = n.s_y);
-            }), C.value.s_x = l, C.value.s_y = he, Q(r.value, (n, S) => n.filter((u) => u.move !== !0 && u.id !== S.id), !0));
+            }), G.value.s_x = l, G.value.s_y = he, Q(r.value, (n, S) => n.filter((u) => u.move !== !0 && u.id !== S.id), !0));
             break;
           case "left":
           case "right":
@@ -271,42 +271,42 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
               const u = n.s_y, y = S.s_y;
               return u - y;
             });
-            let Ce = !0;
+            let Ge = !0;
             for (let n = 0; n < c.length; n++) {
-              if (Ce) {
-                const S = G(r.value);
+              if (Ge) {
+                const S = m(r.value);
                 for (let u = 0; u <= n; u++) {
                   let y = null;
-                  const m = K(S.filter((W) => W.move !== !0 && W.s_y < c[u].s_y), c[u], !0);
-                  if (m.length === 0 ? y = 0 : y = Math.max(...m.map((W) => W.s_y + W.s_height)), u === n) {
+                  const C = K(S.filter((W) => W.move !== !0 && W.s_y < c[u].s_y), c[u], !0);
+                  if (C.length === 0 ? y = 0 : y = Math.max(...C.map((W) => W.s_y + W.s_height)), u === n) {
                     if (c[u].s_y - (c[u].s_y + c[u].s_height - o) < y) {
-                      Ce = !1;
+                      Ge = !1;
                       break;
                     }
                   } else if (c[u].s_y - c[n].s_height < y) {
-                    Ce = !1;
+                    Ge = !1;
                     break;
                   } else
                     S.filter((W) => W.id === c[u].id)[0].s_y -= c[n].s_height;
                 }
               }
-              if (Ce) {
+              if (Ge) {
                 c[n].s_y -= c[n].s_y + c[n].s_height - o, r.value.filter((S) => S.id === c[n].id)[0].s_y = c[n].s_y;
                 for (let S = n; S > 0; S--)
                   c[n - 1].s_y -= c[n].s_height, r.value.filter((u) => u.id === c[n - 1].id)[0].s_y = c[n - 1].s_y;
               } else
                 c.filter((S) => S.id === c[n].id).forEach((S) => {
-                  S.s_y += r.value[P].s_y + r.value[P].s_height - S.s_y, r.value.filter((u) => u.id === S.id)[0].s_y = S.s_y, Q([S], (u, y) => u.filter((m) => m.move !== !0 && m.id !== y.id), !0);
+                  S.s_y += r.value[P].s_y + r.value[P].s_height - S.s_y, r.value.filter((u) => u.id === S.id)[0].s_y = S.s_y, Q([S], (u, y) => u.filter((C) => C.move !== !0 && C.id !== y.id), !0);
                 });
             }
-            C.value.s_x = l;
+            G.value.s_x = l;
             break;
         }
       r.value.forEach((g) => {
         We(g);
       }), $(!1), H("dragIng", L(r.value[P]));
     }, Ne = () => {
-      window.removeEventListener("mousemove", Be), window.removeEventListener("mouseup", Ne), delete r.value[P].move, r.value[P].s_x = C.value.s_x, r.value[P].s_y = C.value.s_y, re(null), r.value.forEach((s) => {
+      window.removeEventListener("mousemove", Be), window.removeEventListener("mouseup", Ne), delete r.value[P].move, r.value[P].s_x = G.value.s_x, r.value[P].s_y = G.value.s_y, re(null), r.value.forEach((s) => {
         We(s);
       }), $(), H("dragEnd", L(r.value[P])), P = null;
     }, q = (s) => {
@@ -368,7 +368,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
           break;
       }
       ut(v), re(v);
-      let h = xe(G(r.value.filter((x) => x.drag !== !0)), v, !0);
+      let h = xe(m(r.value.filter((x) => x.drag !== !0)), v, !0);
       if (h.length > 0) {
         h.sort((x, M) => {
           const k = x.s_y, he = M.s_y;
@@ -376,7 +376,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
         });
         for (let x = 0; x < h.length; x++)
           h.filter((M) => M.id === h[x].id).forEach((M) => {
-            M.s_y += v.s_y + v.s_height - M.s_y, r.value.filter((k) => k.id === M.id)[0].s_y = M.s_y, Q([M], (k, he) => k.filter((Ge) => Ge.drag !== !0 && Ge.id !== he.id), !0);
+            M.s_y += v.s_y + v.s_height - M.s_y, r.value.filter((k) => k.id === M.id)[0].s_y = M.s_y, Q([M], (k, he) => k.filter((me) => me.drag !== !0 && me.id !== he.id), !0);
           });
       }
       r.value.forEach((x) => {
@@ -409,7 +409,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
       }
     );
     const qe = () => {
-      const s = G(r.value).sort((t, e) => {
+      const s = m(r.value).sort((t, e) => {
         const l = t.y, o = e.y;
         return l - o;
       });
@@ -451,7 +451,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
     });
     let Oe = !1;
     const gt = (s = [], t = null) => {
-      r.value = G(s), r.value.filter((e) => e.isGroup === !0).forEach((e) => {
+      r.value = m(s), r.value.filter((e) => e.isGroup === !0).forEach((e) => {
         if (e.groupData.length < 2)
           ve(e.id);
         else {
@@ -496,7 +496,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
         s.y = Math.max(...i);
       }
     }, ae = (s, t = null, e = !1) => {
-      const l = G(s), o = r.value.filter((a) => a.id === t);
+      const l = m(s), o = r.value.filter((a) => a.id === t);
       if (l.id || (l.id = (/* @__PURE__ */ new Date()).getTime() + ""), t && o.length !== 1)
         try {
         } catch {
@@ -522,7 +522,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
     }, ze = (s, t = null, e = null) => {
       let l = null;
       const o = r.value.filter((a) => a.id === t);
-      if (t ? o.length === 1 && (l = G(o[0].groupData.filter((a) => a.id === s)[0])) : l = G(r.value.filter((a) => a.id === s)[0]), l)
+      if (t ? o.length === 1 && (l = m(o[0].groupData.filter((a) => a.id === s)[0])) : l = m(r.value.filter((a) => a.id === s)[0]), l)
         return l.id = e || (/* @__PURE__ */ new Date()).getTime() + "", t ? (J(l, o[0]), ae(l, t)) : ae(l), L(t ? r.value.filter((a) => a.id === t)[0].groupData.filter((a) => a.id === l.id)[0] : r.value.filter((a) => a.id === l.id)[0]);
       try {
       } catch {
@@ -552,7 +552,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
         }
     }, Pe = (s) => {
       if (s.id) {
-        const t = G(s);
+        const t = m(s);
         delete t.showPop, delete t.showSet, delete t.btnPosition, t.groupData && t.groupData.forEach((o) => {
           delete o.showPop, delete o.showSet;
         });
@@ -601,7 +601,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
     }, vt = (s) => {
       s.checked = !s.checked, H("updateChecked", r.value.filter((t) => t.checked).length);
     }, Ie = (s, t) => {
-      const e = G(s), l = G(t);
+      const e = m(s), l = m(t);
       e.sort((h, x) => {
         const M = h.x, k = x.x;
         return M - k;
@@ -613,7 +613,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
             e[M].x -= x;
         }
         if (e[h + 1].x > e[h].x + e[h].width) {
-          const x = G(e.slice(0, h + 1));
+          const x = m(e.slice(0, h + 1));
           if (e[h + 1].x > Math.max(...x.map((M) => M.x + M.width))) {
             const M = e[h + 1].x - Math.max(...x.map((k) => k.x + k.width));
             for (let k = h + 1; k < e.length; k++)
@@ -632,7 +632,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
             e[M].y -= x;
         }
         if (e[h + 1].y > e[h].y + e[h].height) {
-          const x = G(e.slice(0, h + 1));
+          const x = m(e.slice(0, h + 1));
           if (e[h + 1].y > Math.max(...x.map((M) => M.y + M.height))) {
             const M = e[h + 1].y - Math.max(...x.map((k) => k.y + k.height));
             for (let k = h + 1; k < e.length; k++)
@@ -694,7 +694,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
         }), ue(t.id);
         let l = [];
         return e.forEach((o) => {
-          l.push(G(r.value.filter((a) => a.id === o)[0]));
+          l.push(m(r.value.filter((a) => a.id === o)[0]));
         }), l;
       } else
         try {
@@ -720,7 +720,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
           delete o.showPop, delete o.showSet;
         });
       });
-      const e = G(r.value);
+      const e = m(r.value);
       e.forEach((l) => {
         l.isGroup === !0 && l.groupData.forEach((o) => {
           J(o, l), delete o.s_width, delete o.s_height, delete o.s_x, delete o.s_y;
@@ -753,13 +753,13 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
           onMouseenter: (o) => _.seeModel || f(R) || f(P) || f(v) || !e.isGroup ? null : ft(o, e),
           onMouseleave: (o) => _.seeModel || f(R) || f(P) || f(v) || !e.isGroup ? null : yt(o, e)
         }, [
-          O("div", Gt, [
+          O("div", mt, [
             e.isGroup ? (w(), b(ce, { key: 0 }, [
               e.groupTit ? (w(), b("div", {
                 key: 0,
                 class: "group-item-tit",
                 title: e.groupTit
-              }, V(e.groupTit), 9, Ct)) : I("", !0),
+              }, V(e.groupTit), 9, Gt)) : I("", !0),
               O("div", {
                 class: se(["group-item-content", e.groupTit ? "" : "full"])
               }, [
@@ -773,7 +773,7 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
                   }),
                   key: a
                 }, [
-                  O("div", mt, [
+                  O("div", Ct, [
                     de(s.$slots, "item", { data: o }, () => [
                       O("p", null, V(Math.round(o.s_width * 100) / 100) + "," + V(Math.round(o.s_height * 100) / 100), 1),
                       O("p", null, V(Math.round(o.s_x * 100) / 100) + "," + V(Math.round(o.s_y * 100) / 100), 1)
@@ -929,10 +929,10 @@ const It = ["onMousedown", "onMouseenter", "onMouseleave"], Gt = { class: "com-i
           key: 0,
           class: "drag-bg",
           style: X({
-            width: f(C).s_width + "px",
-            height: f(C).s_height + "px",
-            top: f(C).s_y + "px",
-            left: f(C).s_x + "px"
+            width: f(G).s_width + "px",
+            height: f(G).s_height + "px",
+            top: f(G).s_y + "px",
+            left: f(G).s_x + "px"
           })
         }, null, 4)) : I("", !0),
         O("div", {
