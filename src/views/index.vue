@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2024-11-26 13:52:08
+ * @LastEditors: aFei
+ * @LastEditTime: 2024-12-04 11:00:41
 */
 <template>
   <div class="demo">
@@ -35,7 +35,7 @@
             @updateChecked="num => groupNum = num" @showTitPop="showTitPop" @baseWidthInit="num => baseWidth = num"
             @changeScle="num => nowScle = num" :seeModel="seeModel">
             <template #item="{ data }">
-              <test v-if="data.x === 0 && data.y === 0" />
+              <test :obj="data" v-if="data.x === 0 && data.y === 0" />
             </template>
           </vueDragComponentPlus>
         </div>

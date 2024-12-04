@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-12-03 13:41:55
+ * @LastEditTime: 2024-12-04 11:02:15
 */
 <template>
   <div class="vue-drag-component-plus" :style="{ '--css-scle': nowScle }" ref="pageRef">
@@ -53,7 +53,7 @@
                 </div>
                 <!-- 设置弹窗 -->
                 <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
-                  <slot name="setPopNormal" :data="one">
+                  <slot name="setPopNormal" :data="outDataInit(one)">
                     <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
                     <div class="setting-box-pop-item" @click="copyItem(one.id, one.inGroupId)">复制</div>
                     <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
@@ -87,12 +87,12 @@
           <div
             :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'center' ? 'special c' : '' : '']"
             @mousedown.prevent.stop="null" v-if="item.showPop">
-            <slot name="setPopSpecial" :data="item" v-if="item.isGroup === true">
+            <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
               <div class="setting-box-pop-item" @click="emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
                 设置组合标题</div>
               <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
             </slot>
-            <slot name="setPopNormal" :data="item" v-else>
+            <slot name="setPopNormal" :data="outDataInit(item)" v-else>
               <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
               <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
               <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
