@@ -4,129 +4,135 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-12-04 11:02:15
+ * @LastEditTime: 2025-01-20 13:28:30
 */
 <template>
-  <div class="vue-drag-component-plus" :style="{ '--css-scle': nowScle }" ref="pageRef">
+  <div class="vue-drag-component-plus"
+    :style="{ '--css-scle': nowScle, '--com-x-space': nowXSpace + 'px', '--com-y-space': nowYSpace + 'px' }"
+    ref="pageRef">
     <!-- 滚动区 -->
-    <div class="content-box" ref="boxRef">
+    <div class="content-box">
       <!-- 组件项 -->
-      <div
-        :class="['com-item', seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop ? 'on-top' : '', seeModel ? 'no-hover' : '']"
+      <div :class="['com-item', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop ? 'on-top' : '']"
         :style="{
           width: item.s_width + 'px',
           height: item.s_height + 'px',
           top: item.s_y + 'px',
           left: item.s_x + 'px'
-        }" v-for="(item, index) in comData" :key="index"
-        @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
-        @mouseenter="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : showGroupSet($event, item)"
-        @mouseleave="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : hideGroupSet($event, item)">
-        <div class="com-item-box">
-          <!-- 组件内容区 -->
-          <!-- 组合内容 -->
-          <template v-if="item.isGroup">
-            <!-- 组合标题 -->
-            <div class="group-item-tit" :title="item.groupTit" v-if="item.groupTit">
-              {{ item.groupTit }}
-            </div>
-            <!-- 组合子项内容 -->
-            <div :class="['group-item-content', item.groupTit ? '' : 'full']">
-              <div :class="['com-item-box-child', one.isObstacle ? 'else' : '']" :style="{
-                width: one.s_width + 'px',
-                height: one.s_height + 'px',
-                top: one.s_y + 'px',
-                left: one.s_x + 'px'
-              }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
-                <!-- 内容 -->
-                <div class="com-item-box-content">
-                  <slot name="item" :data="one">
-                    <p>{{ Math.round(one.s_width * 100) / 100 }},{{ Math.round(one.s_height * 100) / 100 }}</p>
-                    <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
-                  </slot>
-                </div>
-                <!-- 设置弹窗入口 -->
-                <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
-                  @mousedown.prevent.stop="null"
-                  v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
-                  <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
-                </div>
-                <!-- 设置弹窗 -->
-                <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
-                  <slot name="setPopNormal" :data="outDataInit(one)">
-                    <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
-                    <div class="setting-box-pop-item" @click="copyItem(one.id, one.inGroupId)">复制</div>
-                    <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
-                  </slot>
+        }" v-for="(item, index) in comData" :key="index">
+        <!-- 实际内容区 -->
+        <div
+          :class="['com-item-inner', seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag', seeModel ? 'no-hover' : '']"
+          @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
+          @mouseenter="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : showGroupSet(item)"
+          @mouseleave="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
+          <div class="com-item-box">
+            <!-- 组件内容区 -->
+            <!-- 组合内容 -->
+            <template v-if="item.isGroup">
+              <!-- 组合标题 -->
+              <div class="group-item-tit" :title="item.groupTit" v-if="item.groupTit">
+                {{ item.groupTit }}
+              </div>
+              <!-- 组合子项内容 -->
+              <div :class="['group-item-content', item.groupTit ? '' : 'full']">
+                <div :class="['com-item-box-child', one.isObstacle ? 'is-obstacle' : '']" :style="{
+                  width: one.s_width + 'px',
+                  height: one.s_height + 'px',
+                  top: one.s_y + 'px',
+                  left: one.s_x + 'px'
+                }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
+                  <!-- 内容 -->
+                  <div class="com-item-box-content">
+                    <slot name="item" :data="one">
+                      <p>{{ Math.round(one.s_width * 100) / 100 }},{{ Math.round(one.s_height * 100) / 100 }}</p>
+                      <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
+                    </slot>
+                  </div>
+                  <!-- 设置弹窗入口 -->
+                  <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
+                    @mousedown.prevent.stop="null"
+                    v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
+                    <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
+                  </div>
+                  <!-- 设置弹窗 -->
+                  <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
+                    <slot name="setPopNormal" :data="outDataInit(one)">
+                      <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
+                      <div class="setting-box-pop-item" @click="copyItem(one.id, one.inGroupId)">复制</div>
+                      <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
+                    </slot>
+                  </div>
                 </div>
               </div>
+            </template>
+            <!-- 普通内容 -->
+            <template v-else>
+              <div class="com-item-box-content">
+                <slot name="item" :data="item">
+                  <p>{{ Math.round(item.s_width * 100) / 100 }},{{ Math.round(item.s_height * 100) / 100 }}</p>
+                  <p>{{ Math.round(item.s_x * 100) / 100 }},{{ Math.round(item.s_y * 100) / 100 }}</p>
+                </slot>
+              </div>
+            </template>
+            <!-- 组合选择器 -->
+            <div :class="['group-checkbox', item.checked ? 'is-checked' : '', item.checkDis ? 'disabled' : '']"
+              @click="item.checkDis ? null : changeCheck(item)"
+              v-if="!item.isGroup && item.notGroup !== true && isGrouping">
             </div>
-          </template>
-          <!-- 普通内容 -->
-          <template v-else>
-            <div class="com-item-box-content">
-              <slot name="item" :data="item">
-                <p>{{ Math.round(item.s_width * 100) / 100 }},{{ Math.round(item.s_height * 100) / 100 }}</p>
-                <p>{{ Math.round(item.s_x * 100) / 100 }},{{ Math.round(item.s_y * 100) / 100 }}</p>
+            <!-- 设置弹窗入口 -->
+            <div
+              :class="['setting-box', item.isGroup === true ? item.btnPosition === 'right' ? 'only-g' : item.btnPosition === 'left' ? 'only-g l' : item.btnPosition === 'top' ? 'only-g t' : item.btnPosition === 'bottom' ? 'only-g b' : item.btnPosition === 'center' ? 'only-g c' : '' : '']"
+              :style="{ display: item.showPop || item.showSet ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
+              v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
+              <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
+            </div>
+            <!-- 设置弹窗 -->
+            <div
+              :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'top' ? 'special t' : item.btnPosition === 'bottom' ? 'special b' : item.btnPosition === 'center' ? 'special c' : '' : '']"
+              @mousedown.prevent.stop="null" v-if="item.showPop">
+              <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
+                <div class="setting-box-pop-item"
+                  @click="hideGroupSet(item.id); emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
+                  设置组合标题</div>
+                <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
+              </slot>
+              <slot name="setPopNormal" :data="outDataInit(item)" v-else>
+                <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
+                <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
+                <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
               </slot>
             </div>
+          </div>
+          <!-- 缩放触发器 -->
+          <template
+            v-if="!seeModel && !isGrouping && !item.showPop && !item.move && item.static !== true && item.resizable !== false">
+            <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
+              v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
+            <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
+              v-if="resizeKeys.indexOf('top') !== -1"></div>
+            <div class="resize-line top-right" @mousedown.prevent.stop="resizeStart($event, item, 'top-right')"
+              v-if="resizeKeys.indexOf('topRight') !== -1"></div>
+            <div class="resize-line left" @mousedown.prevent.stop="resizeStart($event, item, 'left')"
+              v-if="resizeKeys.indexOf('left') !== -1"></div>
+            <div class="resize-line right" @mousedown.prevent.stop="resizeStart($event, item, 'right')"
+              v-if="resizeKeys.indexOf('right') !== -1"></div>
+            <div class="resize-line bottom-left" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-left')"
+              v-if="resizeKeys.indexOf('bottomLeft') !== -1"></div>
+            <div class="resize-line bottom" @mousedown.prevent.stop="resizeStart($event, item, 'bottom')"
+              v-if="resizeKeys.indexOf('bottom') !== -1"></div>
+            <div class="resize-line bottom-right" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-right')"
+              v-if="resizeKeys.indexOf('bottomRight') !== -1">
+            </div>
           </template>
-          <!-- 组合选择器 -->
-          <div :class="['group-checkbox', item.checked ? 'is-checked' : '', item.checkDis ? 'disabled' : '']"
-            @click="item.checkDis ? null : changeCheck(item)"
-            v-if="!item.isGroup && item.notGroup !== true && isGrouping">
-          </div>
-          <!-- 设置弹窗入口 -->
-          <div
-            :class="['setting-box', item.isGroup === true ? item.btnPosition === 'right' ? 'only-g' : item.btnPosition === 'left' ? 'only-g l' : item.btnPosition === 'center' ? 'only-g c' : '' : '']"
-            :style="{ display: item.showPop || item.showSet ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
-            v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
-            <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
-          </div>
-          <!-- 设置弹窗 -->
-          <div
-            :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'center' ? 'special c' : '' : '']"
-            @mousedown.prevent.stop="null" v-if="item.showPop">
-            <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
-              <div class="setting-box-pop-item" @click="emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
-                设置组合标题</div>
-              <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
-            </slot>
-            <slot name="setPopNormal" :data="outDataInit(item)" v-else>
-              <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
-              <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
-              <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
-            </slot>
-          </div>
         </div>
-        <!-- 缩放触发器 -->
-        <template
-          v-if="!seeModel && !isGrouping && !item.showPop && !item.move && item.static !== true && item.resizable !== false">
-          <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
-            v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
-          <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
-            v-if="resizeKeys.indexOf('top') !== -1"></div>
-          <div class="resize-line top-right" @mousedown.prevent.stop="resizeStart($event, item, 'top-right')"
-            v-if="resizeKeys.indexOf('topRight') !== -1"></div>
-          <div class="resize-line left" @mousedown.prevent.stop="resizeStart($event, item, 'left')"
-            v-if="resizeKeys.indexOf('left') !== -1"></div>
-          <div class="resize-line right" @mousedown.prevent.stop="resizeStart($event, item, 'right')"
-            v-if="resizeKeys.indexOf('right') !== -1"></div>
-          <div class="resize-line bottom-left" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-left')"
-            v-if="resizeKeys.indexOf('bottomLeft') !== -1"></div>
-          <div class="resize-line bottom" @mousedown.prevent.stop="resizeStart($event, item, 'bottom')"
-            v-if="resizeKeys.indexOf('bottom') !== -1"></div>
-          <div class="resize-line bottom-right" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-right')"
-            v-if="resizeKeys.indexOf('bottomRight') !== -1">
-          </div>
-        </template>
       </div>
       <!-- shadow阴影 -->
       <div :class="['shadow-bg', item.move ? 'is-move' : '']" :style="{
-        width: item.s_width + 'px',
-        height: item.s_height + 'px',
-        top: item.s_y + 'px',
-        left: item.s_x + 'px'
+        width: item.s_width - nowXSpace * 2 * nowScle + 'px',
+        height: item.s_height - nowYSpace * 2 * nowScle + 'px',
+        top: item.s_y + nowYSpace * nowScle + 'px',
+        left: item.s_x + nowXSpace * nowScle + 'px'
       }" v-for="(item, index) in comData" :key="index"></div>
       <!-- 拖拽背景占位 -->
       <div class="drag-bg" :style="{
@@ -140,7 +146,7 @@
         :style="{ height: (heightBg > 0 ? + (heightBg * nowScle + (seeModel ? seeModelMinBg : 220)) : 0) + 'px' }">
       </div>
       <!-- 辅助线 -->
-      <template v-if="!hideAuxiliary">
+      <template v-if="showAuxiliary">
         <div class="auxiliary-line hor" :style="{ top: auxiliaryTop + 'px', left: '0px' }" v-if="auxiliaryTop !== null">
         </div>
         <div class="auxiliary-line hor" :style="{ top: auxiliaryBtoom + 'px', left: '0px' }"
@@ -177,11 +183,6 @@ const props = defineProps({
       return [];
     }
   },
-  // 顶部组件添加ySpace间距
-  addFirstSpace: {
-    type: Boolean,
-    default: false
-  },
   // 预览模式
   seeModel: {
     type: Boolean,
@@ -195,7 +196,7 @@ const props = defineProps({
       return value >= 0;
     }
   },
-  // 组件项最小宽度
+  // 组件项最小宽度（原始尺寸）
   itemMinWidth: {
     type: Number,
     default: 15,
@@ -203,7 +204,7 @@ const props = defineProps({
       return value >= 15;
     }
   },
-  // 组件项最小高度
+  // 组件项最小高度（原始尺寸）
   itemMinHeight: {
     type: Number,
     default: 15,
@@ -211,10 +212,18 @@ const props = defineProps({
       return value >= 15;
     }
   },
-  // 纵向相邻元素的自动间距
+  // 纵向相邻元素的自动间距（原始尺寸）
+  xSpace: {
+    type: Number,
+    default: 10,
+    validator(value, props) {
+      return value >= 0;
+    }
+  },
+  // 横向相邻元素的自动间距（原始尺寸）
   ySpace: {
     type: Number,
-    default: 7,
+    default: null,
     validator(value, props) {
       return value >= 0;
     }
@@ -233,19 +242,16 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  // 不显示辅助线
-  hideAuxiliary: {
+  // 显示辅助线
+  showAuxiliary: {
     type: Boolean,
     default: false
   },
-  // 辅助线显示距离
-  auxiliarySpace: {
-    type: Number,
-    default: 15,
-    validator(value, props) {
-      return value >= 1;
-    }
-  },
+  // 组合按钮位置更详细
+  groupBtnPosMore: {
+    type: Boolean,
+    default: false
+  }
 });
 // 深拷贝
 const deepCopy = (obj) => {
@@ -275,11 +281,17 @@ const filterCrossYArr = (arr, obj, scle = false) => {
 const dealComStacking = (orginArr, filters = (arr) => arr, scle = false) => {
   const copyData = deepCopy(comData.value);
   const copyArr = deepCopy(orginArr);
-  // 先按y排序
+  // 先按y排序，再按x排序
   copyArr.sort((a, b) => {
     const x = a[scle ? 's_y' : 'y'];
     const y = b[scle ? 's_y' : 'y'];
-    return x - y;
+    if (x !== y) {
+      return x - y;
+    } else {
+      const x1 = a[scle ? 's_x' : 'x'];
+      const y1 = b[scle ? 's_x' : 'x'];
+      return x1 - y1;
+    }
   });
   // 递归方法
   const deepDown = (obj) => {
@@ -296,7 +308,7 @@ const dealComStacking = (orginArr, filters = (arr) => arr, scle = false) => {
     comData.value.filter(one => one.id === item.id)[0][scle ? 's_y' : 'y'] = item[scle ? 's_y' : 'y'];
   });
 };
-// 抛出对象格式化
+// 抛出对象格式化（缩放尺寸）
 const outDataInit = (obj) => {
   const result = deepCopy(obj);
   delete result.showPop;
@@ -325,6 +337,8 @@ const outDataInit = (obj) => {
   delete result.s_y;
   return result;
 };
+// 组件数据
+const comData = ref([]);
 // 计算当前应该生效的缩放key
 const dealResizeKeys = () => {
   props.insertResizeKeys.forEach(item => {
@@ -342,6 +356,39 @@ watch(
 // 当前生效的缩放key
 const resizeKeys = ref([]);
 dealResizeKeys();
+// 重新计算所有组合的内边距宽高/边框（原始尺寸）
+const dealItemPBWH = () => {
+  if (comData.value.length > 0) {
+    comData.value.filter(item => item.isGroup === true).forEach(item => {
+      dealItemScleWH(item);
+    });
+  }
+};
+// 计算当前组件实际间距数据（原始尺寸）
+const setSpace = () => {
+  if (props.xSpace !== null && props.xSpace !== undefined) {
+    nowXSpace.value = props.xSpace / 2;
+  } else {
+    nowXSpace.value = 10 / 2;
+  }
+  if (props.ySpace !== null && props.ySpace !== undefined && props.ySpace >= 0) {
+    nowYSpace.value = props.ySpace / 2;
+  } else {
+    nowYSpace.value = nowXSpace.value;
+  }
+  dealItemPBWH();
+};
+watch(
+  () => [props.xSpace, props.ySpace],
+  () => {
+    setSpace();
+  }
+);
+// 当前纵向间距实际值
+const nowXSpace = ref(0);
+// 当前横向间距实际值
+const nowYSpace = ref(0);
+setSpace();
 // 画布ref
 const pageRef = ref(null);
 // 基准宽度
@@ -358,7 +405,7 @@ const setNowScle = (val) => {
   nowScle.value = val;
   emit('changeScle', nowScle.value);
 };
-// 根据缩放比例结算当前宽高
+// 根据缩放比例结算当前宽高（缩放尺寸）
 const dealItemScleWH = (item) => {
   item.s_width = item.width * nowScle.value;
   item.s_height = item.height * nowScle.value;
@@ -366,8 +413,8 @@ const dealItemScleWH = (item) => {
   const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   if (item.isGroup === true) {
-    const multipleX = item.s_width - 2 * borderWidth;
-    const multipleY = item.s_height - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+    const multipleX = item.s_width - 2 * nowXSpace.value * nowScle.value - 2 * borderWidth;
+    const multipleY = item.s_height - 2 * nowYSpace.value * nowScle.value - 2 * borderWidth - (item.groupTit ? titHeight : 0);
     item.groupData.forEach(one => {
       one.s_width = multipleX * one.groupW;
       one.s_height = multipleY * one.groupH;
@@ -376,28 +423,27 @@ const dealItemScleWH = (item) => {
     });
   }
 };
-// 根据缩放比例结算当前位置
+// 根据缩放比例结算当前位置（缩放尺寸）
 const dealItemScleXY = (item) => {
   item.s_x = item.x * nowScle.value;
   item.s_y = item.y * nowScle.value;
 };
-// 根据当前已经缩放的宽高重设原数据
+// 根据当前已经缩放的宽高重设原数据（缩放尺寸）
 const dealItemScleReverseWH = (item) => {
   item.width = item.s_width / nowScle.value;
   item.height = item.s_height / nowScle.value;
   const styles = getComputedStyle(pageRef.value);
-  const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   if (item.isGroup === true) {
-    const multipleX = item.width - 2 * borderWidth;
-    const multipleY = item.height - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+    const multipleX = item.width;
+    const multipleY = item.height - (item.groupTit ? titHeight : 0);
     item.groupData.forEach(one => {
       one.x = multipleX * one.groupX;
       one.y = multipleY * one.groupY;
     });
   }
 };
-// 根据当前已经缩放的位置重设原数据
+// 根据当前已经缩放的位置重设原数据（缩放尺寸）
 const dealItemScleReverseXY = (item) => {
   item.x = item.s_x / nowScle.value;
   item.y = item.s_y / nowScle.value;
@@ -406,8 +452,6 @@ const dealItemScleReverseXY = (item) => {
 let pageWidth = null;
 // 当前画布高度
 let pageHeight = null;
-// 画布容器ref
-const boxRef = ref(null);
 // 占位高度
 const heightBg = ref(0);
 // 上辅助线位置
@@ -421,7 +465,7 @@ const auxiliaryRight = ref(null);
 // 处理辅助线显示位置（缩放尺寸）
 const dealAuxiliary = (obj) => {
   const position = deepCopy(obj);
-  if (obj === null) {
+  if (!props.showAuxiliary || obj === null) {
     auxiliaryTop.value = null;
     auxiliaryBtoom.value = null;
     auxiliaryLeft.value = null;
@@ -430,41 +474,39 @@ const dealAuxiliary = (obj) => {
     const styles = getComputedStyle(pageRef.value);
     const auxiliaryWidth = parseInt(styles.getPropertyValue('--auxiliary-width').trim());
     const t1 = comData.value.filter(item => item.id !== position.id).map(item => item.s_y);
-    const t2 = comData.value.filter(item => item.id !== position.id).map(item => (item.s_y + item.s_height - 1));
+    const t2 = comData.value.filter(item => item.id !== position.id).map(item => (item.s_y + item.s_height));
     const t = [...t1, ...t2];
     t.sort();
     // 上边线计算
-    if (t.filter(item => (item <= position.s_y && (position.s_y - props.auxiliarySpace) < item) || (item >= position.s_y && (position.s_y + props.auxiliarySpace) > item)).length > 0) {
+    if (t.filter(item => item === position.s_y).length > 0) {
       auxiliaryTop.value = position.s_y;
     } else {
       auxiliaryTop.value = null;
     }
     // 下边线计算
-    if (t.filter(item => (item <= (position.s_y + position.s_height - 1) && (position.s_y + position.s_height - 1 - props.auxiliarySpace) < item) || (item >= (position.s_y + position.s_height - 1) && (position.s_y + position.s_height - 1 + props.auxiliarySpace) > item)).length > 0) {
+    if (t.filter(item => (item === (position.s_y + position.s_height))).length > 0) {
       auxiliaryBtoom.value = position.s_y + position.s_height - auxiliaryWidth;
     } else {
       auxiliaryBtoom.value = null;
     }
     const l1 = comData.value.filter(item => item.id !== position.id).map(item => item.s_x);
-    const l2 = comData.value.filter(item => item.id !== position.id).map(item => (item.s_x + item.s_width - 1));
+    const l2 = comData.value.filter(item => item.id !== position.id).map(item => (item.s_x + item.s_width));
     const l = [...l1, ...l2];
     l.sort();
     // 左边线计算
-    if (l.filter(item => (item <= position.s_x && (position.s_x - props.auxiliarySpace) < item) || (item >= position.s_x && (position.s_x + props.auxiliarySpace) > item)).length > 0) {
+    if (l.filter(item => item === position.s_x).length > 0) {
       auxiliaryLeft.value = position.s_x;
     } else {
       auxiliaryLeft.value = null;
     }
     // 右边线计算
-    if (l.filter(item => (item <= (position.s_x + position.s_width - 1) && (position.s_x + position.s_width - 1 - props.auxiliarySpace) < item) || (item >= (position.s_x + position.s_width - 1) && (position.s_x + position.s_width - 1 + props.auxiliarySpace) > item)).length > 0) {
+    if (l.filter(item => item === (position.s_x + position.s_width)).length > 0) {
       auxiliaryRight.value = position.s_x + position.s_width - auxiliaryWidth;
     } else {
       auxiliaryRight.value = null;
     }
   }
 };
-// 组件数据
-const comData = ref([]);
 // JQ的closest()方法
 const closest = (ele, selector) => {
   let matchesSelector = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || ele.msMatchesSelector;
@@ -484,8 +526,11 @@ let differX = null;
 let differY = null;
 // 拖拽背景信息
 const dragBg = ref({});
+// 自动修复定时器
+let dragResetInt = null;
 // 开始拖拽（缩放尺寸）
 const dragStart = (e, index) => {
+  clearTimeout(dragResetInt);
   closeSettingPop();
   dragSrc = index;
   dragBg.value = deepCopy(comData.value[dragSrc]);
@@ -500,6 +545,7 @@ const dragStart = (e, index) => {
 };
 // 拖拽中（缩放尺寸）
 const dragIng = (e) => {
+  clearTimeout(dragResetInt);
   const x = e.clientX - differX;
   const y = e.clientY - differY;
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
@@ -728,6 +774,10 @@ const dragEnd = () => {
   dealBg();
   emit('dragEnd', outDataInit(comData.value[dragSrc]));
   dragSrc = null;
+  // 修复偶现的拖拽后重叠问题
+  dragResetInt = setTimeout(() => {
+    dealBg();
+  }, 500);
 };
 // 计算拖拽最大边界（缩放尺寸）
 const dealDragMax = (direction) => {
@@ -736,7 +786,7 @@ const dealDragMax = (direction) => {
       return 0;
       break;
     case 'right':
-      return pageWidth - comData.value[dragSrc].s_width;
+      return pageWidth - nowXSpace.value * 2 * nowScle.value - comData.value[dragSrc].s_width;
       break;
     case 'bottom':
       return 999999999;
@@ -829,61 +879,63 @@ const resizeIng = (e) => {
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   const dealGroup = () => {
     if (resizeObj.isGroup === true) {
-      const multipleX = resizeObj.s_width - 2 * borderWidth;
-      const multipleY = resizeObj.s_height - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+      const multipleX = resizeObj.s_width - 2 * nowXSpace.value * nowScle.value - 2 * borderWidth;
+      const multipleY = resizeObj.s_height - 2 * nowYSpace.value * nowScle.value - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
       resizeObj.groupData.forEach(item => {
         item.s_width = multipleX * item.groupW;
-        item.s_x = multipleX * item.groupX;
         item.s_height = multipleY * item.groupH;
+        item.s_x = multipleX * item.groupX;
         item.s_y = multipleY * item.groupY;
       });
     }
   };
+  const realMinWidth = (props.itemMinWidth + nowXSpace.value * 2) * nowScle.value;
+  const realMinHeight = (props.itemMinHeight + nowYSpace.value * 2) * nowScle.value;
   switch (resizeDirection) {
     case 'top-left':
-      resizeObj.s_height = y_rever < props.itemMinHeight ? props.itemMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
-      resizeObj.s_y = y_rever < props.itemMinHeight ? (startTop + startHeight - props.itemMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
-      resizeObj.s_width = x_rever < props.itemMinWidth ? props.itemMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
-      resizeObj.s_x = x_rever < props.itemMinWidth ? (startLeft + startWidth - props.itemMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
+      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
+      resizeObj.s_width = x_rever < realMinWidth ? realMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
+      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
       dealGroup();
       break;
     case 'top':
       // 原始
-      resizeObj.s_height = y_rever < props.itemMinHeight ? props.itemMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
-      resizeObj.s_y = y_rever < props.itemMinHeight ? (startTop + startHeight - props.itemMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
+      resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
+      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
       dealGroup();
       break;
     case 'top-right':
-      resizeObj.s_height = y_rever < props.itemMinHeight ? props.itemMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
-      resizeObj.s_y = y_rever < props.itemMinHeight ? (startTop + startHeight - props.itemMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
-      resizeObj.s_width = x < props.itemMinWidth ? props.itemMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
+      resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
+      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
+      resizeObj.s_width = x < realMinWidth ? realMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
       dealGroup();
       break;
     case 'left':
       // 原始
-      resizeObj.s_width = x_rever < props.itemMinWidth ? props.itemMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
-      resizeObj.s_x = x_rever < props.itemMinWidth ? (startLeft + startWidth - props.itemMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      resizeObj.s_width = x_rever < realMinWidth ? realMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
+      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
       dealGroup();
       break;
     case 'right':
       // 原始
-      resizeObj.s_width = x < props.itemMinWidth ? props.itemMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
+      resizeObj.s_width = x < realMinWidth ? realMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
       dealGroup();
       break;
     case 'bottom-left':
-      resizeObj.s_height = y < props.itemMinHeight ? props.itemMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
-      resizeObj.s_width = x_rever < props.itemMinWidth ? props.itemMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
-      resizeObj.s_x = x_rever < props.itemMinWidth ? (startLeft + startWidth - props.itemMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      resizeObj.s_height = y < realMinHeight ? realMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
+      resizeObj.s_width = x_rever < realMinWidth ? realMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
+      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
       dealGroup();
       break;
     case 'bottom':
       // 原始
-      resizeObj.s_height = y < props.itemMinHeight ? props.itemMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
+      resizeObj.s_height = y < realMinHeight ? realMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
       dealGroup();
       break;
     case 'bottom-right':
-      resizeObj.s_height = y < props.itemMinHeight ? props.itemMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
-      resizeObj.s_width = x < props.itemMinWidth ? props.itemMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
+      resizeObj.s_height = y < realMinHeight ? realMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
+      resizeObj.s_width = x < realMinWidth ? realMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
       dealGroup();
       break;
   };
@@ -935,7 +987,7 @@ const dealResizeMax = (direction) => {
       return startLeft + startWidth - leftObstacle;
       break;
     case 'right':
-      return (rightObstacle > 0 ? rightObstacle : pageWidth) - startLeft;
+      return (rightObstacle > 0 ? rightObstacle : (pageWidth - nowXSpace.value * 2 * nowScle.value)) - startLeft;
       break;
     case 'bottom':
       return bottomObstacle > 0 ? (bottomObstacle - startTop) : 999999999;
@@ -963,14 +1015,6 @@ const dealBg = (deal = true) => {
     heightBg.value = 0;
   }
 };
-watch(
-  () => props.ySpace,
-  () => {
-    if (props.ySpace >= 0) {
-      dealSpace();
-    }
-  }
-);
 // 修正横向间距（原始尺寸）
 const dealSpace = () => {
   // 按y从小到大排列
@@ -990,37 +1034,10 @@ const dealSpace = () => {
       copyData[i].y = 0;
     }
   };
-  // 按y从小到大排列
-  copyData.sort((a, b) => {
-    const x = a.y;
-    const y = b.y;
-    return x - y;
-  });
-  // 重置间隙(向后一个处理，所以不用处理最后一个)
-  for (let i = 0; i < (copyData.length - 1); i++) {
-    // 记录相邻的id
-    const ids = [];
-    const deep = (obj) => {
-      const arr = filterCrossXArr(copyData, obj)
-        .filter(item => item.y === (obj.y + obj.height));
-      arr.forEach(item => {
-        ids.push(item.id);
-        deep(item);
-      });
-    };
-    deep(copyData[i]);
-    ids.forEach(item => {
-      copyData.filter(one => one.id === item)[0].y += props.ySpace;
-    });
-  };
   // 原数据赋值
   copyData.forEach(item => {
     comData.value.filter(one => one.id === item.id)[0].y = item.y;
   });
-  // 给顶部加间距
-  if (props.addFirstSpace) {
-    comData.value.forEach(item => item.y += props.ySpace);
-  }
 };
 // 计算组合按钮位置（缩放尺寸）
 const dealGroupSetting = () => {
@@ -1028,10 +1045,19 @@ const dealGroupSetting = () => {
   if (arr.length > 0) {
     const styles = getComputedStyle(pageRef.value);
     const settingWidth = parseInt(styles.getPropertyValue('--setting-icon-group-width').trim());
+    const settingHeight = parseInt(styles.getPropertyValue('--setting-icon-group-height').trim());
     arr.forEach(item => {
-      if ((item.s_x + item.s_width + settingWidth) > pageWidth) {
-        if ((item.s_x - settingWidth < 0)) {
-          item.btnPosition = 'center';
+      if ((nowXSpace.value + item.s_x + item.s_width + settingWidth) > pageWidth) {
+        if ((nowXSpace.value + item.s_x - settingWidth < 0)) {
+          if (props.groupBtnPosMore) {
+            if (nowYSpace.value + item.s_y - settingHeight < 0) {
+              item.btnPosition = 'bottom';
+            } else {
+              item.btnPosition = 'top';
+            }
+          } else {
+            item.btnPosition = 'center';
+          }
         } else {
           item.btnPosition = 'left';
         }
@@ -1048,12 +1074,14 @@ onMounted(() => {
 });
 // 画布尺寸改变监听器
 const resizePageObserver = new ResizeObserver(entries => {
-  changePageSize(pageWidth === entries[0].contentRect.width ? null : entries[0].contentRect.width, pageHeight === entries[0].contentRect.height ? null : entries[0].contentRect.height);
+  // 存在padding
+  changePageSize(pageWidth === entries[0].borderBoxSize[0].inlineSize ? null : entries[0].borderBoxSize[0].inlineSize, pageHeight === entries[0].borderBoxSize[0].blockSize ? null : entries[0].borderBoxSize[0].blockSize);
 });
 // 正在init
 let initIng = false;
 // 初始化画布（原始尺寸）
 const init = (historyData = [], historyWidth = null) => {
+  resetData();
   comData.value = deepCopy(historyData);
   // 组合数据修复，这里只考虑减少的情况，新增必须走addItem方法
   comData.value.filter(item => item.isGroup === true).forEach(item => {
@@ -1071,7 +1099,7 @@ const init = (historyData = [], historyWidth = null) => {
       setBaseWidth(historyWidth);
       setNowScle(obj.width / historyWidth);
     } else {
-      setBaseWidth(obj.width);
+      setBaseWidth(comData.value.length > 0 ? obj.width : null);
       setNowScle(1);
     }
     comData.value.forEach(item => {
@@ -1084,14 +1112,21 @@ const init = (historyData = [], historyWidth = null) => {
   });
 };
 // 显示组合设置按钮
-const showGroupSet = (e, item) => {
+const showGroupSet = (item) => {
   item.showSet = true;
 };
 // 隐藏组合设置按钮
-const hideGroupSet = (e, item) => {
-  delete item.showSet;
+const hideGroupSet = (id) => {
+  const pArr = comData.value.filter(item => item.id === id);
+  if (pArr.length === 1) {
+    delete pArr[0].showSet;
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
 };
-// 计算新增的一个组件的x,y（画布中数量至少一个，原始尺寸）
+// 计算新增的一个组件的x,y，画布中数量至少一个（原始尺寸）
 const dealMoreItemXY = (item, dataArr, maxWidth) => {
   const yTopArr = dataArr.map(item => item.y);
   // 与最高的y持平
@@ -1147,6 +1182,7 @@ const addItem = (obj, pid = null, keepPosition = false) => {
   if (!item.id) {
     item.id = new Date().getTime() + '';
   }
+  // 子级找父级
   if (pid && pArr.length !== 1) {
     try {
       console.error('未找到组件');
@@ -1155,7 +1191,7 @@ const addItem = (obj, pid = null, keepPosition = false) => {
       return;
     }
   }
-  // 重新计算坐标（原始尺寸）
+  // 重新计算原始尺寸坐标
   if (keepPosition !== true) {
     delete item.x;
     delete item.y;
@@ -1164,15 +1200,13 @@ const addItem = (obj, pid = null, keepPosition = false) => {
       pArr[0].groupData.forEach(item => {
         dealGroupItemWH(item, pArr[0]);
       });
-      const styles = getComputedStyle(pageRef.value);
-      const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
-      dealMoreItemXY(item, pArr[0].groupData, pArr[0].width - 2 * borderWidth);
+      dealMoreItemXY(item, pArr[0].groupData, pArr[0].width);
     } else {
       if (comData.value.length === 0) {
         item.x = 0;
         item.y = 0;
       } else {
-        dealMoreItemXY(item, comData.value, baseWidth || pageWidth);
+        dealMoreItemXY(item, comData.value, (baseWidth || pageWidth) - nowXSpace.value * 2);
       }
     }
   }
@@ -1396,7 +1430,7 @@ const changeCheck = (obj) => {
 const dealGroupSize = (childData, parentObj) => {
   const childList = deepCopy(childData);
   const result = deepCopy(parentObj);
-  // 压缩横坐标
+  // 压缩纵向间距
   childList.sort((a, b) => {
     const x = a.x;
     const y = b.x;
@@ -1419,7 +1453,7 @@ const dealGroupSize = (childData, parentObj) => {
       }
     }
   };
-  // 压缩纵坐标
+  // 压缩横向间距
   childList.sort((a, b) => {
     const x = a.y;
     const y = b.y;
@@ -1456,32 +1490,29 @@ const dealGroupSize = (childData, parentObj) => {
     item.groupH = item.height / maxHeight;
     item.groupX = item.x / maxWidth;
     item.groupY = item.y / maxHeight;
+    // 判断当前元素是否在右上角
+    item.isObstacle = (item.x + item.width) === maxWidth && item.y === 0;
     delete item.width;
     delete item.height;
-    item.isObstacle = (item.x + item.width) === maxWidth && item.y === 0;
   });
   const styles = getComputedStyle(pageRef.value);
-  const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
-  result.width = maxWidth + 2 * borderWidth;
-  result.height = maxHeight + 2 * borderWidth + (result.groupTit ? titHeight : 0);
+  result.width = maxWidth;
+  result.height = maxHeight + (result.groupTit ? titHeight : 0);
   result.groupData = [...childList];
   return result;
 };
 // 重新计算组合内组件的宽高（原始尺寸）
 const dealGroupItemWH = (item, pObj) => {
   const styles = getComputedStyle(pageRef.value);
-  const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
-  item.width = (pObj.width - 2 * borderWidth) * item.groupW;
-  item.height = (pObj.height - 2 * borderWidth - (pObj.groupTit ? titHeight : 0)) * item.groupH;
+  item.width = pObj.width * item.groupW;
+  item.height = (pObj.height - (pObj.groupTit ? titHeight : 0)) * item.groupH;
 };
 // 组合边框大小改变重新计算组件大小（原始尺寸）
 const changeGroupBorder = () => {
   nextTick(() => {
-    comData.value.filter(item => item.isGroup === true).forEach(item => {
-      dealItemScleWH(item);
-    });
+    dealItemPBWH();
   });
 };
 // 生成组合（原始尺寸）
@@ -1558,9 +1589,9 @@ const removeGroup = (id) => {
       delete item.inGroupId;
       delete item.groupW;
       delete item.groupH;
-      delete lin.groupX;
-      delete lin.groupY;
-      delete lin.isObstacle;
+      delete item.groupX;
+      delete item.groupY;
+      delete item.isObstacle;
       ids.push(item.id);
       addItem(item, null, true);
     });
@@ -1568,7 +1599,7 @@ const removeGroup = (id) => {
     deleteItem(lin.id);
     let result = [];
     ids.forEach(item => {
-      result.push(deepCopy(comData.value.filter(one => one.id === item)[0]));
+      result.push(outDataInit(comData.value.filter(one => one.id === item)[0]));
     });
     return result;
   } else {
@@ -1591,12 +1622,12 @@ const changeGroupTit = (tit = '', id) => {
       // 删除了标题
       if (lin.groupTit && !tit) {
         lin.height -= titHeight;
-        lin.s_height -= titHeight;
+        lin.s_height -= titHeight * nowScle.value;
       }
       // 添加了标题
       if (!lin.groupTit && tit) {
         lin.height += titHeight;
-        lin.s_height += titHeight;
+        lin.s_height += titHeight * nowScle.value;
       }
     }
     lin.groupTit = tit;
@@ -1609,6 +1640,13 @@ const changeGroupTit = (tit = '', id) => {
       console.error('未找到组件');
     } catch (error) { }
   }
+};
+// 重置当前画布数据
+const resetData = () => {
+  comData.value = [];
+  setBaseWidth(null);
+  setNowScle(1);
+  heightBg.value = 0;
 };
 // 获取当前画布数据（原始尺寸）
 const getData = () => {
@@ -1650,7 +1688,7 @@ onBeforeUnmount(() => {
   resizePageObserver.unobserve(pageRef.value);
   window.removeEventListener('click', closeSettingPop);
 });
-defineExpose({ init, addItem, copyItem, deleteItem, updateItem, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, getData });
+defineExpose({ init, addItem, copyItem, deleteItem, updateItem, hideGroupSet, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, resetData, getData });
 </script>
 <style lang="scss">
 @use "style/index.scss" as *;

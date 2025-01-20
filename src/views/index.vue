@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-12-04 11:00:41
+ * @LastEditTime: 2025-01-17 09:51:05
 */
 <template>
   <div class="demo">
@@ -19,8 +19,10 @@
           <div class="con">
             <template v-if="!seeModel">
               <el-button @click="addOne" type="primary">添加</el-button>
-              <el-input-number v-model="ySpace" :min="0" controls-position="right" title="纵向间距" />
+              <el-input-number v-model="xSpace" :min="0" controls-position="right" title="纵向间距" />
+              <el-input-number v-model="ySpace" :min="0" controls-position="right" title="横向间距" />
               <el-button @click="initTest" type="primary" plain>init</el-button>
+              <el-button @click="resetData" type="danger">重置数据</el-button>
             </template>
             <el-button @click="getData">查看当前数据</el-button>
           </div>
@@ -31,9 +33,9 @@
           </div>
         </template>
         <div class="box">
-          <vueDragComponentPlus ref="comRef" :ySpace="ySpace" @showGroup="chengGroup"
+          <vueDragComponentPlus ref="comRef" :xSpace="xSpace" :ySpace="ySpace" @showGroup="chengGroup"
             @updateChecked="num => groupNum = num" @showTitPop="showTitPop" @baseWidthInit="num => baseWidth = num"
-            @changeScle="num => nowScle = num" :seeModel="seeModel">
+            @changeScle="num => nowScle = num" :seeModel="seeModel" showAuxiliary>
             <template #item="{ data }">
               <test :obj="data" v-if="data.x === 0 && data.y === 0" />
             </template>
@@ -61,7 +63,8 @@
 import vueDragComponentPlus from "~/lib/index.vue";
 import test from "./components/test.vue";
 const comRef = ref(null);
-const ySpace = ref(12);
+const xSpace = ref(10);
+const ySpace = ref(null);
 const seeModel = ref(false);
 const baseWidth = ref(null);
 const nowScle = ref(1);
@@ -176,6 +179,9 @@ const initTest = () => {
       x: 581
     }
   ], 1000);
+};
+const resetData = () => {
+  comRef.value.resetData();
 };
 const getData = async () => {
   const res = await comRef.value.getData();

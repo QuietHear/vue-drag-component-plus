@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2024-11-22 10:50:40
+ * @LastEditTime: 2025-01-20 13:43:28
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -48,6 +48,7 @@
   width                      : 100%;
   height                     : 100%;
   background                 : var(--bg);
+  padding                    : calc(var(--com-y-space) * var(--css-scle)) calc(var(--com-x-space) * var(--css-scle)) 0;
 
   > {
     ::-webkit-scrollbar {
@@ -73,45 +74,56 @@
   }
 
   .com-item {
-    position     : absolute;
-    background   : var(--com-item-bg);
-    border       : var(--com-item-border-width) var(--com-item-border-type) var(--com-item-border-color);
-    border-radius: var(--com-item-border-radius);
-    box-sizing   : border-box;
-    user-select  : none;
-    z-index      : 1;
-
-    &.can-drag {
-      cursor: grab;
-    }
+    position  : absolute;
+    box-sizing: border-box;
+    padding   : calc(var(--com-y-space) * var(--css-scle)) calc(var(--com-x-space) * var(--css-scle));
+    z-index   : 1;
 
     &.is-move,
     &.is-drag,
     &:hover {
       z-index: 3;
-
-      &::after {
-        content      : '';
-        position     : absolute;
-        border-radius: var(--com-item-border-radius);
-        left         : calc(0px - var(--com-item-border-width));
-        top          : calc(0px - var(--com-item-border-width));
-        width        : calc(100% + var(--com-item-border-width) * 2);
-        height       : calc(100% + var(--com-item-border-width) * 2);
-        border       : 1px solid var(--com-item-active-border);
-        box-sizing   : border-box;
-        z-index      : 1;
-      }
     }
 
     &.on-top {
       z-index: 4;
     }
 
-    &.no-hover {
+    .com-item-inner {
+      position     : relative;
+      background   : var(--com-item-bg);
+      border       : var(--com-item-border-width) var(--com-item-border-type) var(--com-item-border-color);
+      border-radius: var(--com-item-border-radius);
+      width        : 100%;
+      height       : 100%;
+      box-sizing   : border-box;
+      user-select  : none;
+      z-index      : 6;
+
+      &.can-drag {
+        cursor: grab;
+      }
+
       &:hover {
         &::after {
-          content: none;
+          content      : '';
+          position     : absolute;
+          border-radius: var(--com-item-border-radius);
+          left         : calc(0px - var(--com-item-border-width));
+          top          : calc(0px - var(--com-item-border-width));
+          width        : calc(100% + var(--com-item-border-width) * 2);
+          height       : calc(100% + var(--com-item-border-width) * 2);
+          border       : 1px solid var(--com-item-active-border);
+          box-sizing   : border-box;
+          z-index      : 1;
+        }
+      }
+
+      &.no-hover {
+        &:hover {
+          &::after {
+            content: none;
+          }
         }
       }
     }
@@ -169,15 +181,9 @@
         position: relative;
 
         &.full {
-          height      : 100%;
+          height: 100%;
           // 组合中右上角元素
-          // .com-item-box-child.else {
-          //   .setting-box {
-          //     right: 20px;
-          //   }
-          //   .setting-box-pop {
-          //     right: 25px;
-          //   }
+          // .com-item-box-child.is-obstacle {
           // }
         }
 
@@ -298,6 +304,19 @@
             left         : 0;
             border-radius: 0;
           }
+
+          &.t {
+            top          : calc(-1 * var(--setting-icon-group-height));
+            right        : var(--setting-icon-group-top);
+            border-radius: var(--setting-icon-group-radius) var(--setting-icon-group-radius) 0px 0px;
+          }
+
+          &.b {
+            top          : unset;
+            bottom       : calc(-1 * var(--setting-icon-group-height));
+            right        : var(--setting-icon-group-top);
+            border-radius: 0px 0px var(--setting-icon-group-radius) var(--setting-icon-group-radius);
+          }
         }
       }
 
@@ -307,7 +326,7 @@
         right        : 10px;
         width        : var(--setting-pop-width);
         background   : #FFFFFF;
-        box-shadow   : 0px 2px 6px 0px rgba(0, 0, 0, 0.2);
+        box-shadow   : 0px 2px 6px 0px rgba(0, 0, 0, 0.3);
         border-radius: 2px 2px 2px 2px;
         cursor       : default;
         padding      : 8px 0;
@@ -326,6 +345,17 @@
           &.c {
             right: unset;
             left : calc(var(--setting-icon-group-width) / 2);
+          }
+
+          &.t {
+            top  : 2px;
+            right: calc(var(--setting-icon-group-width) / 2 + 1px);
+          }
+
+          &.b {
+            top   : unset;
+            bottom: 2px;
+            right : calc(var(--setting-icon-group-width) / 2 + 1px);
           }
         }
 
