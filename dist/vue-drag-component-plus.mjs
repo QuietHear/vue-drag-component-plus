@@ -1,4 +1,4 @@
-import { resolveComponent as It, openBlock as _, createBlock as Le, resolveDynamicComponent as nt, normalizeProps as it, mergeProps as Te, withCtx as Gt, createElementBlock as w, toDisplayString as K, ref as L, watch as at, onMounted as zt, onBeforeUnmount as Ct, normalizeStyle as m, unref as p, createElementVNode as A, Fragment as fe, renderList as Re, normalizeClass as te, withModifiers as $, createCommentVNode as D, renderSlot as ye, createVNode as ut, createTextVNode as Ot, nextTick as ct, isVNode as ht } from "vue";
+import { resolveComponent as It, openBlock as _, createBlock as Le, resolveDynamicComponent as nt, normalizeProps as it, mergeProps as Te, withCtx as Gt, createElementBlock as w, toDisplayString as K, ref as L, watch as at, onMounted as zt, onBeforeUnmount as Ct, normalizeStyle as N, unref as p, createElementVNode as A, Fragment as fe, renderList as Re, normalizeClass as te, withModifiers as $, createCommentVNode as D, renderSlot as ye, createVNode as ut, createTextVNode as Ot, nextTick as ct, isVNode as ht } from "vue";
 const dt = {
   __name: "icon",
   props: {
@@ -28,10 +28,10 @@ const dt = {
 const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMouseleave"], At = { class: "com-item-box" }, Bt = ["title"], Ht = { class: "com-item-box-content" }, Xt = ["onClick"], $t = ["onClick"], Wt = ["onClick"], Lt = {
   key: 1,
   class: "com-item-box-content"
-}, Rt = ["onClick"], Vt = ["onClick"], mt = ["onClick"], Nt = ["onClick"], Kt = ["onClick"], qt = ["onClick"], Ft = ["onMousedown"], Ut = ["onMousedown"], Jt = ["onMousedown"], Qt = ["onMousedown"], Zt = ["onMousedown"], jt = ["onMousedown"], es = ["onMousedown"], ts = ["onMousedown"], ss = {
+}, Rt = ["onClick"], Vt = ["onClick"], Nt = ["onClick"], mt = ["onClick"], Kt = ["onClick"], qt = ["onClick"], Ft = ["onMousedown"], Ut = ["onMousedown"], Jt = ["onMousedown"], Qt = ["onMousedown"], Zt = ["onMousedown"], jt = ["onMousedown"], es = ["onMousedown"], ts = ["onMousedown"], ss = {
   key: 2,
   class: "com-empty"
-}, ls = {
+}, os = {
   __name: "index",
   props: {
     // 包含收缩方向
@@ -122,9 +122,9 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
         return t;
       } else
         return s;
-    }, Pe = (s, t, e = !1) => pt(se(s, t, e), t, e), se = (s, t, e = !1) => s.filter((o) => o[e ? "s_x" : "x"] <= t[e ? "s_x" : "x"] && o[e ? "s_x" : "x"] + o[e ? "s_width" : "width"] > t[e ? "s_x" : "x"] || o[e ? "s_x" : "x"] > t[e ? "s_x" : "x"] && o[e ? "s_x" : "x"] < t[e ? "s_x" : "x"] + t[e ? "s_width" : "width"]), pt = (s, t, e = !1) => s.filter((o) => o[e ? "s_y" : "y"] <= t[e ? "s_y" : "y"] && o[e ? "s_y" : "y"] + o[e ? "s_height" : "height"] > t[e ? "s_y" : "y"] || o[e ? "s_y" : "y"] > t[e ? "s_y" : "y"] && o[e ? "s_y" : "y"] < t[e ? "s_y" : "y"] + t[e ? "s_height" : "height"]), le = (s, t = (o) => o, e = !1) => {
-      const o = I(r.value), l = I(s);
-      l.sort((u, k) => {
+    }, Pe = (s, t, e = !1) => pt(se(s, t, e), t, e), se = (s, t, e = !1) => s.filter((l) => l[e ? "s_x" : "x"] <= t[e ? "s_x" : "x"] && l[e ? "s_x" : "x"] + l[e ? "s_width" : "width"] > t[e ? "s_x" : "x"] || l[e ? "s_x" : "x"] > t[e ? "s_x" : "x"] && l[e ? "s_x" : "x"] < t[e ? "s_x" : "x"] + t[e ? "s_width" : "width"]), pt = (s, t, e = !1) => s.filter((l) => l[e ? "s_y" : "y"] <= t[e ? "s_y" : "y"] && l[e ? "s_y" : "y"] + l[e ? "s_height" : "height"] > t[e ? "s_y" : "y"] || l[e ? "s_y" : "y"] > t[e ? "s_y" : "y"] && l[e ? "s_y" : "y"] < t[e ? "s_y" : "y"] + t[e ? "s_height" : "height"]), oe = (s, t = (l) => l, e = !1) => {
+      const l = I(r.value), o = I(s);
+      o.sort((u, k) => {
         const h = u[e ? "s_y" : "y"], g = k[e ? "s_y" : "y"];
         if (h !== g)
           return h - g;
@@ -134,11 +134,11 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
         }
       });
       const a = (u) => {
-        Pe(t(o, u), u, e).forEach((h) => {
+        Pe(t(l, u), u, e).forEach((h) => {
           h[e ? "s_y" : "y"] = u[e ? "s_y" : "y"] + u[e ? "s_height" : "height"], a(h);
         });
       };
-      l.forEach((u) => a(o.filter((k) => k.id === u.id)[0])), o.forEach((u) => {
+      o.forEach((u) => a(l.filter((k) => k.id === u.id)[0])), l.forEach((u) => {
         r.value.filter((k) => k.id === u.id)[0][e ? "s_y" : "y"] = u[e ? "s_y" : "y"];
       });
     }, H = (s) => {
@@ -146,7 +146,7 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       return delete t.showPop, delete t.showSet, t.groupData ? t.groupData.forEach((e) => {
         delete e.showPop, delete e.showSet, j(e, t), delete e.s_width, delete e.s_height, delete e.s_x, delete e.s_y;
       }) : t.inGroupId && (delete t.showPop, delete t.showSet, j(t, r.value.filter((e) => e.id === t.inGroupId)[0])), delete t.btnPosition, delete t.s_width, delete t.s_height, delete t.s_x, delete t.s_y, t;
-    }, r = L([]), me = () => {
+    }, r = L([]), Ne = () => {
       C.insertResizeKeys.forEach((s) => {
         C.excludeResizeKeys.indexOf(s) === -1 && F.value.push(s);
       });
@@ -154,17 +154,17 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
     at(
       () => [C.insertResizeKeys, C.excludeResizeKeys],
       () => {
-        me();
+        Ne();
       }
     );
     const F = L([]);
-    me();
-    const Ne = () => {
+    Ne();
+    const me = () => {
       r.value.length > 0 && r.value.filter((s) => s.isGroup === !0).forEach((s) => {
         ue(s);
       });
     }, Ke = () => {
-      C.xSpace !== null && C.xSpace !== void 0 ? W.value = C.xSpace / 2 : W.value = 10 / 2, C.ySpace !== null && C.ySpace !== void 0 && C.ySpace >= 0 ? U.value = C.ySpace / 2 : U.value = W.value, Ne();
+      C.xSpace !== null && C.xSpace !== void 0 ? W.value = C.xSpace / 2 : W.value = 10 / 2, C.ySpace !== null && C.ySpace !== void 0 && C.ySpace >= 0 ? U.value = C.ySpace / 2 : U.value = W.value, me();
     };
     at(
       () => [C.xSpace, C.ySpace],
@@ -182,11 +182,11 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       S.value = s, B("changeScle", S.value);
     }, ue = (s) => {
       s.s_width = s.width * S.value, s.s_height = s.height * S.value;
-      const t = getComputedStyle(R.value), e = parseInt(t.getPropertyValue("--com-item-border-width").trim()), o = parseInt(t.getPropertyValue("--group-tit-height").trim());
+      const t = getComputedStyle(R.value), e = parseInt(t.getPropertyValue("--com-item-border-width").trim()), l = parseInt(t.getPropertyValue("--group-tit-height").trim());
       if (s.isGroup === !0) {
-        const l = s.s_width - 2 * W.value * S.value - 2 * e, a = s.s_height - 2 * U.value * S.value - 2 * e - (s.groupTit ? o : 0);
+        const o = s.s_width - 2 * W.value * S.value - 2 * e, a = s.s_height - 2 * U.value * S.value - 2 * e - (s.groupTit ? l : 0);
         s.groupData.forEach((u) => {
-          u.s_width = l * u.groupW, u.s_height = a * u.groupH, u.s_x = l * u.groupX, u.s_y = a * u.groupY;
+          u.s_width = o * u.groupW, u.s_height = a * u.groupH, u.s_x = o * u.groupX, u.s_y = a * u.groupY;
         });
       }
     }, gt = (s) => {
@@ -195,9 +195,9 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       s.width = s.s_width / S.value, s.height = s.s_height / S.value;
       const t = getComputedStyle(R.value), e = parseInt(t.getPropertyValue("--group-tit-height").trim());
       if (s.isGroup === !0) {
-        const o = s.width, l = s.height - (s.groupTit ? e : 0);
+        const l = s.width, o = s.height - (s.groupTit ? e : 0);
         s.groupData.forEach((a) => {
-          a.x = o * a.groupX, a.y = l * a.groupY;
+          a.x = l * a.groupX, a.y = o * a.groupY;
         });
       }
     }, Ye = (s) => {
@@ -209,10 +209,10 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       if (!C.showAuxiliary || s === null)
         we.value = null, be.value = null, ke.value = null, Me.value = null;
       else {
-        const e = getComputedStyle(R.value), o = parseInt(e.getPropertyValue("--auxiliary-width").trim()), l = r.value.filter((n) => n.id !== t.id).map((n) => n.s_y), a = r.value.filter((n) => n.id !== t.id).map((n) => n.s_y + n.s_height), u = [...l, ...a];
-        u.sort(), u.filter((n) => n === t.s_y).length > 0 ? we.value = t.s_y : we.value = null, u.filter((n) => n === t.s_y + t.s_height).length > 0 ? be.value = t.s_y + t.s_height - o : be.value = null;
+        const e = getComputedStyle(R.value), l = parseInt(e.getPropertyValue("--auxiliary-width").trim()), o = r.value.filter((n) => n.id !== t.id).map((n) => n.s_y), a = r.value.filter((n) => n.id !== t.id).map((n) => n.s_y + n.s_height), u = [...o, ...a];
+        u.sort(), u.filter((n) => n === t.s_y).length > 0 ? we.value = t.s_y : we.value = null, u.filter((n) => n === t.s_y + t.s_height).length > 0 ? be.value = t.s_y + t.s_height - l : be.value = null;
         const k = r.value.filter((n) => n.id !== t.id).map((n) => n.s_x), h = r.value.filter((n) => n.id !== t.id).map((n) => n.s_x + n.s_width), g = [...k, ...h];
-        g.sort(), g.filter((n) => n === t.s_x).length > 0 ? ke.value = t.s_x : ke.value = null, g.filter((n) => n === t.s_x + t.s_width).length > 0 ? Me.value = t.s_x + t.s_width - o : Me.value = null;
+        g.sort(), g.filter((n) => n === t.s_x).length > 0 ? ke.value = t.s_x : ke.value = null, g.filter((n) => n === t.s_x + t.s_width).length > 0 ? Me.value = t.s_x + t.s_width - l : Me.value = null;
       }
     }, yt = (s, t) => {
       let e = s.matches || s.webkitMatchesSelector || s.mozMatchesSelector || s.msMatchesSelector;
@@ -229,12 +229,12 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       Fe = s.clientX - e.offsetLeft, Ue = s.clientY - e.offsetTop, window.addEventListener("mousemove", Je), window.addEventListener("mouseup", Qe);
     }, Je = (s) => {
       clearTimeout(Ae);
-      const t = s.clientX - Fe, e = s.clientY - Ue, o = t <= Q("left") ? Q("left") : t >= Q("right") ? Q("right") : t, l = e <= Q("top") ? Q("top") : e >= Q("bottom") ? Q("bottom") : e, a = o - r.value[P].s_x, u = l - r.value[P].s_y;
+      const t = s.clientX - Fe, e = s.clientY - Ue, l = t <= Q("left") ? Q("left") : t >= Q("right") ? Q("right") : t, o = e <= Q("top") ? Q("top") : e >= Q("bottom") ? Q("bottom") : e, a = l - r.value[P].s_x, u = o - r.value[P].s_y;
       let k = "";
-      u > 0 ? k = "bottom" : u < 0 ? k = "top" : a > 2 ? k = "right" : a < -2 && (k = "left"), r.value[P].s_x = o, r.value[P].s_y = l, ce(r.value[P]);
+      u > 0 ? k = "bottom" : u < 0 ? k = "top" : a > 2 ? k = "right" : a < -2 && (k = "left"), r.value[P].s_x = l, r.value[P].s_y = o, ce(r.value[P]);
       let h = Pe(I(r.value.filter((g) => g.move !== !0)), r.value[P], !0);
       if (h.length === 0)
-        G.value.s_x = o, G.value.s_y = l;
+        G.value.s_x = l, G.value.s_y = o;
       else
         switch (k) {
           case "top":
@@ -243,7 +243,7 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
             h.forEach((i) => {
               Math.abs(i.s_y + i.s_height - g) < 5 && (i.s_y = g - i.s_height);
             });
-            let n = G.value.s_y - l, x = !0, d = [...h];
+            let n = G.value.s_y - o, x = !0, d = [...h];
             const E = (i) => {
               se(I(r.value.filter((c) => c.move !== !0 && Math.abs(c.s_y + c.s_height - i.s_y) <= 3)), i, !0).forEach((c) => {
                 d.findIndex((f) => f.id === c.id) === -1 && (d.push(c), E(c));
@@ -262,17 +262,17 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
                 });
               }), i = d[0].s_y - i, i < n && (n = i), d.forEach((c) => {
                 c.s_y -= n, r.value.filter((f) => f.id === c.id)[0].s_y = c.s_y;
-              }), G.value.s_x = o, G.value.s_y = r.value.filter((c) => c.id === d[d.length - 1].id)[0].s_y + r.value.filter((c) => c.id === d[d.length - 1].id)[0].s_height;
+              }), G.value.s_x = l, G.value.s_y = r.value.filter((c) => c.id === d[d.length - 1].id)[0].s_y + r.value.filter((c) => c.id === d[d.length - 1].id)[0].s_height;
             } else {
               let i = 0;
               h.forEach((f) => {
                 const z = se(r.value.filter((Y) => Y.move !== !0), f, !0).filter((Y) => Y.s_y > f.s_y + f.s_height);
                 z.length > 0 && (i = Math.min(...z.map((Y) => Y.s_y)));
               });
-              const b = i === 0 ? 0 : i - G.value.s_height - (Math.max(...h.map((f) => f.s_y + f.s_height)) - Math.min(...h.map((f) => f.s_y))), c = b === 0 ? l + G.value.s_height - Math.min(...h.map((f) => f.s_y)) : i - Math.min(...h.map((f) => f.s_y)) - (Math.max(...h.map((f) => f.s_y + f.s_height)) - Math.min(...h.map((f) => f.s_y)));
-              (b === 0 || l <= b) && (h.filter((f) => f.s_y < G.value.s_y).forEach((f) => {
+              const b = i === 0 ? 0 : i - G.value.s_height - (Math.max(...h.map((f) => f.s_y + f.s_height)) - Math.min(...h.map((f) => f.s_y))), c = b === 0 ? o + G.value.s_height - Math.min(...h.map((f) => f.s_y)) : i - Math.min(...h.map((f) => f.s_y)) - (Math.max(...h.map((f) => f.s_y + f.s_height)) - Math.min(...h.map((f) => f.s_y)));
+              (b === 0 || o <= b) && (h.filter((f) => f.s_y < G.value.s_y).forEach((f) => {
                 f.s_y += c, r.value.filter((z) => z.id === f.id)[0].s_y = f.s_y;
-              }), G.value.s_x = o, G.value.s_y = l, le(r.value, (f, z) => f.filter((Y) => Y.move !== !0 && Y.id !== z.id), !0));
+              }), G.value.s_x = l, G.value.s_y = o, oe(r.value, (f, z) => f.filter((Y) => Y.move !== !0 && Y.id !== z.id), !0));
             }
             break;
           case "bottom":
@@ -282,11 +282,11 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
               b.length > 0 && (O = Math.max(...b.map((c) => c.s_y + c.s_height)));
             });
             const X = O + (Math.max(...h.map((i) => i.s_height + i.s_y)) - Math.min(...h.map((i) => i.s_y))), T = Math.min(...h.map((i) => i.s_y)) - O;
-            l >= X && (h.filter((i) => i.s_y > G.value.s_y).forEach((i) => {
+            o >= X && (h.filter((i) => i.s_y > G.value.s_y).forEach((i) => {
               i.s_y -= T, r.value.filter((c) => c.id === i.id)[0].s_y = i.s_y;
               const b = Pe(r.value.filter((c) => c.move !== !0 && c.id !== i.id), i, !0);
               b.length > 0 && (i.s_y = Math.max(...b.map((c) => c.s_y + c.s_height)), r.value.filter((c) => c.id === i.id)[0].s_y = i.s_y);
-            }), G.value.s_x = o, G.value.s_y = X, le(r.value, (i, b) => i.filter((c) => c.move !== !0 && c.id !== b.id), !0));
+            }), G.value.s_x = l, G.value.s_y = X, oe(r.value, (i, b) => i.filter((c) => c.move !== !0 && c.id !== b.id), !0));
             break;
           case "left":
           case "right":
@@ -302,7 +302,7 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
                   let f = null;
                   const z = se(b.filter((Y) => Y.move !== !0 && Y.s_y < h[c].s_y), h[c], !0);
                   if (z.length === 0 ? f = 0 : f = Math.max(...z.map((Y) => Y.s_y + Y.s_height)), c === i) {
-                    if (h[c].s_y - (h[c].s_y + h[c].s_height - l) < f) {
+                    if (h[c].s_y - (h[c].s_y + h[c].s_height - o) < f) {
                       ee = !1;
                       break;
                     }
@@ -314,25 +314,25 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
                 }
               }
               if (ee) {
-                h[i].s_y -= h[i].s_y + h[i].s_height - l, r.value.filter((b) => b.id === h[i].id)[0].s_y = h[i].s_y;
+                h[i].s_y -= h[i].s_y + h[i].s_height - o, r.value.filter((b) => b.id === h[i].id)[0].s_y = h[i].s_y;
                 for (let b = i; b > 0; b--)
                   h[i - 1].s_y -= h[i].s_height, r.value.filter((c) => c.id === h[i - 1].id)[0].s_y = h[i - 1].s_y;
               } else
                 h.filter((b) => b.id === h[i].id).forEach((b) => {
-                  b.s_y += r.value[P].s_y + r.value[P].s_height - b.s_y, r.value.filter((c) => c.id === b.id)[0].s_y = b.s_y, le([b], (c, f) => c.filter((z) => z.move !== !0 && z.id !== f.id), !0);
+                  b.s_y += r.value[P].s_y + r.value[P].s_height - b.s_y, r.value.filter((c) => c.id === b.id)[0].s_y = b.s_y, oe([b], (c, f) => c.filter((z) => z.move !== !0 && z.id !== f.id), !0);
                 });
             }
-            G.value.s_x = o;
+            G.value.s_x = l;
             break;
         }
       r.value.forEach((g) => {
         Ye(g);
-      }), N(!1), B("dragIng", H(r.value[P]));
+      }), m(!1), B("dragIng", H(r.value[P]));
     }, Qe = () => {
       window.removeEventListener("mousemove", Je), window.removeEventListener("mouseup", Qe), delete r.value[P].move, r.value[P].s_x = G.value.s_x, r.value[P].s_y = G.value.s_y, ce(null), r.value.forEach((s) => {
         Ye(s);
-      }), N(), B("dragEnd", H(r.value[P])), P = null, Ae = setTimeout(() => {
-        N();
+      }), m(), B("dragEnd", H(r.value[P])), P = null, Ae = setTimeout(() => {
+        m();
       }, 500);
     }, Q = (s) => {
       switch (s) {
@@ -346,19 +346,19 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
           return 0;
       }
     };
-    let v = null, Be = "", De = 0, Ie = 0, oe = 0, re = 0, ne = 0, ie = 0, he = 0, Ge = 0, de = 0, ze = 0;
+    let v = null, Be = "", De = 0, Ie = 0, le = 0, re = 0, ne = 0, ie = 0, he = 0, Ge = 0, de = 0, ze = 0;
     const Z = (s, t, e) => {
-      Se(), v = t, B("resizeStart", H(v)), Be = e, De = s.clientX, Ie = s.clientY, oe = t.s_width, re = t.s_height, ne = t.s_y, ie = t.s_x, v.drag = !0, ce(v);
-      const o = r.value.filter((g) => g.static === !0 && (g.s_x < t.s_x ? g.s_x + g.s_width >= t.s_x : g.s_x <= t.s_x + t.s_width)), l = r.value.filter((g) => g.static === !0 && (g.s_y < t.s_y ? g.s_y + g.s_height >= t.s_y : g.s_y <= t.s_y + t.s_height)), a = o.filter((g) => g.s_y + g.s_height <= t.s_y).map((g) => g.s_y + g.s_height);
+      Se(), v = t, B("resizeStart", H(v)), Be = e, De = s.clientX, Ie = s.clientY, le = t.s_width, re = t.s_height, ne = t.s_y, ie = t.s_x, v.drag = !0, ce(v);
+      const l = r.value.filter((g) => g.static === !0 && (g.s_x < t.s_x ? g.s_x + g.s_width >= t.s_x : g.s_x <= t.s_x + t.s_width)), o = r.value.filter((g) => g.static === !0 && (g.s_y < t.s_y ? g.s_y + g.s_height >= t.s_y : g.s_y <= t.s_y + t.s_height)), a = l.filter((g) => g.s_y + g.s_height <= t.s_y).map((g) => g.s_y + g.s_height);
       a.length > 0 ? he = Math.max(...a) : he = 0;
-      const u = o.filter((g) => g.s_y >= t.s_y + t.s_height).map((g) => g.s_y);
+      const u = l.filter((g) => g.s_y >= t.s_y + t.s_height).map((g) => g.s_y);
       u.length > 0 ? Ge = Math.min(...u) : Ge = 0;
-      const k = l.filter((g) => g.s_x + g.s_width <= t.s_x).map((g) => g.s_x + g.s_width);
+      const k = o.filter((g) => g.s_x + g.s_width <= t.s_x).map((g) => g.s_x + g.s_width);
       k.length > 0 ? de = Math.max(...k) : de = 0;
-      const h = l.filter((g) => g.s_x >= t.s_x + t.s_width).map((g) => g.s_x);
+      const h = o.filter((g) => g.s_x >= t.s_x + t.s_width).map((g) => g.s_x);
       h.length > 0 ? ze = Math.min(...h) : ze = 0, window.addEventListener("mousemove", Ze), window.addEventListener("mouseup", je);
     }, Ze = (s) => {
-      const t = oe + (s.clientX - De), e = re + (s.clientY - Ie), o = oe - (s.clientX - De), l = re - (s.clientY - Ie), a = ne + (s.clientY - Ie), u = ie + (s.clientX - De), k = getComputedStyle(R.value), h = parseInt(k.getPropertyValue("--com-item-border-width").trim()), g = parseInt(k.getPropertyValue("--group-tit-height").trim()), n = () => {
+      const t = le + (s.clientX - De), e = re + (s.clientY - Ie), l = le - (s.clientX - De), o = re - (s.clientY - Ie), a = ne + (s.clientY - Ie), u = ie + (s.clientX - De), k = getComputedStyle(R.value), h = parseInt(k.getPropertyValue("--com-item-border-width").trim()), g = parseInt(k.getPropertyValue("--group-tit-height").trim()), n = () => {
         if (v.isGroup === !0) {
           const O = v.s_width - 2 * W.value * S.value - 2 * h, X = v.s_height - 2 * U.value * S.value - 2 * h - (v.groupTit ? g : 0);
           v.groupData.forEach((T) => {
@@ -368,22 +368,22 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       }, x = (C.itemMinWidth + W.value * 2) * S.value, d = (C.itemMinHeight + U.value * 2) * S.value;
       switch (Be) {
         case "top-left":
-          v.s_height = l < d ? d : l > M("top") ? M("top") : l, v.s_y = l < d ? ne + re - d : l > M("top") ? he : a, v.s_width = o < x ? x : o > M("left") ? M("left") : o, v.s_x = o < x ? ie + oe - x : o > M("left") ? de : u, n();
+          v.s_height = o < d ? d : o > M("top") ? M("top") : o, v.s_y = o < d ? ne + re - d : o > M("top") ? he : a, v.s_width = l < x ? x : l > M("left") ? M("left") : l, v.s_x = l < x ? ie + le - x : l > M("left") ? de : u, n();
           break;
         case "top":
-          v.s_height = l < d ? d : l > M("top") ? M("top") : l, v.s_y = l < d ? ne + re - d : l > M("top") ? he : a, n();
+          v.s_height = o < d ? d : o > M("top") ? M("top") : o, v.s_y = o < d ? ne + re - d : o > M("top") ? he : a, n();
           break;
         case "top-right":
-          v.s_height = l < d ? d : l > M("top") ? M("top") : l, v.s_y = l < d ? ne + re - d : l > M("top") ? he : a, v.s_width = t < x ? x : t > M("right") ? M("right") : t, n();
+          v.s_height = o < d ? d : o > M("top") ? M("top") : o, v.s_y = o < d ? ne + re - d : o > M("top") ? he : a, v.s_width = t < x ? x : t > M("right") ? M("right") : t, n();
           break;
         case "left":
-          v.s_width = o < x ? x : o > M("left") ? M("left") : o, v.s_x = o < x ? ie + oe - x : o > M("left") ? de : u, n();
+          v.s_width = l < x ? x : l > M("left") ? M("left") : l, v.s_x = l < x ? ie + le - x : l > M("left") ? de : u, n();
           break;
         case "right":
           v.s_width = t < x ? x : t > M("right") ? M("right") : t, n();
           break;
         case "bottom-left":
-          v.s_height = e < d ? d : e > M("bottom") ? M("bottom") : e, v.s_width = o < x ? x : o > M("left") ? M("left") : o, v.s_x = o < x ? ie + oe - x : o > M("left") ? de : u, n();
+          v.s_height = e < d ? d : e > M("bottom") ? M("bottom") : e, v.s_width = l < x ? x : l > M("left") ? M("left") : l, v.s_x = l < x ? ie + le - x : l > M("left") ? de : u, n();
           break;
         case "bottom":
           v.s_height = e < d ? d : e > M("bottom") ? M("bottom") : e, n();
@@ -401,39 +401,39 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
         });
         for (let O = 0; O < E.length; O++)
           E.filter((X) => X.id === E[O].id).forEach((X) => {
-            X.s_y += v.s_y + v.s_height - X.s_y, r.value.filter((T) => T.id === X.id)[0].s_y = X.s_y, le([X], (T, ee) => T.filter((i) => i.drag !== !0 && i.id !== ee.id), !0);
+            X.s_y += v.s_y + v.s_height - X.s_y, r.value.filter((T) => T.id === X.id)[0].s_y = X.s_y, oe([X], (T, ee) => T.filter((i) => i.drag !== !0 && i.id !== ee.id), !0);
           });
       }
       r.value.forEach((O) => {
         Ye(O);
-      }), N(!1), B("resizeIng", H(v));
+      }), m(!1), B("resizeIng", H(v));
     }, je = (s) => {
-      delete v.drag, Be = "", ce(null), window.removeEventListener("mousemove", Ze), window.removeEventListener("mouseup", je), N(), B("resizeEnd", H(v)), v = null;
+      delete v.drag, Be = "", ce(null), window.removeEventListener("mousemove", Ze), window.removeEventListener("mouseup", je), m(), B("resizeEnd", H(v)), v = null;
     }, M = (s) => {
       switch (s) {
         case "top":
           return ne + re - he;
         case "left":
-          return ie + oe - de;
+          return ie + le - de;
         case "right":
           return (ze > 0 ? ze : J - W.value * 2 * S.value) - ie;
         case "bottom":
           return Ge > 0 ? Ge - ne : 999999999;
       }
-    }, N = (s = !0) => {
-      s === !0 && (le(r.value, (e, o) => e.filter((l) => l.id !== o.id)), _t(), r.value.forEach((e) => {
+    }, m = (s = !0) => {
+      s === !0 && (oe(r.value, (e, l) => e.filter((o) => o.id !== l.id)), _t(), r.value.forEach((e) => {
         gt(e);
       }), xt());
       const t = r.value.map((e) => e.y + e.height);
       t.length > 0 ? xe.value = Math.max(...t) : xe.value = 0;
     }, _t = () => {
       const s = I(r.value).sort((t, e) => {
-        const o = t.y, l = e.y;
-        return o - l;
+        const l = t.y, o = e.y;
+        return l - o;
       });
       for (let t = 0; t < s.length; t++) {
-        const e = se(s, s[t]).filter((o) => o.y + o.height <= s[t].y);
-        e.length > 0 ? s[t].y = Math.max(...e.map((o) => o.y + o.height)) : s[t].y = 0;
+        const e = se(s, s[t]).filter((l) => l.y + l.height <= s[t].y);
+        e.length > 0 ? s[t].y = Math.max(...e.map((l) => l.y + l.height)) : s[t].y = 0;
       }
       s.forEach((t) => {
         r.value.filter((e) => e.id === t.id)[0].y = t.y;
@@ -441,9 +441,9 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
     }, xt = () => {
       const s = r.value.filter((t) => t.isGroup === !0);
       if (s.length > 0) {
-        const t = getComputedStyle(R.value), e = parseInt(t.getPropertyValue("--setting-icon-group-width").trim()), o = parseInt(t.getPropertyValue("--setting-icon-group-height").trim());
-        s.forEach((l) => {
-          W.value + l.s_x + l.s_width + e > J ? W.value + l.s_x - e < 0 ? C.groupBtnPosMore ? U.value + l.s_y - o < 0 ? l.btnPosition = "bottom" : l.btnPosition = "top" : l.btnPosition = "center" : l.btnPosition = "left" : l.btnPosition = "right";
+        const t = getComputedStyle(R.value), e = parseInt(t.getPropertyValue("--setting-icon-group-width").trim()), l = parseInt(t.getPropertyValue("--setting-icon-group-height").trim());
+        s.forEach((o) => {
+          W.value + o.s_x + o.s_width + e > J ? W.value + o.s_x - e < 0 ? C.groupBtnPosMore ? U.value + o.s_y - l < 0 ? o.btnPosition = "bottom" : o.btnPosition = "top" : o.btnPosition = "center" : o.btnPosition = "left" : o.btnPosition = "right";
         });
       }
     };
@@ -459,14 +459,14 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
         if (e.groupData.length < 2)
           Ee(e.id);
         else {
-          const o = Oe(e.groupData, e);
-          Ce(o);
+          const l = Oe(e.groupData, e);
+          Ce(l);
         }
       }), He = !0, ct(() => {
         const e = R.value.getBoundingClientRect();
-        t != null ? (ve(t), _e(e.width / t)) : (ve(r.value.length > 0 ? e.width : null), _e(1)), r.value.forEach((o) => {
-          ue(o);
-        }), N(), setTimeout(() => {
+        t != null ? (ve(t), _e(e.width / t)) : (ve(r.value.length > 0 ? e.width : null), _e(1)), r.value.forEach((l) => {
+          ue(l);
+        }), m(), setTimeout(() => {
           He = !1;
         }, 500);
       });
@@ -481,22 +481,22 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
         } catch {
         }
     }, tt = (s, t, e) => {
-      const o = t.map((u) => u.y), l = Math.max(...o), a = t.filter((u) => u.y + u.height > l);
+      const l = t.map((u) => u.y), o = Math.max(...l), a = t.filter((u) => u.y + u.height > o);
       a.sort((u, k) => {
         const h = u.x, g = k.x;
         return h - g;
       });
       for (let u = 0; u < a.length; u++) {
         if (u === 0 && a[u].x >= s.width) {
-          s.y = l, s.x = 0;
+          s.y = o, s.x = 0;
           break;
         }
         if (a.length > 1 && u !== a.length - 1 && a[u].x + a[u].width + s.width <= a[u + 1].x) {
-          s.y = l, s.x = a[u].x + a[u].width;
+          s.y = o, s.x = a[u].x + a[u].width;
           break;
         }
         if (u === a.length - 1 && a[u].x + a[u].width + s.width <= e) {
-          s.y = l, s.x = a[u].x + a[u].width;
+          s.y = o, s.x = a[u].x + a[u].width;
           break;
         }
       }
@@ -506,27 +506,27 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
         s.y = Math.max(...u);
       }
     }, pe = (s, t = null, e = !1) => {
-      const o = I(s), l = r.value.filter((a) => a.id === t);
-      if (o.id || (o.id = (/* @__PURE__ */ new Date()).getTime() + ""), t && l.length !== 1)
+      const l = I(s), o = r.value.filter((a) => a.id === t);
+      if (l.id || (l.id = (/* @__PURE__ */ new Date()).getTime() + ""), t && o.length !== 1)
         try {
         } catch {
         } finally {
           return;
         }
-      if (e !== !0 && (delete o.x, delete o.y, t ? (l[0].groupData.forEach((a) => {
-        j(a, l[0]);
-      }), tt(o, l[0].groupData, l[0].width)) : r.value.length === 0 ? (o.x = 0, o.y = 0) : tt(o, r.value, (ae || J) - W.value * 2)), t) {
-        l[0].groupData.push(o);
-        const a = Oe(l[0].groupData, l[0]);
-        Ce(a), le([a], (u, k) => u.filter((h) => h.id !== k.id));
+      if (e !== !0 && (delete l.x, delete l.y, t ? (o[0].groupData.forEach((a) => {
+        j(a, o[0]);
+      }), tt(l, o[0].groupData, o[0].width)) : r.value.length === 0 ? (l.x = 0, l.y = 0) : tt(l, r.value, (ae || J) - W.value * 2)), t) {
+        o[0].groupData.push(l);
+        const a = Oe(o[0].groupData, o[0]);
+        Ce(a), oe([a], (u, k) => u.filter((h) => h.id !== k.id));
       } else
-        r.value.length === 0 && ve(J), ue(o), r.value.push(o);
-      N();
+        r.value.length === 0 && ve(J), ue(l), r.value.push(l);
+      m();
     }, $e = (s, t = null, e = null) => {
-      let o = null;
-      const l = r.value.filter((a) => a.id === t);
-      if (t ? l.length === 1 && (o = I(l[0].groupData.filter((a) => a.id === s)[0])) : o = I(r.value.filter((a) => a.id === s)[0]), o)
-        return o.id = e || (/* @__PURE__ */ new Date()).getTime() + "", t ? (j(o, l[0]), pe(o, t)) : pe(o), H(t ? r.value.filter((a) => a.id === t)[0].groupData.filter((a) => a.id === o.id)[0] : r.value.filter((a) => a.id === o.id)[0]);
+      let l = null;
+      const o = r.value.filter((a) => a.id === t);
+      if (t ? o.length === 1 && (l = I(o[0].groupData.filter((a) => a.id === s)[0])) : l = I(r.value.filter((a) => a.id === s)[0]), l)
+        return l.id = e || (/* @__PURE__ */ new Date()).getTime() + "", t ? (j(l, o[0]), pe(l, t)) : pe(l), H(t ? r.value.filter((a) => a.id === t)[0].groupData.filter((a) => a.id === l.id)[0] : r.value.filter((a) => a.id === l.id)[0]);
       try {
       } catch {
       } finally {
@@ -534,21 +534,21 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       }
     }, ge = (s, t = null) => {
       let e = -1;
-      const o = r.value.filter((l) => l.id === t);
-      if (t ? o.length === 1 && (e = o[0].groupData.findIndex((l) => l.id === s)) : e = r.value.findIndex((l) => l.id === s), e !== -1) {
+      const l = r.value.filter((o) => o.id === t);
+      if (t ? l.length === 1 && (e = l[0].groupData.findIndex((o) => o.id === s)) : e = r.value.findIndex((o) => o.id === s), e !== -1) {
         if (t)
-          if (o[0].groupData.splice(e, 1), o[0].groupData.length === 1)
+          if (l[0].groupData.splice(e, 1), l[0].groupData.length === 1)
             Ee(t);
           else {
-            o[0].groupData.forEach((a) => {
-              j(a, o[0]);
+            l[0].groupData.forEach((a) => {
+              j(a, l[0]);
             });
-            const l = Oe(o[0].groupData, o[0]);
-            Ce(l);
+            const o = Oe(l[0].groupData, l[0]);
+            Ce(o);
           }
         else
           r.value.splice(e, 1), r.value.length === 0 && (ve(null), _e(1));
-        N();
+        m();
       } else
         try {
         } catch {
@@ -556,13 +556,13 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
     }, Ce = (s) => {
       if (s.id) {
         const t = I(s);
-        delete t.showPop, delete t.showSet, delete t.btnPosition, t.groupData && t.groupData.forEach((l) => {
-          delete l.showPop, delete l.showSet;
+        delete t.showPop, delete t.showSet, delete t.btnPosition, t.groupData && t.groupData.forEach((o) => {
+          delete o.showPop, delete o.showSet;
         });
         let e = -1;
-        const o = r.value.filter((l) => l.id === t.inGroupId);
-        if (t.inGroupId ? o.length === 1 && (e = o[0].groupData.findIndex((l) => l.id === t.id)) : e = r.value.findIndex((l) => l.id === t.id), e !== -1)
-          t.inGroupId ? (o[0].groupData[e] = t, ue(o[0])) : (r.value[e] = t, ue(r.value[e])), N();
+        const l = r.value.filter((o) => o.id === t.inGroupId);
+        if (t.inGroupId ? l.length === 1 && (e = l[0].groupData.findIndex((o) => o.id === t.id)) : e = r.value.findIndex((o) => o.id === t.id), e !== -1)
+          t.inGroupId ? (l[0].groupData[e] = t, ue(l[0])) : (r.value[e] = t, ue(r.value[e])), m();
         else
           try {
           } catch {
@@ -574,7 +574,7 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
     }, kt = (s, t) => {
       s !== null && (J = s, He || (_e(ae && J ? s / ae : 1), r.value.forEach((e) => {
         ue(e);
-      }), N())), t !== null && (qe = t);
+      }), m())), t !== null && (qe = t);
     }, st = (s) => {
       s.showPop || (r.value.forEach((t) => {
         delete t.showPop, t.groupData && t.groupData.forEach((e) => {
@@ -587,7 +587,7 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
           delete t.showPop;
         });
       }), window.removeEventListener("click", Se);
-    }, V = L(!1), lt = (s) => {
+    }, V = L(!1), ot = (s) => {
       const t = r.value.findIndex((e) => e.id === s);
       if (t !== -1)
         r.value[t].checked = !0, r.value[t].checkDis = !0, V.value = !0, B("showGroup", V.value);
@@ -604,7 +604,7 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
     }, Mt = (s) => {
       s.checked = !s.checked, B("updateChecked", r.value.filter((t) => t.checked).length);
     }, Oe = (s, t) => {
-      const e = I(s), o = I(t);
+      const e = I(s), l = I(t);
       e.sort((n, x) => {
         const d = n.x, E = x.x;
         return d - E;
@@ -643,18 +643,18 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
           }
         }
       }
-      const l = e.map((n) => n.x + n.width), a = Math.max(...l), u = e.map((n) => n.y + n.height), k = Math.max(...u);
+      const o = e.map((n) => n.x + n.width), a = Math.max(...o), u = e.map((n) => n.y + n.height), k = Math.max(...u);
       e.forEach((n) => {
-        n.inGroupId || (n.inGroupId = o.id), n.groupW = n.width / a, n.groupH = n.height / k, n.groupX = n.x / a, n.groupY = n.y / k, n.isObstacle = n.x + n.width === a && n.y === 0, delete n.width, delete n.height;
+        n.inGroupId || (n.inGroupId = l.id), n.groupW = n.width / a, n.groupH = n.height / k, n.groupX = n.x / a, n.groupY = n.y / k, n.isObstacle = n.x + n.width === a && n.y === 0, delete n.width, delete n.height;
       });
       const h = getComputedStyle(R.value), g = parseInt(h.getPropertyValue("--group-tit-height").trim());
-      return o.width = a, o.height = k + (o.groupTit ? g : 0), o.groupData = [...e], o;
+      return l.width = a, l.height = k + (l.groupTit ? g : 0), l.groupData = [...e], l;
     }, j = (s, t) => {
-      const e = getComputedStyle(R.value), o = parseInt(e.getPropertyValue("--group-tit-height").trim());
-      s.width = t.width * s.groupW, s.height = (t.height - (t.groupTit ? o : 0)) * s.groupH;
+      const e = getComputedStyle(R.value), l = parseInt(e.getPropertyValue("--group-tit-height").trim());
+      s.width = t.width * s.groupW, s.height = (t.height - (t.groupTit ? l : 0)) * s.groupH;
     }, St = () => {
       ct(() => {
-        Ne();
+        me();
       });
     }, Et = () => {
       const s = r.value.filter((t) => t.checked);
@@ -664,17 +664,17 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
           isGroup: !0,
           groupTit: ""
         }, e = Oe(s, t);
-        return e.groupData.forEach((o) => {
-          ge(o.id);
-        }), pe(e), We(), H(r.value.filter((o) => o.id === e.id)[0]);
+        return e.groupData.forEach((l) => {
+          ge(l.id);
+        }), pe(e), We(), H(r.value.filter((l) => l.id === e.id)[0]);
       } else
         return We(), null;
-    }, ot = (s, t) => {
-      const e = r.value.filter((o) => o.id === t)[0];
+    }, lt = (s, t) => {
+      const e = r.value.filter((l) => l.id === t)[0];
       if (e) {
-        const o = e.groupData.filter((l) => l.id === s)[0];
-        if (o)
-          return e.groupData.length === 2 ? Ee(t) : (j(o, e), delete o.inGroupId, delete o.groupW, delete o.groupH, delete o.groupX, delete o.groupY, delete o.isObstacle, ge(o.id, e.id), pe(o), [H(r.value.filter((l) => l.id === s)[0])]);
+        const l = e.groupData.filter((o) => o.id === s)[0];
+        if (l)
+          return e.groupData.length === 2 ? Ee(t) : (j(l, e), delete l.inGroupId, delete l.groupW, delete l.groupH, delete l.groupX, delete l.groupY, delete l.isObstacle, ge(l.id, e.id), pe(l), [H(r.value.filter((o) => o.id === s)[0])]);
         try {
         } catch {
         } finally {
@@ -690,13 +690,13 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       const t = r.value.filter((e) => e.id === s)[0];
       if (t) {
         let e = [];
-        t.groupData.forEach((l) => {
-          j(l, t), l.x += t.x, l.y += t.y, delete l.inGroupId, delete l.groupW, delete l.groupH, delete l.groupX, delete l.groupY, delete l.isObstacle, e.push(l.id), pe(l, null, !0);
+        t.groupData.forEach((o) => {
+          j(o, t), o.x += t.x, o.y += t.y, delete o.inGroupId, delete o.groupW, delete o.groupH, delete o.groupX, delete o.groupY, delete o.isObstacle, e.push(o.id), pe(o, null, !0);
         }), ge(t.id);
-        let o = [];
-        return e.forEach((l) => {
-          o.push(H(r.value.filter((a) => a.id === l)[0]));
-        }), o;
+        let l = [];
+        return e.forEach((o) => {
+          l.push(H(r.value.filter((a) => a.id === o)[0]));
+        }), l;
       } else
         try {
         } catch {
@@ -704,13 +704,13 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
           return [];
         }
     }, Pt = (s = "", t) => {
-      const e = r.value.filter((o) => o.id === t)[0];
+      const e = r.value.filter((l) => l.id === t)[0];
       if (e) {
         if (!e.groupTit || !s) {
-          const o = getComputedStyle(R.value), l = parseInt(o.getPropertyValue("--group-tit-height").trim());
-          e.groupTit && !s && (e.height -= l, e.s_height -= l * S.value), !e.groupTit && s && (e.height += l, e.s_height += l * S.value);
+          const l = getComputedStyle(R.value), o = parseInt(l.getPropertyValue("--group-tit-height").trim());
+          e.groupTit && !s && (e.height -= o, e.s_height -= o * S.value), !e.groupTit && s && (e.height += o, e.s_height += o * S.value);
         }
-        e.groupTit = s, le([e], (o, l) => o.filter((a) => a.id !== l.id)), N();
+        e.groupTit = s, oe([e], (l, o) => l.filter((a) => a.id !== o.id)), m();
       } else
         try {
         } catch {
@@ -718,42 +718,42 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
     }, rt = () => {
       r.value = [], ve(null), _e(1), xe.value = 0;
     }, Dt = () => new Promise((s, t) => {
-      r.value.forEach((o) => {
-        delete o.showPop, delete o.showSet, o.groupData && o.groupData.forEach((l) => {
-          delete l.showPop, delete l.showSet;
+      r.value.forEach((l) => {
+        delete l.showPop, delete l.showSet, l.groupData && l.groupData.forEach((o) => {
+          delete o.showPop, delete o.showSet;
         });
       });
       const e = I(r.value);
-      e.forEach((o) => {
-        o.isGroup === !0 && o.groupData.forEach((l) => {
-          j(l, o), delete l.s_width, delete l.s_height, delete l.s_x, delete l.s_y;
-        }), delete o.btnPosition, delete o.s_width, delete o.s_height, delete o.s_x, delete o.s_y;
+      e.forEach((l) => {
+        l.isGroup === !0 && l.groupData.forEach((o) => {
+          j(o, l), delete o.s_width, delete o.s_height, delete o.s_x, delete o.s_y;
+        }), delete l.btnPosition, delete l.s_width, delete l.s_height, delete l.s_x, delete l.s_y;
       }), s({ data: e, width: ae });
     });
     return Ct(() => {
       et.unobserve(R.value), window.removeEventListener("click", Se);
-    }), q({ init: wt, addItem: pe, copyItem: $e, deleteItem: ge, updateItem: Ce, hideGroupSet: Xe, openGroup: lt, closeGroup: We, changeGroupBorder: St, addGroup: Et, removeGroupItem: ot, removeGroup: Ee, changeGroupTit: Pt, resetData: rt, getData: Dt }), (s, t) => (_(), w("div", {
+    }), q({ init: wt, addItem: pe, copyItem: $e, deleteItem: ge, updateItem: Ce, hideGroupSet: Xe, openGroup: ot, closeGroup: We, changeGroupBorder: St, addGroup: Et, removeGroupItem: lt, removeGroup: Ee, changeGroupTit: Pt, resetData: rt, getData: Dt }), (s, t) => (_(), w("div", {
       class: "vue-drag-component-plus",
-      style: m({ "--css-scle": p(S), "--com-x-space": p(W) + "px", "--com-y-space": p(U) + "px" }),
+      style: N({ "--css-scle": p(S), "--com-x-space": p(W) + "px", "--com-y-space": p(U) + "px" }),
       ref_key: "pageRef",
       ref: R
     }, [
       A("div", Tt, [
-        (_(!0), w(fe, null, Re(p(r), (e, o) => (_(), w("div", {
-          class: te(["com-item", e.move ? "is-move" : "", e.drag ? "is-drag" : "", e.showPop ? "on-top" : ""]),
-          style: m({
+        (_(!0), w(fe, null, Re(p(r), (e, l) => (_(), w("div", {
+          class: te(["com-item", e.move ? "is-move" : "", e.drag ? "is-drag" : "", e.showPop || e.isGroup && e.groupData.filter((o) => o.showPop).length > 0 ? "on-top" : ""]),
+          style: N({
             width: e.s_width + "px",
             height: e.s_height + "px",
             top: e.s_y + "px",
             left: e.s_x + "px"
           }),
-          key: o
+          key: l
         }, [
           A("div", {
             class: te(["com-item-inner", y.seeModel || p(V) || e.static === !0 || e.dragable === !1 ? "" : "can-drag", y.seeModel ? "no-hover" : ""]),
-            onMousedown: $((l) => y.seeModel || p(V) || e.static === !0 || e.dragable === !1 ? null : vt(l, o), ["prevent"]),
-            onMouseenter: (l) => y.seeModel || p(V) || p(P) || p(v) || !e.isGroup ? null : bt(e),
-            onMouseleave: (l) => y.seeModel || p(V) || p(P) || p(v) || !e.isGroup ? null : Xe(e.id)
+            onMousedown: $((o) => y.seeModel || p(V) || e.static === !0 || e.dragable === !1 ? null : vt(o, l), ["prevent"]),
+            onMouseenter: (o) => y.seeModel || p(V) || p(P) || p(v) || !e.isGroup ? null : bt(e),
+            onMouseleave: (o) => y.seeModel || p(V) || p(P) || p(v) || !e.isGroup ? null : Xe(e.id)
           }, [
             A("div", At, [
               e.isGroup ? (_(), w(fe, { key: 0 }, [
@@ -765,52 +765,52 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
                 A("div", {
                   class: te(["group-item-content", e.groupTit ? "" : "full"])
                 }, [
-                  (_(!0), w(fe, null, Re(e.groupData, (l, a) => (_(), w("div", {
-                    class: te(["com-item-box-child", l.isObstacle ? "is-obstacle" : ""]),
-                    style: m({
-                      width: l.s_width + "px",
-                      height: l.s_height + "px",
-                      top: l.s_y + "px",
-                      left: l.s_x + "px"
+                  (_(!0), w(fe, null, Re(e.groupData, (o, a) => (_(), w("div", {
+                    class: te(["com-item-box-child", o.isObstacle ? "is-obstacle" : ""]),
+                    style: N({
+                      width: o.s_width + "px",
+                      height: o.s_height + "px",
+                      top: o.s_y + "px",
+                      left: o.s_x + "px"
                     }),
                     key: a
                   }, [
                     A("div", Ht, [
-                      ye(s.$slots, "item", { data: l }, () => [
-                        A("p", null, K(Math.round(l.s_width * 100) / 100) + "," + K(Math.round(l.s_height * 100) / 100), 1),
-                        A("p", null, K(Math.round(l.s_x * 100) / 100) + "," + K(Math.round(l.s_y * 100) / 100), 1)
+                      ye(s.$slots, "item", { data: o }, () => [
+                        A("p", null, K(Math.round(o.s_width * 100) / 100) + "," + K(Math.round(o.s_height * 100) / 100), 1),
+                        A("p", null, K(Math.round(o.s_x * 100) / 100) + "," + K(Math.round(o.s_y * 100) / 100), 1)
                       ])
                     ]),
                     !y.seeModel && !p(V) && p(P) === null && p(v) === null ? (_(), w("div", {
                       key: 0,
                       class: "setting-box",
-                      style: m({ display: l.showPop ? "flex" : "none" }),
+                      style: N({ display: o.showPop ? "flex" : "none" }),
                       onMousedown: $((u) => null, ["prevent", "stop"])
                     }, [
                       ut(dt, {
                         iconObj: y.settingIcon,
-                        onClick: $((u) => st(l), ["prevent", "stop"])
+                        onClick: $((u) => st(o), ["prevent", "stop"])
                       }, null, 8, ["iconObj", "onClick"])
                     ], 36)) : D("", !0),
-                    l.showPop ? (_(), w("div", {
+                    o.showPop ? (_(), w("div", {
                       key: 1,
                       class: "setting-box-pop",
                       onMousedown: $((u) => null, ["prevent", "stop"])
                     }, [
                       ye(s.$slots, "setPopNormal", {
-                        data: H(l)
+                        data: H(o)
                       }, () => [
                         A("div", {
                           class: "setting-box-pop-item",
-                          onClick: (u) => ot(l.id, l.inGroupId)
+                          onClick: (u) => lt(o.id, o.inGroupId)
                         }, "移出组合", 8, Xt),
                         A("div", {
                           class: "setting-box-pop-item",
-                          onClick: (u) => $e(l.id, l.inGroupId)
+                          onClick: (u) => $e(o.id, o.inGroupId)
                         }, "复制", 8, $t),
                         A("div", {
                           class: "setting-box-pop-item",
-                          onClick: (u) => ge(l.id, l.inGroupId)
+                          onClick: (u) => ge(o.id, o.inGroupId)
                         }, "删除", 8, Wt)
                       ])
                     ], 32)) : D("", !0)
@@ -825,23 +825,23 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
               !e.isGroup && e.notGroup !== !0 && p(V) ? (_(), w("div", {
                 key: 2,
                 class: te(["group-checkbox", e.checked ? "is-checked" : "", e.checkDis ? "disabled" : ""]),
-                onClick: (l) => e.checkDis ? null : Mt(e)
+                onClick: (o) => e.checkDis ? null : Mt(e)
               }, null, 10, Rt)) : D("", !0),
               !y.seeModel && !p(V) && p(P) === null && p(v) === null ? (_(), w("div", {
                 key: 3,
                 class: te(["setting-box", e.isGroup === !0 ? e.btnPosition === "right" ? "only-g" : e.btnPosition === "left" ? "only-g l" : e.btnPosition === "top" ? "only-g t" : e.btnPosition === "bottom" ? "only-g b" : e.btnPosition === "center" ? "only-g c" : "" : ""]),
-                style: m({ display: e.showPop || e.showSet ? "flex" : "none" }),
-                onMousedown: $((l) => null, ["prevent", "stop"])
+                style: N({ display: e.showPop || e.showSet ? "flex" : "none" }),
+                onMousedown: $((o) => null, ["prevent", "stop"])
               }, [
                 ut(dt, {
                   iconObj: y.settingIcon,
-                  onClick: $((l) => st(e), ["prevent", "stop"])
+                  onClick: $((o) => st(e), ["prevent", "stop"])
                 }, null, 8, ["iconObj", "onClick"])
               ], 38)) : D("", !0),
               e.showPop ? (_(), w("div", {
                 key: 4,
                 class: te(["setting-box-pop", e.isGroup === !0 ? e.btnPosition === "right" ? "special" : e.btnPosition === "left" ? "special l" : e.btnPosition === "top" ? "special t" : e.btnPosition === "bottom" ? "special b" : e.btnPosition === "center" ? "special c" : "" : ""]),
-                onMousedown: $((l) => null, ["prevent", "stop"])
+                onMousedown: $((o) => null, ["prevent", "stop"])
               }, [
                 e.isGroup === !0 ? ye(s.$slots, "setPopSpecial", {
                   key: 0,
@@ -850,14 +850,14 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
                   y.hideTit ? D("", !0) : (_(), w("div", {
                     key: 0,
                     class: "setting-box-pop-item",
-                    onClick: (l) => {
+                    onClick: (o) => {
                       Xe(e.id), B("showTitPop", e.groupTit, e.id);
                     }
                   }, " 设置组合标题", 8, Vt)),
                   A("div", {
                     class: "setting-box-pop-item",
-                    onClick: (l) => Ee(e.id)
-                  }, "解除组合", 8, mt)
+                    onClick: (o) => Ee(e.id)
+                  }, "解除组合", 8, Nt)
                 ]) : ye(s.$slots, "setPopNormal", {
                   key: 1,
                   data: H(e)
@@ -865,77 +865,77 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
                   e.notGroup !== !0 ? (_(), w("div", {
                     key: 0,
                     class: "setting-box-pop-item",
-                    onClick: (l) => lt(e.id)
-                  }, "组合", 8, Nt)) : D("", !0),
+                    onClick: (o) => ot(e.id)
+                  }, "组合", 8, mt)) : D("", !0),
                   A("div", {
                     class: "setting-box-pop-item",
-                    onClick: (l) => $e(e.id)
+                    onClick: (o) => $e(e.id)
                   }, "复制", 8, Kt),
                   A("div", {
                     class: "setting-box-pop-item",
-                    onClick: (l) => ge(e.id)
+                    onClick: (o) => ge(e.id)
                   }, "删除", 8, qt)
                 ])
               ], 34)) : D("", !0)
             ]),
-            !y.seeModel && !p(V) && !e.showPop && !e.move && e.static !== !0 && e.resizable !== !1 ? (_(), w(fe, { key: 0 }, [
+            !y.seeModel && !p(V) && !e.showPop && !(e.isGroup && e.groupData.filter((o) => o.showPop).length > 0) && !e.move && e.static !== !0 && e.resizable !== !1 ? (_(), w(fe, { key: 0 }, [
               p(F).indexOf("topLeft") !== -1 ? (_(), w("div", {
                 key: 0,
                 class: "resize-line top-left",
-                onMousedown: $((l) => Z(l, e, "top-left"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "top-left"), ["prevent", "stop"])
               }, null, 40, Ft)) : D("", !0),
               p(F).indexOf("top") !== -1 ? (_(), w("div", {
                 key: 1,
                 class: "resize-line top",
-                onMousedown: $((l) => Z(l, e, "top"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "top"), ["prevent", "stop"])
               }, null, 40, Ut)) : D("", !0),
               p(F).indexOf("topRight") !== -1 ? (_(), w("div", {
                 key: 2,
                 class: "resize-line top-right",
-                onMousedown: $((l) => Z(l, e, "top-right"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "top-right"), ["prevent", "stop"])
               }, null, 40, Jt)) : D("", !0),
               p(F).indexOf("left") !== -1 ? (_(), w("div", {
                 key: 3,
                 class: "resize-line left",
-                onMousedown: $((l) => Z(l, e, "left"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "left"), ["prevent", "stop"])
               }, null, 40, Qt)) : D("", !0),
               p(F).indexOf("right") !== -1 ? (_(), w("div", {
                 key: 4,
                 class: "resize-line right",
-                onMousedown: $((l) => Z(l, e, "right"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "right"), ["prevent", "stop"])
               }, null, 40, Zt)) : D("", !0),
               p(F).indexOf("bottomLeft") !== -1 ? (_(), w("div", {
                 key: 5,
                 class: "resize-line bottom-left",
-                onMousedown: $((l) => Z(l, e, "bottom-left"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "bottom-left"), ["prevent", "stop"])
               }, null, 40, jt)) : D("", !0),
               p(F).indexOf("bottom") !== -1 ? (_(), w("div", {
                 key: 6,
                 class: "resize-line bottom",
-                onMousedown: $((l) => Z(l, e, "bottom"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "bottom"), ["prevent", "stop"])
               }, null, 40, es)) : D("", !0),
               p(F).indexOf("bottomRight") !== -1 ? (_(), w("div", {
                 key: 7,
                 class: "resize-line bottom-right",
-                onMousedown: $((l) => Z(l, e, "bottom-right"), ["prevent", "stop"])
+                onMousedown: $((o) => Z(o, e, "bottom-right"), ["prevent", "stop"])
               }, null, 40, ts)) : D("", !0)
             ], 64)) : D("", !0)
           ], 42, Yt)
         ], 6))), 128)),
-        (_(!0), w(fe, null, Re(p(r), (e, o) => (_(), w("div", {
+        (_(!0), w(fe, null, Re(p(r), (e, l) => (_(), w("div", {
           class: te(["shadow-bg", e.move ? "is-move" : ""]),
-          style: m({
+          style: N({
             width: e.s_width - p(W) * 2 * p(S) + "px",
             height: e.s_height - p(U) * 2 * p(S) + "px",
             top: e.s_y + p(U) * p(S) + "px",
             left: e.s_x + p(W) * p(S) + "px"
           }),
-          key: o
+          key: l
         }, null, 6))), 128)),
         p(P) !== null ? (_(), w("div", {
           key: 0,
           class: "drag-bg",
-          style: m({
+          style: N({
             width: p(G).s_width + "px",
             height: p(G).s_height + "px",
             top: p(G).s_y + "px",
@@ -944,28 +944,28 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
         }, null, 4)) : D("", !0),
         A("div", {
           class: "height-bg",
-          style: m({ height: (p(xe) > 0 ? +(p(xe) * p(S) + (y.seeModel ? y.seeModelMinBg : 220)) : 0) + "px" })
+          style: N({ height: (p(xe) > 0 ? +(p(xe) * p(S) + (y.seeModel ? y.seeModelMinBg : 220)) : 0) + "px" })
         }, null, 4),
         y.showAuxiliary ? (_(), w(fe, { key: 1 }, [
           p(we) !== null ? (_(), w("div", {
             key: 0,
             class: "auxiliary-line hor",
-            style: m({ top: p(we) + "px", left: "0px" })
+            style: N({ top: p(we) + "px", left: "0px" })
           }, null, 4)) : D("", !0),
           p(be) !== null ? (_(), w("div", {
             key: 1,
             class: "auxiliary-line hor",
-            style: m({ top: p(be) + "px", left: "0px" })
+            style: N({ top: p(be) + "px", left: "0px" })
           }, null, 4)) : D("", !0),
           p(ke) !== null ? (_(), w("div", {
             key: 2,
             class: "auxiliary-line",
-            style: m({ top: "0px", left: p(ke) + "px" })
+            style: N({ top: "0px", left: p(ke) + "px" })
           }, null, 4)) : D("", !0),
           p(Me) !== null ? (_(), w("div", {
             key: 3,
             class: "auxiliary-line",
-            style: m({ top: "0px", left: p(Me) + "px" })
+            style: N({ top: "0px", left: p(Me) + "px" })
           }, null, 4)) : D("", !0)
         ], 64)) : D("", !0),
         p(r).length === 0 ? (_(), w("div", ss, [
@@ -976,9 +976,9 @@ const Tt = { class: "content-box" }, Yt = ["onMousedown", "onMouseenter", "onMou
       ])
     ], 4));
   }
-}, os = [ls], rs = {
+}, ls = [os], rs = {
   install(y) {
-    os.forEach((q) => {
+    ls.forEach((q) => {
       y.component("vueDragComponentPlus", q);
     });
   }

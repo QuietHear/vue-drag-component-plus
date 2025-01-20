@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-01-20 13:28:30
+* @LastEditors: aFei
+* @LastEditTime: 2025-01-20 13:58:05
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -13,7 +13,8 @@
     <!-- 滚动区 -->
     <div class="content-box">
       <!-- 组件项 -->
-      <div :class="['com-item', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop ? 'on-top' : '']"
+      <div
+        :class="['com-item', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '']"
         :style="{
           width: item.s_width + 'px',
           height: item.s_height + 'px',
@@ -106,7 +107,7 @@
           </div>
           <!-- 缩放触发器 -->
           <template
-            v-if="!seeModel && !isGrouping && !item.showPop && !item.move && item.static !== true && item.resizable !== false">
+            v-if="!seeModel && !isGrouping && !item.showPop && !(item.isGroup && item.groupData.filter(one => one.showPop).length > 0) && !item.move && item.static !== true && item.resizable !== false">
             <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
               v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
             <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
