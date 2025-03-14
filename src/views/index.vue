@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-01-17 09:51:05
+ * @LastEditTime: 2025-03-14 13:37:19
 */
 <template>
   <div class="demo">
@@ -35,7 +35,8 @@
         <div class="box">
           <vueDragComponentPlus ref="comRef" :xSpace="xSpace" :ySpace="ySpace" @showGroup="chengGroup"
             @updateChecked="num => groupNum = num" @showTitPop="showTitPop" @baseWidthInit="num => baseWidth = num"
-            @changeScle="num => nowScle = num" :seeModel="seeModel" showAuxiliary>
+            @changeScle="num => nowScle = num" @domStart="domStart" @domReady="domReady" :seeModel="seeModel"
+            showAuxiliary>
             <template #item="{ data }">
               <test :obj="data" v-if="data.x === 0 && data.y === 0" />
             </template>
@@ -179,6 +180,12 @@ const initTest = () => {
       x: 581
     }
   ], 1000);
+};
+const domStart = () => {
+  console.log('开始');
+};
+const domReady = () => {
+  console.log('结束');
 };
 const resetData = () => {
   comRef.value.resetData();

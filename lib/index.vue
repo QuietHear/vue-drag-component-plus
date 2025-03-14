@@ -4,7 +4,7 @@
 */
 /*
 * @LastEditors: aFei
-* @LastEditTime: 2025-01-20 13:58:05
+* @LastEditTime: 2025-03-14 13:30:19
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -14,7 +14,7 @@
     <div class="content-box">
       <!-- 组件项 -->
       <div
-        :class="['com-item', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '']"
+        :class="['com-item', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '', initTime + 'p']"
         :style="{
           width: item.s_width + 'px',
           height: item.s_height + 'px',
@@ -37,7 +37,7 @@
               </div>
               <!-- 组合子项内容 -->
               <div :class="['group-item-content', item.groupTit ? '' : 'full']">
-                <div :class="['com-item-box-child', one.isObstacle ? 'is-obstacle' : '']" :style="{
+                <div :class="['com-item-box-child', one.isObstacle ? 'is-obstacle' : '', initTime + 'c']" :style="{
                   width: one.s_width + 'px',
                   height: one.s_height + 'px',
                   top: one.s_y + 'px',
@@ -168,7 +168,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
-const emit = defineEmits(["baseWidthInit", "changeScle", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop"]);
+const emit = defineEmits(["baseWidthInit", "changeScle", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -265,6 +265,37 @@ const deepCopy = (obj) => {
   } else {
     return obj;
   }
+};
+// JQ的closest()方法
+const closest = (ele, selector) => {
+  let matchesSelector = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || ele.msMatchesSelector;
+  while (ele) {
+    if (matchesSelector.call(ele, selector)) {
+      break;
+    }
+    ele = ele.parentElement;
+  }
+  return ele;
+};
+// JQ的hasClass()方法
+const hasClass = (ele, className) => {
+  return ele.classList ? ele.classList.contains(className) : new RegExp('\\s' + className + '\\s').test(' ' + ele.className + ' ');
+};
+// 根据class查找子元素集合
+const findByClass = (ele, className) => {
+  let result = [];
+  let depth = (arr) => {
+    arr.forEach((item) => {
+      if (hasClass(item, className)) {
+        result.push(item);
+      }
+      if (item.childNodes && item.childNodes.length > 0) {
+        depth(item.childNodes);
+      }
+    })
+  }
+  depth(ele.childNodes);
+  return result;
 };
 // 过滤数组中与组件项XY方向都有交集的（接触覆盖的）
 const filterCrossArr = (arr, obj, scle = false) => {
@@ -507,17 +538,6 @@ const dealAuxiliary = (obj) => {
       auxiliaryRight.value = null;
     }
   }
-};
-// JQ的closest()方法
-const closest = (ele, selector) => {
-  let matchesSelector = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || ele.msMatchesSelector;
-  while (ele) {
-    if (matchesSelector.call(ele, selector)) {
-      break;
-    }
-    ele = ele.parentElement;
-  }
-  return ele;
 };
 // 当前拖拽目标
 let dragSrc = null;
@@ -1078,11 +1098,31 @@ const resizePageObserver = new ResizeObserver(entries => {
   // 存在padding
   changePageSize(pageWidth === entries[0].borderBoxSize[0].inlineSize ? null : entries[0].borderBoxSize[0].inlineSize, pageHeight === entries[0].borderBoxSize[0].blockSize ? null : entries[0].borderBoxSize[0].blockSize);
 });
+// 当次初始化唯一标识
+const initTime = ref('');
+// 此次父元素数量统计
+let parentDomNum = 0;
+// 此次子元素数量统计
+let childDomNum = 0;
+// dom定时器
+let domInt = null;
 // 正在init
 let initIng = false;
 // 初始化画布（原始尺寸）
 const init = (historyData = [], historyWidth = null) => {
+  // DOM检测
+  clearInterval(domInt);
+  initTime.value = new Date().getTime() + '';
+  parentDomNum = 0;
+  childDomNum = 0;
+  historyData.forEach(item => {
+    parentDomNum += 1;
+    if (item.isGroup === true) {
+      childDomNum += item.groupData.length;
+    }
+  });
   resetData();
+  emit('domStart');
   comData.value = deepCopy(historyData);
   // 组合数据修复，这里只考虑减少的情况，新增必须走addItem方法
   comData.value.filter(item => item.isGroup === true).forEach(item => {
@@ -1107,6 +1147,14 @@ const init = (historyData = [], historyWidth = null) => {
       dealItemScleWH(item);
     });
     dealBg();
+    // DOM检测
+    domInt = setInterval(() => {
+      if (findByClass(pageRef.value, initTime.value + 'p').length === parentDomNum && findByClass(pageRef.value, initTime.value + 'c').length === childDomNum) {
+        console.log('dom加载完毕');
+        clearInterval(domInt);
+        emit('domReady');
+      }
+    }, 10);
     setTimeout(() => {
       initIng = false;
     }, 500);
