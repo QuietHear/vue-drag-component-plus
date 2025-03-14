@@ -109,11 +109,6 @@
 
 * `excludeResizeKeys`：排除收缩方向-->Array;非必传;默认*[]*
 
-* `addFirstSpace`：顶部组件添加ySpace间距-->Boolean;非必传;默认*false*
->
-	开启后顶部也会添加上间距逻辑
->
-
 * `seeModel`：预览模式-->Boolean;非必传;默认*false*
 
 * `seeModelMinBg`：预览模式底部最小留白，校验变量不能小于0-->Number;非必传;默认*50*
