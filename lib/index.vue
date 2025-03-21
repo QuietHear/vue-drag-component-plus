@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-03-21 10:37:54
+ * @LastEditTime: 2025-03-21 16:09:32
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -1144,7 +1144,7 @@ const init = (historyData = [], historyWidth = null) => {
       removeGroup(item.id);
     } else {
       const result = dealGroupSize(item.groupData, item);
-      updateItem(result);
+      updateItemAll(result);
     }
   });
   initIng = true;
@@ -1277,7 +1277,7 @@ const addItem = (obj, pid = null, keepPosition = false) => {
   if (pid) {
     pArr[0].groupData.push(item);
     const result = dealGroupSize(pArr[0].groupData, pArr[0]);
-    updateItem(result);
+    updateItemAll(result);
     // 递归解除重叠
     dealComStacking([result], (arr, obj) => arr.filter(item => item.id !== obj.id));
   } else {
@@ -1346,7 +1346,7 @@ const deleteItem = (id, pid = null) => {
           dealGroupItemWH(item, pArr[0]);
         });
         const result = dealGroupSize(pArr[0].groupData, pArr[0]);
-        updateItem(result);
+        updateItemAll(result);
       }
     } else {
       comData.value.splice(index, 1);
@@ -1362,20 +1362,14 @@ const deleteItem = (id, pid = null) => {
     } catch (error) { }
   }
 };
-// 更新一个组件（原始尺寸）
+// 更新一个组件部分数据（原始尺寸）
 const updateItem = (obj) => {
+  updateItemAll(obj, false);
+};
+// 更新一个组件全部数据（原始尺寸）
+const updateItemAll = (obj, type = true) => {
   if (obj.id) {
     const item = deepCopy(obj);
-    // 删除多余浮窗信息
-    delete item.showPop;
-    delete item.showSet;
-    delete item.btnPosition;
-    if (item.groupData) {
-      item.groupData.forEach(one => {
-        delete one.showPop;
-        delete one.showSet;
-      });
-    }
     let index = -1;
     const pArr = comData.value.filter(one => one.id === item.inGroupId);
     if (item.inGroupId) {
@@ -1386,12 +1380,90 @@ const updateItem = (obj) => {
       index = comData.value.findIndex(one => one.id === item.id);
     }
     if (index !== -1) {
+      if (type) {
+        // 删除多余浮窗信息
+        delete item.showPop;
+        delete item.showSet;
+        delete item.btnPosition;
+        if (item.groupData) {
+          item.groupData.forEach(one => {
+            delete one.showPop;
+            delete one.showSet;
+          });
+        }
+      }
       if (item.inGroupId) {
-        pArr[0].groupData[index] = item;
+        if (type) {
+          pArr[0].groupData[index] = item;
+        } else {
+          try {
+            // 删除多余浮窗信息
+            delete pArr[0].showPop;
+            delete pArr[0].showSet;
+            delete pArr[0].btnPosition;
+            if (pArr[0].groupData) {
+              pArr[0].groupData.forEach(one => {
+                delete one.showPop;
+                delete one.showSet;
+              });
+            }
+            for (let keys in item) {
+              const arr = keys.split('.');
+              let res = pArr[0].groupData[index];
+              for (let i = 0; i < arr.length; i++) {
+                if (i === (arr.length - 1)) {
+                  res[arr[i]] = item[keys];
+                } else {
+                  res = res[arr[i]];
+                  if (!res) {
+                    throw new Error(keys);
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            try {
+              console.error('数据key: ' + (error + '').replace('Error: ', '') + ' 不存在');
+            } catch (error) { }
+          }
+        }
         // 计算实际大小
         dealItemScleWH(pArr[0]);
       } else {
-        comData.value[index] = item;
+        if (type) {
+          comData.value[index] = item;
+        } else {
+          try {
+            // 删除多余浮窗信息
+            delete comData.value[index].showPop;
+            delete comData.value[index].showSet;
+            delete comData.value[index].btnPosition;
+            if (comData.value[index].groupData) {
+              comData.value[index].groupData.forEach(one => {
+                delete one.showPop;
+                delete one.showSet;
+              });
+            }
+            for (let keys in item) {
+              const arr = keys.split('.');
+              let res = comData.value[index];
+              for (let i = 0; i < arr.length; i++) {
+                if (i === (arr.length - 1)) {
+                  res[arr[i]] = item[keys];
+                } else {
+                  res = res[arr[i]];
+                  if (!res) {
+                    throw new Error(keys);
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            try {
+              console.error('数据key: ' + (error + '').replace('Error: ', '') + ' 不存在');
+            } catch (error) { }
+          }
+        }
         // 计算实际大小
         dealItemScleWH(comData.value[index]);
       }
