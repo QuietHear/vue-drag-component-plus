@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2025-03-14 13:30:19
+ * @LastEditors: aFei
+ * @LastEditTime: 2025-03-21 10:37:54
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -252,6 +252,20 @@ const props = defineProps({
   groupBtnPosMore: {
     type: Boolean,
     default: false
+  },
+  // 组合前数据处理
+  beforeAddGroup: {
+    type: Function,
+    default: (arr) => {
+      return arr;
+    }
+  },
+  // 解散/移出组合前数据处理
+  beforeRemoveGroup: {
+    type: Function,
+    default: (arr) => {
+      return arr;
+    }
   }
 });
 // 深拷贝
@@ -1566,20 +1580,30 @@ const changeGroupBorder = () => {
 };
 // 生成组合（原始尺寸）
 const addGroup = () => {
-  const arr = comData.value.filter(item => item.checked);
+  let arr = comData.value.filter(item => item.checked);
   if (arr.length > 1) {
-    const obj = {
-      id: new Date().getTime() + 'G',
-      isGroup: true,
-      groupTit: ''
-    };
-    const result = dealGroupSize(arr, obj);
-    result.groupData.forEach(item => {
-      deleteItem(item.id);
-    });
-    addItem(result);
-    closeGroup();
-    return outDataInit(comData.value.filter(item => item.id === result.id)[0]);
+    arr = props.beforeAddGroup(deepCopy(arr));
+    if (typeof arr === 'object' && arr instanceof Array && arr.length > 0 && arr.filter(item => item.id).length === arr.length) {
+      const obj = {
+        id: new Date().getTime() + 'G',
+        isGroup: true,
+        groupTit: ''
+      };
+      const result = dealGroupSize(arr, obj);
+      result.groupData.forEach(item => {
+        deleteItem(item.id);
+      });
+      addItem(result);
+      closeGroup();
+      return outDataInit(comData.value.filter(item => item.id === result.id)[0]);
+    } else {
+      try {
+        console.error('自定义方法抛出数据格式不正确');
+      } catch (error) {
+      } finally {
+        return null;
+      }
+    }
   } else {
     closeGroup();
     return null;
@@ -1589,23 +1613,34 @@ const addGroup = () => {
 const removeGroupItem = (id, pid) => {
   const pObj = comData.value.filter(item => item.id === pid)[0];
   if (pObj) {
-    const lin = pObj.groupData.filter(item => item.id === id)[0];
+    let lin = pObj.groupData.filter(item => item.id === id)[0];
     if (lin) {
       if (pObj.groupData.length === 2) {
         const result = removeGroup(pid);
         return result;
       } else {
-        // 反推原始尺寸
-        dealGroupItemWH(lin, pObj);
-        delete lin.inGroupId;
-        delete lin.groupW;
-        delete lin.groupH;
-        delete lin.groupX;
-        delete lin.groupY;
-        delete lin.isObstacle;
-        deleteItem(lin.id, pObj.id);
-        addItem(lin);
-        return [outDataInit(comData.value.filter(item => item.id === id)[0])];
+        lin = props.beforeRemoveGroup(deepCopy([lin]));
+        if (typeof lin === 'object' && lin instanceof Array && lin.length === 1 && lin.filter(item => item.id).length === 1) {
+          lin = lin[0];
+          // 反推原始尺寸
+          dealGroupItemWH(lin, pObj);
+          delete lin.inGroupId;
+          delete lin.groupW;
+          delete lin.groupH;
+          delete lin.groupX;
+          delete lin.groupY;
+          delete lin.isObstacle;
+          deleteItem(lin.id, pObj.id);
+          addItem(lin);
+          return [outDataInit(comData.value.filter(item => item.id === id)[0])];
+        } else {
+          try {
+            console.error('自定义方法抛出数据格式不正确');
+          } catch (error) {
+          } finally {
+            return [];
+          }
+        }
       }
     } else {
       try {
@@ -1630,27 +1665,45 @@ const removeGroup = (id) => {
   if (lin) {
     // 记录子组件id
     let ids = [];
-    lin.groupData.forEach(item => {
-      // 反推原始尺寸
-      dealGroupItemWH(item, lin);
-      item.x += lin.x;
-      item.y += lin.y;
-      delete item.inGroupId;
-      delete item.groupW;
-      delete item.groupH;
-      delete item.groupX;
-      delete item.groupY;
-      delete item.isObstacle;
-      ids.push(item.id);
-      addItem(item, null, true);
-    });
-    // 先删除的话，后面的会移动上去
-    deleteItem(lin.id);
-    let result = [];
-    ids.forEach(item => {
-      result.push(outDataInit(comData.value.filter(one => one.id === item)[0]));
-    });
-    return result;
+    let reg = true;
+    try {
+      lin.groupData.forEach(item => {
+        item = props.beforeRemoveGroup(deepCopy([lin]));
+        if (typeof item === 'object' && item instanceof Array && item.length === 1 && item.filter(one => one.id).length === 1) {
+          item = item[0];
+        } else {
+          reg = false;
+          throw new Error();
+        }
+      });
+    } catch (error) {
+      console.error('自定义方法抛出数据格式不正确');
+    }
+    if (reg) {
+      lin.groupData.forEach(item => {
+        // 反推原始尺寸
+        dealGroupItemWH(item, lin);
+        item.x += lin.x;
+        item.y += lin.y;
+        delete item.inGroupId;
+        delete item.groupW;
+        delete item.groupH;
+        delete item.groupX;
+        delete item.groupY;
+        delete item.isObstacle;
+        ids.push(item.id);
+        addItem(item, null, true);
+      });
+      // 先删除的话，后面的会移动上去
+      deleteItem(lin.id);
+      let result = [];
+      ids.forEach(item => {
+        result.push(outDataInit(comData.value.filter(one => one.id === item)[0]));
+      });
+      return result;
+    } else {
+      return [];
+    }
   } else {
     try {
       console.error('未找到组件');
