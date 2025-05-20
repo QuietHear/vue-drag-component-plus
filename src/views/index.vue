@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-03-14 13:37:19
+* @LastEditors: aFei
+* @LastEditTime: 2025-05-20 10:03:22
 */
 <template>
   <div class="demo">
@@ -29,14 +29,15 @@
           <div class="con">
             <el-switch v-model="seeModel" active-text="仅查看" inactive-text="正常" />
             <em>基准宽度：{{ baseWidth ? (baseWidth + 'px') : 'null' }}；</em>
-            <em>当前缩放：{{ nowScle }}</em>
+            <em>当前缩放：{{ nowScale }}；</em>
+            <em>当前css缩放：{{ nowCssScale }}</em>
           </div>
         </template>
         <div class="box">
           <vueDragComponentPlus ref="comRef" :xSpace="xSpace" :ySpace="ySpace" @showGroup="chengGroup"
             @updateChecked="num => groupNum = num" @showTitPop="showTitPop" @baseWidthInit="num => baseWidth = num"
-            @changeScle="num => nowScle = num" @domStart="domStart" @domReady="domReady" :seeModel="seeModel"
-            showAuxiliary>
+            @changeScale="num => nowScale = num" @changeCssScale="num => nowCssScale = num" @domStart="domStart"
+            @domReady="domReady" :seeModel="seeModel" showAuxiliary>
             <template #item="{ data }">
               <test :obj="data" v-if="data.x === 0 && data.y === 0" />
             </template>
@@ -68,7 +69,8 @@ const xSpace = ref(10);
 const ySpace = ref(null);
 const seeModel = ref(false);
 const baseWidth = ref(null);
-const nowScle = ref(1);
+const nowScale = ref(1);
+const nowCssScale = ref(1);
 const addOne = () => {
   comRef.value.addItem({
     width: 100,

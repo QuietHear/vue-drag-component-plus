@@ -3,12 +3,12 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-03-21 16:09:32
+* @LastEditors: aFei
+* @LastEditTime: 2025-05-20 14:44:04
 */
 <template>
   <div class="vue-drag-component-plus"
-    :style="{ '--css-scle': nowScle, '--com-x-space': nowXSpace + 'px', '--com-y-space': nowYSpace + 'px' }"
+    :style="{ '--item-scale': nowScale, '--css-scale': seeModel ? nowCssScale : 1, '--com-x-space': nowXSpace + 'px', '--com-y-space': nowYSpace + 'px' }"
     ref="pageRef">
     <!-- 滚动区 -->
     <div class="content-box">
@@ -130,10 +130,10 @@
       </div>
       <!-- shadow阴影 -->
       <div :class="['shadow-bg', item.move ? 'is-move' : '']" :style="{
-        width: item.s_width - nowXSpace * 2 * nowScle + 'px',
-        height: item.s_height - nowYSpace * 2 * nowScle + 'px',
-        top: item.s_y + nowYSpace * nowScle + 'px',
-        left: item.s_x + nowXSpace * nowScle + 'px'
+        width: item.s_width - nowXSpace * 2 + 'px',
+        height: item.s_height - nowYSpace * 2 + 'px',
+        top: item.s_y + nowYSpace + 'px',
+        left: item.s_x + nowXSpace + 'px'
       }" v-for="(item, index) in comData" :key="index"></div>
       <!-- 拖拽背景占位 -->
       <div class="drag-bg" :style="{
@@ -144,7 +144,7 @@
       }" v-if="dragSrc !== null"></div>
       <!-- 高度占位，出现滚动条 -->
       <div class="height-bg"
-        :style="{ height: (heightBg > 0 ? + (heightBg * nowScle + (seeModel ? seeModelMinBg : 220)) : 0) + 'px' }">
+        :style="{ height: (heightBg > 0 ? + (heightBg * getNowHScale() + (seeModel ? seeModelMinBg : 220)) : 0) + 'px' }">
       </div>
       <!-- 辅助线 -->
       <template v-if="showAuxiliary">
@@ -168,7 +168,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
-const emit = defineEmits(["baseWidthInit", "changeScle", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"]);
+const emit = defineEmits(["baseWidthInit", "changeScale", "changeCssScale", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -200,17 +200,17 @@ const props = defineProps({
   // 组件项最小宽度（原始尺寸）
   itemMinWidth: {
     type: Number,
-    default: 15,
+    default: 50,
     validator(value, props) {
-      return value >= 15;
+      return value >= 20;
     }
   },
   // 组件项最小高度（原始尺寸）
   itemMinHeight: {
     type: Number,
-    default: 15,
+    default: 50,
     validator(value, props) {
-      return value >= 15;
+      return value >= 20;
     }
   },
   // 纵向相邻元素的自动间距（原始尺寸）
@@ -227,6 +227,30 @@ const props = defineProps({
     default: null,
     validator(value, props) {
       return value >= 0;
+    }
+  },
+  // 高度缩放折扣率（让高度没那么大变化）
+  hScaleDiscount: {
+    type: Number,
+    default: 0.2,
+    validator(value, props) {
+      return value > 0;
+    }
+  },
+  // 预览模式组件内css缩放比例最小值
+  cssScaleMin: {
+    type: Number,
+    default: 0.75,
+    validator(value, props) {
+      return value > 0;
+    }
+  },
+  // 预览模式组件内css缩放比例最大值
+  cssScaleMax: {
+    type: Number,
+    default: 1.2,
+    validator(value, props) {
+      return value > 0 && value >= props.cssScaleMin;
     }
   },
   // 设置图标
@@ -312,38 +336,38 @@ const findByClass = (ele, className) => {
   return result;
 };
 // 过滤数组中与组件项XY方向都有交集的（接触覆盖的）
-const filterCrossArr = (arr, obj, scle = false) => {
-  return filterCrossYArr(filterCrossXArr(arr, obj, scle), obj, scle);
+const filterCrossArr = (arr, obj, scale = false) => {
+  return filterCrossYArr(filterCrossXArr(arr, obj, scale), obj, scale);
 };
 // 过滤数组中与组件项X方向有交集的
-const filterCrossXArr = (arr, obj, scle = false) => {
-  return arr.filter(item => (item[scle ? 's_x' : 'x'] <= obj[scle ? 's_x' : 'x'] && (item[scle ? 's_x' : 'x'] + item[scle ? 's_width' : 'width']) > obj[scle ? 's_x' : 'x']) || (item[scle ? 's_x' : 'x'] > obj[scle ? 's_x' : 'x'] && item[scle ? 's_x' : 'x'] < (obj[scle ? 's_x' : 'x'] + obj[scle ? 's_width' : 'width'])));
+const filterCrossXArr = (arr, obj, scale = false) => {
+  return arr.filter(item => (item[scale ? 's_x' : 'x'] <= obj[scale ? 's_x' : 'x'] && (item[scale ? 's_x' : 'x'] + item[scale ? 's_width' : 'width']) > obj[scale ? 's_x' : 'x']) || (item[scale ? 's_x' : 'x'] > obj[scale ? 's_x' : 'x'] && item[scale ? 's_x' : 'x'] < (obj[scale ? 's_x' : 'x'] + obj[scale ? 's_width' : 'width'])));
 };
 // 过滤数组中与组件项Y方向有交集的
-const filterCrossYArr = (arr, obj, scle = false) => {
-  return arr.filter(item => (item[scle ? 's_y' : 'y'] <= obj[scle ? 's_y' : 'y'] && (item[scle ? 's_y' : 'y'] + item[scle ? 's_height' : 'height']) > obj[scle ? 's_y' : 'y']) || (item[scle ? 's_y' : 'y'] > obj[scle ? 's_y' : 'y'] && item[scle ? 's_y' : 'y'] < (obj[scle ? 's_y' : 'y'] + obj[scle ? 's_height' : 'height'])));
+const filterCrossYArr = (arr, obj, scale = false) => {
+  return arr.filter(item => (item[scale ? 's_y' : 'y'] <= obj[scale ? 's_y' : 'y'] && (item[scale ? 's_y' : 'y'] + item[scale ? 's_height' : 'height']) > obj[scale ? 's_y' : 'y']) || (item[scale ? 's_y' : 'y'] > obj[scale ? 's_y' : 'y'] && item[scale ? 's_y' : 'y'] < (obj[scale ? 's_y' : 'y'] + obj[scale ? 's_height' : 'height'])));
 };
 // 递归解除组件叠加
-const dealComStacking = (orginArr, filters = (arr) => arr, scle = false) => {
+const dealComStacking = (orginArr, filters = (arr) => arr, scale = false) => {
   const copyData = deepCopy(comData.value);
   const copyArr = deepCopy(orginArr);
   // 先按y排序，再按x排序
   copyArr.sort((a, b) => {
-    const x = a[scle ? 's_y' : 'y'];
-    const y = b[scle ? 's_y' : 'y'];
+    const x = a[scale ? 's_y' : 'y'];
+    const y = b[scale ? 's_y' : 'y'];
     if (x !== y) {
       return x - y;
     } else {
-      const x1 = a[scle ? 's_x' : 'x'];
-      const y1 = b[scle ? 's_x' : 'x'];
+      const x1 = a[scale ? 's_x' : 'x'];
+      const y1 = b[scale ? 's_x' : 'x'];
       return x1 - y1;
     }
   });
   // 递归方法
   const deepDown = (obj) => {
-    const lin = filterCrossArr(filters(copyData, obj), obj, scle);
+    const lin = filterCrossArr(filters(copyData, obj), obj, scale);
     lin.forEach(item => {
-      item[scle ? 's_y' : 'y'] = obj[scle ? 's_y' : 'y'] + obj[scle ? 's_height' : 'height'];
+      item[scale ? 's_y' : 'y'] = obj[scale ? 's_y' : 'y'] + obj[scale ? 's_height' : 'height'];
       deepDown(item);
     });
   };
@@ -351,7 +375,7 @@ const dealComStacking = (orginArr, filters = (arr) => arr, scle = false) => {
   copyArr.forEach(item => deepDown(copyData.filter(one => one.id === item.id)[0]));
   // 原数据赋值
   copyData.forEach(item => {
-    comData.value.filter(one => one.id === item.id)[0][scle ? 's_y' : 'y'] = item[scle ? 's_y' : 'y'];
+    comData.value.filter(one => one.id === item.id)[0][scale ? 's_y' : 'y'] = item[scale ? 's_y' : 'y'];
   });
 };
 // 抛出对象格式化（缩放尺寸）
@@ -406,7 +430,7 @@ dealResizeKeys();
 const dealItemPBWH = () => {
   if (comData.value.length > 0) {
     comData.value.filter(item => item.isGroup === true).forEach(item => {
-      dealItemScleWH(item);
+      dealItemScaleWH(item);
     });
   }
 };
@@ -445,39 +469,76 @@ const setBaseWidth = (val) => {
   emit('baseWidthInit', baseWidth);
 };
 // 当前缩放比例
-const nowScle = ref(1);
+const nowScale = ref(1);
+// 当前css缩放比例
+const nowCssScale = ref(1);
 // 设置缩放比例
-const setNowScle = (val) => {
-  nowScle.value = val;
-  emit('changeScle', nowScle.value);
+const setNowScale = (val) => {
+  nowScale.value = val;
+  if (val < props.cssScaleMin) {
+    nowCssScale.value = props.cssScaleMin;
+  } else if (val > props.cssScaleMax) {
+    nowCssScale.value = props.cssScaleMax;
+  } else {
+    nowCssScale.value = val;
+  }
+  emit('changeScale', nowScale.value);
+  emit('changeCssScale', props.seeModel ? nowCssScale.value : 1);
 };
-// 根据缩放比例结算当前宽高（缩放尺寸）
-const dealItemScleWH = (item) => {
-  item.s_width = item.width * nowScle.value;
-  item.s_height = item.height * nowScle.value;
+// 计算当前高度实际缩放
+const getNowHScale = () => {
+  return 1 + (nowScale.value - 1) * props.hScaleDiscount;
+};
+watch(
+  () => props.seeModel,
+  () => {
+    // 保证抛出缩放为最新的
+    setNowScale(nowScale.value);
+  }
+);
+// 根据当前/指定缩放比例计算当前宽高（原始尺寸）
+const dealItemScaleWH = (item, targetScale = null) => {
+  if (targetScale) {
+    item.width = item.width * targetScale;
+    item.height = item.height * targetScale;
+  } else {
+    item.s_width = item.width * nowScale.value;
+    item.s_height = item.height * getNowHScale();
+  }
   const styles = getComputedStyle(pageRef.value);
   const borderWidth = parseInt(styles.getPropertyValue('--com-item-border-width').trim());
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   if (item.isGroup === true) {
-    const multipleX = item.s_width - 2 * nowXSpace.value * nowScle.value - 2 * borderWidth;
-    const multipleY = item.s_height - 2 * nowYSpace.value * nowScle.value - 2 * borderWidth - (item.groupTit ? titHeight : 0);
-    item.groupData.forEach(one => {
-      one.s_width = multipleX * one.groupW;
-      one.s_height = multipleY * one.groupH;
-      one.s_x = multipleX * one.groupX;
-      one.s_y = multipleY * one.groupY;
-    });
+    if (targetScale) {
+      const multipleX = item.width - 2 * nowXSpace.value - 2 * borderWidth;
+      const multipleY = item.height - 2 * nowYSpace.value - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+      item.groupData.forEach(one => {
+        one.width = multipleX * one.groupW;
+        one.height = multipleY * one.groupH;
+        one.x = multipleX * one.groupX;
+        one.y = multipleY * one.groupY;
+      });
+    } else {
+      const multipleX = item.s_width - 2 * nowXSpace.value - 2 * borderWidth;
+      const multipleY = item.s_height - 2 * nowYSpace.value - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+      item.groupData.forEach(one => {
+        one.s_width = multipleX * one.groupW;
+        one.s_height = multipleY * one.groupH;
+        one.s_x = multipleX * one.groupX;
+        one.s_y = multipleY * one.groupY;
+      });
+    }
   }
 };
-// 根据缩放比例结算当前位置（缩放尺寸）
-const dealItemScleXY = (item) => {
-  item.s_x = item.x * nowScle.value;
-  item.s_y = item.y * nowScle.value;
+// 根据缩放比例计算当前位置（原始尺寸）
+const dealItemScaleXY = (item) => {
+  item.s_x = item.x * nowScale.value;
+  item.s_y = item.y * getNowHScale();
 };
 // 根据当前已经缩放的宽高重设原数据（缩放尺寸）
-const dealItemScleReverseWH = (item) => {
-  item.width = item.s_width / nowScle.value;
-  item.height = item.s_height / nowScle.value;
+const dealItemScaleReverseWH = (item) => {
+  item.width = item.s_width / nowScale.value;
+  item.height = item.s_height / getNowHScale();
   const styles = getComputedStyle(pageRef.value);
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   if (item.isGroup === true) {
@@ -490,15 +551,15 @@ const dealItemScleReverseWH = (item) => {
   }
 };
 // 根据当前已经缩放的位置重设原数据（缩放尺寸）
-const dealItemScleReverseXY = (item) => {
-  item.x = item.s_x / nowScle.value;
-  item.y = item.s_y / nowScle.value;
+const dealItemScaleReverseXY = (item) => {
+  item.x = item.s_x / nowScale.value;
+  item.y = item.s_y / getNowHScale();
 };
 // 当前画布宽度
 let pageWidth = null;
 // 当前画布高度
 let pageHeight = null;
-// 占位高度
+// 占位高度（原始尺寸）
 const heightBg = ref(0);
 // 上辅助线位置
 const auxiliaryTop = ref(null);
@@ -789,7 +850,7 @@ const dragIng = (e) => {
   }
   // 重新计算原始位置信息
   comData.value.forEach(item => {
-    dealItemScleReverseXY(item);
+    dealItemScaleReverseXY(item);
   });
   dealBg(false);
   emit('dragIng', outDataInit(comData.value[dragSrc]));
@@ -804,7 +865,7 @@ const dragEnd = () => {
   dealAuxiliary(null);
   // 重新计算原始位置信息
   comData.value.forEach(item => {
-    dealItemScleReverseXY(item);
+    dealItemScaleReverseXY(item);
   });
   dealBg();
   emit('dragEnd', outDataInit(comData.value[dragSrc]));
@@ -821,7 +882,7 @@ const dealDragMax = (direction) => {
       return 0;
       break;
     case 'right':
-      return pageWidth - nowXSpace.value * 2 * nowScle.value - comData.value[dragSrc].s_width;
+      return pageWidth - nowXSpace.value * 2 - comData.value[dragSrc].s_width;
       break;
     case 'bottom':
       return 999999999;
@@ -914,8 +975,8 @@ const resizeIng = (e) => {
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   const dealGroup = () => {
     if (resizeObj.isGroup === true) {
-      const multipleX = resizeObj.s_width - 2 * nowXSpace.value * nowScle.value - 2 * borderWidth;
-      const multipleY = resizeObj.s_height - 2 * nowYSpace.value * nowScle.value - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
+      const multipleX = resizeObj.s_width - 2 * nowXSpace.value - 2 * borderWidth;
+      const multipleY = resizeObj.s_height - 2 * nowYSpace.value - 2 * borderWidth - (resizeObj.groupTit ? titHeight : 0);
       resizeObj.groupData.forEach(item => {
         item.s_width = multipleX * item.groupW;
         item.s_height = multipleY * item.groupH;
@@ -924,8 +985,8 @@ const resizeIng = (e) => {
       });
     }
   };
-  const realMinWidth = (props.itemMinWidth + nowXSpace.value * 2) * nowScle.value;
-  const realMinHeight = (props.itemMinHeight + nowYSpace.value * 2) * nowScle.value;
+  const realMinWidth = props.itemMinWidth * nowScale.value;
+  const realMinHeight = props.itemMinHeight * getNowHScale();
   switch (resizeDirection) {
     case 'top-left':
       resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
@@ -975,7 +1036,7 @@ const resizeIng = (e) => {
       break;
   };
   // 重新计算原始宽高信息
-  dealItemScleReverseWH(resizeObj);
+  dealItemScaleReverseWH(resizeObj);
   dealAuxiliary(resizeObj);
   // 当前直接接触的组件
   let obstacleArr = filterCrossArr(deepCopy(comData.value.filter(item => item.drag !== true)), resizeObj, true);
@@ -996,7 +1057,7 @@ const resizeIng = (e) => {
   }
   // 重新计算原始位置信息
   comData.value.forEach(item => {
-    dealItemScleReverseXY(item);
+    dealItemScaleReverseXY(item);
   });
   dealBg(false);
   emit('resizeIng', outDataInit(resizeObj));
@@ -1022,7 +1083,7 @@ const dealResizeMax = (direction) => {
       return startLeft + startWidth - leftObstacle;
       break;
     case 'right':
-      return (rightObstacle > 0 ? rightObstacle : (pageWidth - nowXSpace.value * 2 * nowScle.value)) - startLeft;
+      return (rightObstacle > 0 ? rightObstacle : (pageWidth - nowXSpace.value * 2)) - startLeft;
       break;
     case 'bottom':
       return bottomObstacle > 0 ? (bottomObstacle - startTop) : 999999999;
@@ -1037,7 +1098,7 @@ const dealBg = (deal = true) => {
     dealComStacking(comData.value, (arr, obj) => arr.filter(item => item.id !== obj.id));
     dealSpace();
     comData.value.forEach(item => {
-      dealItemScleXY(item);
+      dealItemScaleXY(item);
     });
     // 使用当前位置计算，必须放在当前位置计算出后
     dealGroupSetting();
@@ -1102,15 +1163,15 @@ const dealGroupSetting = () => {
     });
   }
 };
-// 初始化
-onMounted(() => {
-  // 绑定监听
-  resizePageObserver.observe(pageRef.value);
-});
 // 画布尺寸改变监听器
 const resizePageObserver = new ResizeObserver(entries => {
   // 存在padding
   changePageSize(pageWidth === entries[0].borderBoxSize[0].inlineSize ? null : entries[0].borderBoxSize[0].inlineSize, pageHeight === entries[0].borderBoxSize[0].blockSize ? null : entries[0].borderBoxSize[0].blockSize);
+});
+// 初始化
+onMounted(() => {
+  // 绑定监听
+  resizePageObserver.observe(pageRef.value);
 });
 // 当次初始化唯一标识
 const initTime = ref('');
@@ -1152,13 +1213,13 @@ const init = (historyData = [], historyWidth = null) => {
     const obj = pageRef.value.getBoundingClientRect();
     if (historyWidth !== null && historyWidth !== undefined) {
       setBaseWidth(historyWidth);
-      setNowScle(obj.width / historyWidth);
+      setNowScale(obj.width / historyWidth);
     } else {
       setBaseWidth(comData.value.length > 0 ? obj.width : null);
-      setNowScle(1);
+      setNowScale(1);
     }
     comData.value.forEach(item => {
-      dealItemScleWH(item);
+      dealItemScaleWH(item);
     });
     dealBg();
     // DOM检测
@@ -1285,7 +1346,7 @@ const addItem = (obj, pid = null, keepPosition = false) => {
       setBaseWidth(pageWidth);
     }
     // 计算实际大小
-    dealItemScleWH(item);
+    dealItemScaleWH(item);
     comData.value.push(item);
   }
   dealBg();
@@ -1324,8 +1385,8 @@ const copyItem = (id, pid = null, nid = null) => {
     }
   }
 };
-// 删除一个组件（原始尺寸）
-const deleteItem = (id, pid = null) => {
+// 删除一个组件（原始尺寸）,第三个参数特殊处理组合时先清空页面逻辑的情况（不外抛）
+const deleteItem = (id, pid = null, deelEmpty = true) => {
   let index = -1;
   const pArr = comData.value.filter(item => item.id === pid);
   if (pid) {
@@ -1350,9 +1411,9 @@ const deleteItem = (id, pid = null) => {
       }
     } else {
       comData.value.splice(index, 1);
-      if (comData.value.length === 0) {
+      if (comData.value.length === 0 && deelEmpty) {
         setBaseWidth(null);
-        setNowScle(1);
+        setNowScale(1);
       }
     }
     dealBg();
@@ -1428,7 +1489,7 @@ const updateItemAll = (obj, type = true) => {
           }
         }
         // 计算实际大小
-        dealItemScleWH(pArr[0]);
+        dealItemScaleWH(pArr[0]);
       } else {
         if (type) {
           comData.value[index] = item;
@@ -1465,7 +1526,7 @@ const updateItemAll = (obj, type = true) => {
           }
         }
         // 计算实际大小
-        dealItemScleWH(comData.value[index]);
+        dealItemScaleWH(comData.value[index]);
       }
       dealBg();
     } else {
@@ -1485,9 +1546,9 @@ const changePageSize = (width, height) => {
     pageWidth = width;
     // 防止init时widh监听正好触发
     if (!initIng) {
-      setNowScle(baseWidth && pageWidth ? (width / baseWidth) : 1);
+      setNowScale(baseWidth && pageWidth ? (width / baseWidth) : 1);
       comData.value.forEach(item => {
-        dealItemScleWH(item);
+        dealItemScaleWH(item);
       });
       dealBg();
     }
@@ -1561,7 +1622,7 @@ const changeCheck = (obj) => {
   obj.checked = obj.checked ? false : true;
   emit('updateChecked', comData.value.filter(item => item.checked).length);
 };
-// 计算组合内容区的宽高、内容区的最新位置等信息（原始尺寸）
+// 组合内容变更后计算组合内容区的宽高、内容区的最新位置等信息（原始尺寸）
 const dealGroupSize = (childData, parentObj) => {
   const childList = deepCopy(childData);
   const result = deepCopy(parentObj);
@@ -1663,7 +1724,7 @@ const addGroup = () => {
       };
       const result = dealGroupSize(arr, obj);
       result.groupData.forEach(item => {
-        deleteItem(item.id);
+        deleteItem(item.id, null, false);
       });
       addItem(result);
       closeGroup();
@@ -1796,12 +1857,12 @@ const changeGroupTit = (tit = '', id) => {
       // 删除了标题
       if (lin.groupTit && !tit) {
         lin.height -= titHeight;
-        lin.s_height -= titHeight * nowScle.value;
+        lin.s_height -= titHeight * getNowHScale();
       }
       // 添加了标题
       if (!lin.groupTit && tit) {
         lin.height += titHeight;
-        lin.s_height += titHeight * nowScle.value;
+        lin.s_height += titHeight * getNowHScale();
       }
     }
     lin.groupTit = tit;
@@ -1819,12 +1880,13 @@ const changeGroupTit = (tit = '', id) => {
 const resetData = () => {
   comData.value = [];
   setBaseWidth(null);
-  setNowScle(1);
+  setNowScale(1);
   heightBg.value = 0;
 };
 // 获取当前画布数据（原始尺寸）
-const getData = () => {
+const getData = (targetWidth = null) => {
   return new Promise((resolve, reject) => {
+    // 删除多余状态变量
     comData.value.forEach(item => {
       delete item.showPop;
       delete item.showSet;
@@ -1854,7 +1916,13 @@ const getData = () => {
       delete item.s_x;
       delete item.s_y;
     });
-    resolve({ data, width: baseWidth });
+    // 指定目标基准
+    if (targetWidth && baseWidth) {
+      data.forEach(item => {
+        dealItemScaleWH(item, targetWidth / baseWidth);
+      });
+    }
+    resolve({ data, width: targetWidth || baseWidth });
   });
 };
 onBeforeUnmount(() => {
