@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2025-05-20 14:44:04
+ * @LastEditors: aFei
+ * @LastEditTime: 2025-05-22 16:24:23
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -148,12 +148,24 @@
       </div>
       <!-- 辅助线 -->
       <template v-if="showAuxiliary">
+        <!-- 上 -->
         <div class="auxiliary-line hor" :style="{ top: auxiliaryTop + 'px', left: '0px' }" v-if="auxiliaryTop !== null">
         </div>
-        <div class="auxiliary-line hor" :style="{ top: auxiliaryBtoom + 'px', left: '0px' }"
-          v-if="auxiliaryBtoom !== null"></div>
+        <!-- 上下中间 -->
+        <div class="auxiliary-line hor" :style="{ top: auxiliaryTopBottom + 'px', left: '0px' }"
+          v-if="auxiliaryTopBottom !== null">
+        </div>
+        <!-- 下 -->
+        <div class="auxiliary-line hor" :style="{ top: auxiliaryBottom + 'px', left: '0px' }"
+          v-if="auxiliaryBottom !== null"></div>
+        <!-- 左 -->
         <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryLeft + 'px' }" v-if="auxiliaryLeft !== null">
         </div>
+        <!-- 左右中间 -->
+        <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryLeftRight + 'px' }"
+          v-if="auxiliaryLeftRight !== null">
+        </div>
+        <!-- 右 -->
         <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryRight + 'px' }" v-if="auxiliaryRight !== null">
         </div>
       </template>
@@ -563,10 +575,14 @@ let pageHeight = null;
 const heightBg = ref(0);
 // 上辅助线位置
 const auxiliaryTop = ref(null);
+// 上下中间辅助线位置
+const auxiliaryTopBottom = ref(null);
 // 下辅助线位置
-const auxiliaryBtoom = ref(null);
+const auxiliaryBottom = ref(null);
 // 左辅助线位置
 const auxiliaryLeft = ref(null);
+// 左右中间辅助线位置
+const auxiliaryLeftRight = ref(null);
 // 右辅助线位置
 const auxiliaryRight = ref(null);
 // 处理辅助线显示位置（缩放尺寸）
@@ -574,40 +590,60 @@ const dealAuxiliary = (obj) => {
   const position = deepCopy(obj);
   if (!props.showAuxiliary || obj === null) {
     auxiliaryTop.value = null;
-    auxiliaryBtoom.value = null;
+    auxiliaryTopBottom.value = null;
+    auxiliaryBottom.value = null;
     auxiliaryLeft.value = null;
+    auxiliaryLeftRight.value = null;
     auxiliaryRight.value = null;
   } else {
     const styles = getComputedStyle(pageRef.value);
     const auxiliaryWidth = parseInt(styles.getPropertyValue('--auxiliary-width').trim());
-    const t1 = comData.value.filter(item => item.id !== position.id).map(item => item.s_y);
-    const t2 = comData.value.filter(item => item.id !== position.id).map(item => (item.s_y + item.s_height));
-    const t = [...t1, ...t2];
+    // x轴符合条件的集合统计
+    // 可能会出现小数的情况，移动时都是整数px
+    const t1 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_y));
+    const t2 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_y + item.s_height / 2));
+    const t3 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_y + item.s_height));
+    const t = [...t1, ...t2, ...t3];
     t.sort();
     // 上边线计算
-    if (t.filter(item => item === position.s_y).length > 0) {
+    if (t.filter(item => item === Math.round(position.s_y)).length > 0) {
       auxiliaryTop.value = position.s_y;
     } else {
       auxiliaryTop.value = null;
     }
-    // 下边线计算
-    if (t.filter(item => (item === (position.s_y + position.s_height))).length > 0) {
-      auxiliaryBtoom.value = position.s_y + position.s_height - auxiliaryWidth;
+    // 上下中间线计算
+    if (t.filter(item => item === Math.round(position.s_y + position.s_height / 2)).length > 0) {
+      auxiliaryTopBottom.value = position.s_y + position.s_height / 2;
     } else {
-      auxiliaryBtoom.value = null;
+      auxiliaryTopBottom.value = null;
     }
-    const l1 = comData.value.filter(item => item.id !== position.id).map(item => item.s_x);
-    const l2 = comData.value.filter(item => item.id !== position.id).map(item => (item.s_x + item.s_width));
-    const l = [...l1, ...l2];
+    // 下边线计算
+    if (t.filter(item => (item === Math.round(position.s_y + position.s_height))).length > 0) {
+      auxiliaryBottom.value = position.s_y + position.s_height - auxiliaryWidth;
+    } else {
+      auxiliaryBottom.value = null;
+    }
+    // y轴符合条件的集合统计
+    // 可能会出现小数的情况，移动时都是整数px
+    const l1 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_x));
+    const l2 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_x + item.s_width / 2));
+    const l3 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_x + item.s_width));
+    const l = [...l1, ...l2, ...l3];
     l.sort();
     // 左边线计算
-    if (l.filter(item => item === position.s_x).length > 0) {
+    if (l.filter(item => item === Math.round(position.s_x)).length > 0) {
       auxiliaryLeft.value = position.s_x;
     } else {
       auxiliaryLeft.value = null;
     }
+    // 左右中间线计算
+    if (l.filter(item => item === Math.round(position.s_x + position.s_width / 2)).length > 0) {
+      auxiliaryLeftRight.value = position.s_x + position.s_width / 2;
+    } else {
+      auxiliaryLeftRight.value = null;
+    }
     // 右边线计算
-    if (l.filter(item => item === (position.s_x + position.s_width)).length > 0) {
+    if (l.filter(item => item === Math.round(position.s_x + position.s_width)).length > 0) {
       auxiliaryRight.value = position.s_x + position.s_width - auxiliaryWidth;
     } else {
       auxiliaryRight.value = null;
@@ -628,16 +664,19 @@ let dragResetInt = null;
 const dragStart = (e, index) => {
   clearTimeout(dragResetInt);
   closeSettingPop();
-  dragSrc = index;
-  dragBg.value = deepCopy(comData.value[dragSrc]);
-  emit('dragStart', outDataInit(comData.value[dragSrc]));
-  comData.value[dragSrc].move = true;
-  dealAuxiliary(comData.value[dragSrc]);
   const parentNode = closest(e.target, '.com-item');
-  differX = e.clientX - parentNode.offsetLeft;
-  differY = e.clientY - parentNode.offsetTop;
-  window.addEventListener('mousemove', dragIng);
-  window.addEventListener('mouseup', dragEnd);
+  // 防止内部组件事件冒泡时触发异常
+  if (parentNode) {
+    dragSrc = index;
+    dragBg.value = deepCopy(comData.value[dragSrc]);
+    emit('dragStart', outDataInit(comData.value[dragSrc]));
+    comData.value[dragSrc].move = true;
+    dealAuxiliary(comData.value[dragSrc]);
+    differX = e.clientX - parentNode.offsetLeft;
+    differY = e.clientY - parentNode.offsetTop;
+    window.addEventListener('mousemove', dragIng);
+    window.addEventListener('mouseup', dragEnd);
+  }
 };
 // 拖拽中（缩放尺寸）
 const dragIng = (e) => {
