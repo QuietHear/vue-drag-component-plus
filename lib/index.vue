@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-05-22 16:24:23
+ * @LastEditTime: 2025-05-23 10:32:53
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -100,6 +100,9 @@
               </slot>
               <slot name="setPopNormal" :data="outDataInit(item)" v-else>
                 <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
+                <div class="setting-box-pop-item" @click="item.static = item.static === true ? false : true">
+                  {{ item.static === true ? '解除' : '' }}锁定
+                </div>
                 <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
                 <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
               </slot>
@@ -708,7 +711,6 @@ const dragIng = (e) => {
     dragBg.value.s_y = resultY;
   }
   // 与其他组件有重叠 
-  // TODO 未考虑static的情况
   else {
     switch (direction) {
       case 'top':
@@ -947,14 +949,6 @@ let startHeight = 0;
 let startTop = 0;
 // 开始位置的x坐标
 let startLeft = 0;
-// 上阻碍
-let topObstacle = 0;
-// 下阻碍
-let bottomObstacle = 0;
-// 左阻碍
-let leftObstacle = 0;
-// 右阻碍
-let rightObstacle = 0;
 // 开始收缩（缩放尺寸）
 const resizeStart = (e, obj, direction) => {
   closeSettingPop();
@@ -969,33 +963,6 @@ const resizeStart = (e, obj, direction) => {
   startLeft = obj.s_x;
   resizeObj.drag = true;
   dealAuxiliary(resizeObj);
-  // 计算阻碍边界
-  const xArr = comData.value.filter(item => item.static === true && (item.s_x < obj.s_x ? (item.s_x + item.s_width) >= obj.s_x : item.s_x <= (obj.s_x + obj.s_width)));
-  const yArr = comData.value.filter(item => item.static === true && (item.s_y < obj.s_y ? (item.s_y + item.s_height) >= obj.s_y : item.s_y <= (obj.s_y + obj.s_height)));
-  const t = xArr.filter(item => (item.s_y + item.s_height) <= obj.s_y).map(item => (item.s_y + item.s_height));
-  if (t.length > 0) {
-    topObstacle = Math.max(...t);
-  } else {
-    topObstacle = 0;
-  }
-  const b = xArr.filter(item => item.s_y >= (obj.s_y + obj.s_height)).map(item => item.s_y);
-  if (b.length > 0) {
-    bottomObstacle = Math.min(...b);
-  } else {
-    bottomObstacle = 0;
-  }
-  const l = yArr.filter(item => (item.s_x + item.s_width) <= obj.s_x).map(item => (item.s_x + item.s_width));
-  if (l.length > 0) {
-    leftObstacle = Math.max(...l);
-  } else {
-    leftObstacle = 0;
-  }
-  const r = yArr.filter(item => item.s_x >= (obj.s_x + obj.s_width)).map(item => item.s_x);
-  if (r.length > 0) {
-    rightObstacle = Math.min(...r);
-  } else {
-    rightObstacle = 0;
-  }
   window.addEventListener('mousemove', resizeIng);
   window.addEventListener('mouseup', resizeEnd);
 };
@@ -1029,27 +996,27 @@ const resizeIng = (e) => {
   switch (resizeDirection) {
     case 'top-left':
       resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
-      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
+      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? 0 : t;
       resizeObj.s_width = x_rever < realMinWidth ? realMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
-      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? 0 : l;
       dealGroup();
       break;
     case 'top':
       // 原始
       resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
-      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
+      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? 0 : t;
       dealGroup();
       break;
     case 'top-right':
       resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;
-      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? topObstacle : t;
+      resizeObj.s_y = y_rever < realMinHeight ? (startTop + startHeight - realMinHeight) : y_rever > dealResizeMax('top') ? 0 : t;
       resizeObj.s_width = x < realMinWidth ? realMinWidth : x > dealResizeMax('right') ? dealResizeMax('right') : x;
       dealGroup();
       break;
     case 'left':
       // 原始
       resizeObj.s_width = x_rever < realMinWidth ? realMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
-      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? 0 : l;
       dealGroup();
       break;
     case 'right':
@@ -1060,7 +1027,7 @@ const resizeIng = (e) => {
     case 'bottom-left':
       resizeObj.s_height = y < realMinHeight ? realMinHeight : y > dealResizeMax('bottom') ? dealResizeMax('bottom') : y;
       resizeObj.s_width = x_rever < realMinWidth ? realMinWidth : x_rever > dealResizeMax('left') ? dealResizeMax('left') : x_rever;
-      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? leftObstacle : l;
+      resizeObj.s_x = x_rever < realMinWidth ? (startLeft + startWidth - realMinWidth) : x_rever > dealResizeMax('left') ? 0 : l;
       dealGroup();
       break;
     case 'bottom':
@@ -1116,16 +1083,16 @@ const resizeEnd = (e) => {
 const dealResizeMax = (direction) => {
   switch (direction) {
     case 'top':
-      return startTop + startHeight - topObstacle;
+      return startTop + startHeight;
       break;
     case 'left':
-      return startLeft + startWidth - leftObstacle;
+      return startLeft + startWidth;
       break;
     case 'right':
-      return (rightObstacle > 0 ? rightObstacle : (pageWidth - nowXSpace.value * 2)) - startLeft;
+      return (pageWidth - nowXSpace.value * 2) - startLeft;
       break;
     case 'bottom':
-      return bottomObstacle > 0 ? (bottomObstacle - startTop) : 999999999;
+      return 999999999;
       break;
   };
 };
