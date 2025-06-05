@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-05-19 14:02:13
+ * @LastEditTime: 2025-06-05 14:01:26
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -78,11 +78,17 @@
     box-sizing: border-box;
     padding   : var(--com-y-space) var(--com-x-space);
     z-index   : 1;
+    transition: top cubic-bezier(0.46, 0.03, 0.52, 0.96) 0.15s;
+
+    &.not-move-animate {
+      transition: none;
+    }
 
     &.is-move,
     &.is-drag,
     &:hover {
-      z-index: 3;
+      z-index   : 3;
+      transition: none;
     }
 
     &.on-top {
@@ -441,6 +447,12 @@
     border-radius: var(--com-item-border-radius);
     box-sizing   : border-box;
     z-index      : 0;
+
+    &.is-move,
+    &.is-drag,
+    &.not-move-animate {
+      transition: none;
+    }
 
     &.is-move {
       z-index: 2;

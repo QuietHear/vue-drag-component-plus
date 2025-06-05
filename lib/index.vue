@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2025-06-05 10:56:40
+ * @LastEditors: aFei
+ * @LastEditTime: 2025-06-05 14:04:45
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -13,21 +13,29 @@
     <!-- 滚动区 -->
     <div class="content-box">
       <!-- 组件项 -->
-      <div
-        :class="['com-item', item.move ? 'is-move' : '', item.drag ? 'is-drag' : '', item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '', initTime + 'p']"
-        :style="{
-          width: item.s_width + 'px',
-          height: item.s_height + 'px',
-          top: item.s_y + 'px',
-          left: item.s_x + 'px'
-        }" v-for="(item, index) in comData" :key="index">
-        <!-- TODO：移动位置添加动画 -->
+      <div :class="[
+        'com-item',
+        dragSrc !== null ? '' : 'not-move-animate',
+        item.move ? 'is-move' : '',
+        item.drag ? 'is-drag' : '',
+        item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '',
+        // 初始化标记
+        initTime + 'p'
+      ]" :style="{
+        width: item.s_width + 'px',
+        height: item.s_height + 'px',
+        top: item.s_y + 'px',
+        left: item.s_x + 'px'
+      }" v-for="(item, index) in comData" :key="index">
         <!-- 实际内容区 -->
-        <div
-          :class="['com-item-inner', seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag', seeModel ? 'no-hover' : '']"
+        <div :class="[
+          'com-item-inner',
+          seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag',
+          seeModel ? 'no-hover' : ''
+        ]"
           @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
-          @mouseenter="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : showGroupSet(item)"
-          @mouseleave="seeModel || isGrouping || dragSrc || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
+          @mouseenter="seeModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : showGroupSet(item)"
+          @mouseleave="seeModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
           <div class="com-item-box">
             <!-- 组件内容区 -->
             <!-- 组合内容 -->
@@ -38,7 +46,11 @@
               </div>
               <!-- 组合子项内容 -->
               <div :class="['group-item-content', item.groupTit ? '' : 'full']">
-                <div :class="['com-item-box-child', one.isObstacle ? 'is-obstacle' : '', initTime + 'c']" :style="{
+                <div :class="[
+                  'com-item-box-child',
+                  one.isObstacle ? 'is-obstacle' : '',
+                  initTime + 'c'
+                ]" :style="{
                   width: one.s_width + 'px',
                   height: one.s_height + 'px',
                   top: one.s_y + 'px',
@@ -133,7 +145,12 @@
         </div>
       </div>
       <!-- shadow阴影 -->
-      <div :class="['shadow-bg', item.move ? 'is-move' : '']" :style="{
+      <div :class="[
+        'shadow-bg',
+        dragSrc !== null ? '' : 'not-move-animate',
+        item.move ? 'is-move' : '',
+        item.drag ? 'is-drag' : ''
+      ]" :style="{
         width: item.s_width - nowXSpace * 2 + 'px',
         height: item.s_height - nowYSpace * 2 + 'px',
         top: item.s_y + nowYSpace + 'px',
