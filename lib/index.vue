@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-06-04 14:04:24
+* @LastEditors: aFei
+* @LastEditTime: 2025-06-05 10:56:40
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -101,8 +101,7 @@
               </slot>
               <slot name="setPopNormal" :data="outDataInit(item)" v-else>
                 <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
-                <!-- TODO：把3个限制（static\drag\resize）改为方法触发 -->
-                <div class="setting-box-pop-item" @click="item.static = item.static === true ? false : true">
+                <div class="setting-box-pop-item" @click="toggleLockItem(item.id, item.static === true ? false : true)">
                   {{ item.static === true ? '解除' : '' }}锁定
                 </div>
                 <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
@@ -1577,6 +1576,36 @@ const updateItemAll = (obj, type = true) => {
     } catch (error) { }
   }
 };
+// 锁定/解除一个组件功能
+const toggleLockItem = (id, val = false) => {
+  let obj = null;
+  obj = comData.value.filter(item => item.id === id)[0];
+  if (obj) {
+    if (typeof val === 'boolean') {
+      obj.static = val;
+    }
+    // 排除null
+    else if (val && typeof val === 'object') {
+      if (typeof val.static === 'boolean') {
+        obj.static = val.static;
+      }
+      if (typeof val.dragable === 'boolean') {
+        obj.dragable = val.dragable;
+      }
+      if (typeof val.resizable === 'boolean') {
+        obj.resizable = val.resizable;
+      }
+    }
+    return outDataInit(comData.value.filter(item => item.id === obj.id)[0]);
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) {
+    } finally {
+      return null;
+    }
+  }
+};
 // 记录画布尺寸（原始尺寸）
 const changePageSize = (width, height) => {
   if (width !== null) {
@@ -1967,7 +1996,7 @@ onBeforeUnmount(() => {
   resizePageObserver.unobserve(pageRef.value);
   window.removeEventListener('click', closeSettingPop);
 });
-defineExpose({ init, addItem, copyItem, deleteItem, updateItem, hideGroupSet, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, resetData, getData });
+defineExpose({ init, addItem, copyItem, deleteItem, updateItem, toggleLockItem, hideGroupSet, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, resetData, getData });
 </script>
 <style lang="scss">
 @use "style/index.scss" as *;

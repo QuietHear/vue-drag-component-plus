@@ -271,6 +271,11 @@
 	}
 >
 
+* `toggleLockItem`：锁定/解除一个组件功能-->传入（组件项id，要设置的值）；只支持一级组件，不设置组件项；若传入Boolean类型，则是直接设置static的值；若传入Object类型，则是分别取对应的值（必须是Boolean类型）分别赋给static/dragable/resizable；会返回当前组件的信息（复制对象，随意操作）
+>
+	对应功能参考上方组件项信息的 static/dragable/resizable
+>
+
 * `hideGroupSet`：隐藏组合设置按钮-->传入（组件项id）
 
 * `openGroup`：打开组合开关-->传入（组件项id）
