@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-05 14:04:45
+ * @LastEditTime: 2025-06-10 13:12:02
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -20,7 +20,8 @@
         item.drag ? 'is-drag' : '',
         item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '',
         // 初始化标记
-        initTime + 'p'
+        initTime + 'p',
+        'i' + item.id + 'd'
       ]" :style="{
         width: item.s_width + 'px',
         height: item.s_height + 'px',
@@ -30,12 +31,12 @@
         <!-- 实际内容区 -->
         <div :class="[
           'com-item-inner',
-          seeModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag',
-          seeModel ? 'no-hover' : ''
+          seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag',
+          seeModel || trimModel ? 'no-hover' : ''
         ]"
-          @mousedown.prevent="seeModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
-          @mouseenter="seeModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : showGroupSet(item)"
-          @mouseleave="seeModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
+          @mousedown.prevent="seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
+          @mouseenter="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : showGroupSet(item)"
+          @mouseleave="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
           <div class="com-item-box">
             <!-- 组件内容区 -->
             <!-- 组合内容 -->
@@ -63,13 +64,13 @@
                       <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
                     </slot>
                   </div>
-                  <!-- 设置弹窗入口 -->
+                  <!-- 组合内设置弹窗入口 -->
                   <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
                     @mousedown.prevent.stop="null"
-                    v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
+                    v-if="!seeModel && !trimModel && !isGrouping && dragSrc === null && resizeObj === null">
                     <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
                   </div>
-                  <!-- 设置弹窗 -->
+                  <!-- 组合内设置弹窗 -->
                   <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
                     <slot name="setPopNormal" :data="outDataInit(one)">
                       <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
@@ -98,7 +99,7 @@
             <div
               :class="['setting-box', item.isGroup === true ? item.btnPosition === 'right' ? 'only-g' : item.btnPosition === 'left' ? 'only-g l' : item.btnPosition === 'top' ? 'only-g t' : item.btnPosition === 'bottom' ? 'only-g b' : item.btnPosition === 'center' ? 'only-g c' : '' : '']"
               :style="{ display: item.showPop || item.showSet ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
-              v-if="!seeModel && !isGrouping && dragSrc === null && resizeObj === null">
+              v-if="!seeModel && !trimModel && !isGrouping && dragSrc === null && resizeObj === null">
               <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
             </div>
             <!-- 设置弹窗 -->
@@ -106,15 +107,25 @@
               :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'top' ? 'special t' : item.btnPosition === 'bottom' ? 'special b' : item.btnPosition === 'center' ? 'special c' : '' : '']"
               @mousedown.prevent.stop="null" v-if="item.showPop">
               <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
+                <div class="setting-box-pop-item" @click="toggleLockItem(item.id, item.static === true ? false : true)">
+                  {{ item.static === true ? '解除' : '' }}锁定
+                </div>
+                <div class="setting-box-pop-item" @click="openTrimModel(item.id)" v-if="item.static !== true">
+                  微调
+                </div>
                 <div class="setting-box-pop-item"
                   @click="hideGroupSet(item.id); emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
-                  设置组合标题</div>
+                  设置组合标题
+                </div>
                 <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
               </slot>
               <slot name="setPopNormal" :data="outDataInit(item)" v-else>
                 <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
                 <div class="setting-box-pop-item" @click="toggleLockItem(item.id, item.static === true ? false : true)">
                   {{ item.static === true ? '解除' : '' }}锁定
+                </div>
+                <div class="setting-box-pop-item" @click="openTrimModel(item.id)" v-if="item.static !== true">
+                  微调
                 </div>
                 <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
                 <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
@@ -123,7 +134,7 @@
           </div>
           <!-- 缩放触发器 -->
           <template
-            v-if="!seeModel && !isGrouping && !item.showPop && !(item.isGroup && item.groupData.filter(one => one.showPop).length > 0) && !item.move && item.static !== true && item.resizable !== false">
+            v-if="!seeModel && !trimModel && !isGrouping && !item.showPop && !(item.isGroup && item.groupData.filter(one => one.showPop).length > 0) && !item.move && item.static !== true && item.resizable !== false">
             <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
               v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
             <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
@@ -201,7 +212,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
-const emit = defineEmits(["baseWidthInit", "changeScale", "changeCssScale", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"]);
+const emit = defineEmits(["baseWidthInit", "changeScale", "changeCssScale", "changeTrimModel", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -685,6 +696,63 @@ const dealAuxiliary = (obj) => {
     }
   }
 };
+// 微调模式
+const trimModel = ref(false);
+// 开启微调模式
+const openTrimModel = (id) => {
+  let obj = null;
+  obj = comData.value.filter(item => item.id === id)[0];
+  // 必须处于可拖动状态
+  if (obj && obj.static !== true && obj.dragable !== false) {
+    trimModel.value = true;
+    dragStart(comData.value.findIndex(item => item.id === id));
+    // 不加延迟会触发当前次的按钮点击
+    setTimeout(() => {
+      window.addEventListener('click', closeTrimModel);
+      window.addEventListener('keydown', trimMove);
+    }, 50);
+    emit('changeTrimModel', trimModel.value, outDataInit(comData.value.filter(item => item.id === obj.id)[0]));
+  } else {
+    try {
+      console.error('未找到组件');
+    } catch (error) { }
+  }
+};
+// 键盘控制移动方向
+const trimMove = (e) => {
+  switch (e.keyCode) {
+    // esc、enter、space
+    case 13:
+    case 27:
+    case 32:
+      closeTrimModel();
+      break;
+    // 向左
+    case 37:
+      dragIng('left');
+      break;
+    // 向上
+    case 38:
+      dragIng('top');
+      break;
+    // 向右
+    case 39:
+      dragIng('right');
+      break;
+    // 向下
+    case 40:
+      dragIng('bottom');
+      break;
+  }
+};
+// 关闭微调模式
+const closeTrimModel = () => {
+  window.removeEventListener('click', closeTrimModel);
+  window.removeEventListener('keydown', trimMove);
+  dragEnd();
+  trimModel.value = false;
+  emit('changeTrimModel', trimModel.value);
+};
 // 当前拖拽目标
 let dragSrc = null;
 // 横向初始差值
@@ -702,22 +770,31 @@ const dragStart = (e, index) => {
   clearTimeout(dragResetInt);
   clearTimeout(dragDelayInt);
   closeSettingPop();
-  const parentNode = closest(e.target, '.com-item');
-  // 防止内部组件事件冒泡时触发异常
-  if (parentNode) {
-    dragDelayInt = setTimeout(() => {
-      // 触发间隔太短时，会先触发定时器中的内容，再触发end事件
-      dragDelayInt = null;
-      dragSrc = index;
-      dragBg.value = deepCopy(comData.value[dragSrc]);
-      emit('dragStart', outDataInit(comData.value[dragSrc]));
-      comData.value[dragSrc].move = true;
-      dealAuxiliary(comData.value[dragSrc]);
-      differX = e.clientX - parentNode.offsetLeft;
-      differY = e.clientY - parentNode.offsetTop;
-      window.addEventListener('mousemove', dragIng);
-    }, props.dragDelayTime);
-    window.addEventListener('mouseup', dragEnd);
+  if (trimModel.value) {
+    dragDelayInt = null;
+    dragSrc = e;
+    dragBg.value = deepCopy(comData.value[dragSrc]);
+    emit('dragStart', outDataInit(comData.value[dragSrc]));
+    comData.value[dragSrc].move = true;
+    dealAuxiliary(comData.value[dragSrc]);
+  } else {
+    const parentNode = closest(e.target, '.com-item');
+    // 防止内部组件事件冒泡时触发异常
+    if (parentNode) {
+      dragDelayInt = setTimeout(() => {
+        // 触发间隔太短时，会先触发定时器中的内容，再触发end事件
+        dragDelayInt = null;
+        dragSrc = index;
+        dragBg.value = deepCopy(comData.value[dragSrc]);
+        emit('dragStart', outDataInit(comData.value[dragSrc]));
+        comData.value[dragSrc].move = true;
+        dealAuxiliary(comData.value[dragSrc]);
+        differX = e.clientX - parentNode.offsetLeft;
+        differY = e.clientY - parentNode.offsetTop;
+        window.addEventListener('mousemove', dragIng);
+      }, props.dragDelayTime);
+      window.addEventListener('mouseup', dragEnd);
+    }
   }
 };
 // 拖拽中（缩放尺寸）
@@ -725,8 +802,30 @@ const dragIng = (e) => {
   clearTimeout(dragResetInt);
   clearTimeout(dragDelayInt);
   dragDelayInt = null;
-  const x = e.clientX - differX;
-  const y = e.clientY - differY;
+  let x = null;
+  let y = null;
+  if (trimModel.value) {
+    const parentNode = findByClass(pageRef.value, 'i' + comData.value[dragSrc].id + 'd')[0];
+    x = parentNode.offsetLeft;
+    y = parentNode.offsetTop;
+    switch (e) {
+      case 'top':
+        y -= 1;
+        break;
+      case 'bottom':
+        y += 1;
+        break;
+      case 'left':
+        x -= 1;
+        break;
+      case 'right':
+        x += 1;
+        break;
+    }
+  } else {
+    x = e.clientX - differX;
+    y = e.clientY - differY;
+  }
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
   const resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
   const moveX = resultX - comData.value[dragSrc].s_x;
@@ -2012,8 +2111,10 @@ onBeforeUnmount(() => {
   // 移除监听
   resizePageObserver.unobserve(pageRef.value);
   window.removeEventListener('click', closeSettingPop);
+  window.removeEventListener('click', closeTrimModel);
+  window.removeEventListener('keydown', trimMove);
 });
-defineExpose({ init, addItem, copyItem, deleteItem, updateItem, toggleLockItem, hideGroupSet, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, resetData, getData });
+defineExpose({ init, addItem, copyItem, deleteItem, updateItem, toggleLockItem, hideGroupSet, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, openTrimModel, closeTrimModel, resetData, getData });
 </script>
 <style lang="scss">
 @use "style/index.scss" as *;

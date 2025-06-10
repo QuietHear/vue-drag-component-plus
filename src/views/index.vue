@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2025-05-20 10:03:22
+ * @LastEditors: aFei
+ * @LastEditTime: 2025-06-09 13:50:37
 */
 <template>
   <div class="demo">
@@ -16,7 +16,7 @@
           <el-button @click="closeGroup">取消</el-button>
         </div>
         <template v-else>
-          <div class="con">
+          <div class="con" @keydown.enter.prevent>
             <template v-if="!seeModel">
               <el-button @click="addOne" type="primary">添加</el-button>
               <el-input-number v-model="xSpace" :min="0" controls-position="right" title="纵向间距" />
@@ -26,7 +26,7 @@
             </template>
             <el-button @click="getData">查看当前数据</el-button>
           </div>
-          <div class="con">
+          <div class="con" @keydown.enter.prevent>
             <el-switch v-model="seeModel" active-text="仅查看" inactive-text="正常" />
             <em>基准宽度：{{ baseWidth ? (baseWidth + 'px') : 'null' }}；</em>
             <em>当前缩放：{{ nowScale }}；</em>
