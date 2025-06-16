@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-11 10:47:20
+ * @LastEditTime: 2025-06-16 09:57:44
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -176,7 +176,7 @@
       }" v-if="dragSrc !== null"></div>
       <!-- 高度占位，出现滚动条 -->
       <div class="height-bg"
-        :style="{ height: (heightBg > 0 ? + (heightBg * getNowHScale() + (seeModel ? seeModelMinBg : 220)) : 0) + 'px' }">
+        :style="{ height: (heightBg > 0 ? (heightBg * getNowHScale() + (seeModel ? seeModelMinBg : 220)) : 0) + 'px' }">
       </div>
       <!-- 辅助线 -->
       <template v-if="showAuxiliary">
@@ -190,15 +190,20 @@
         <!-- 下 -->
         <div class="auxiliary-line hor" :style="{ top: auxiliaryBottom + 'px', left: '0px' }"
           v-if="auxiliaryBottom !== null"></div>
-        <!-- 左 -->
-        <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryLeft + 'px' }" v-if="auxiliaryLeft !== null">
+        <!-- 左（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
+        <div class="auxiliary-line"
+          :style="{ top: '0px', left: auxiliaryLeft + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
+          v-if="auxiliaryLeft !== null">
         </div>
-        <!-- 左右中间 -->
-        <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryLeftRight + 'px' }"
+        <!-- 左右中间（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
+        <div class="auxiliary-line"
+          :style="{ top: '0px', left: auxiliaryLeftRight + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
           v-if="auxiliaryLeftRight !== null">
         </div>
-        <!-- 右 -->
-        <div class="auxiliary-line" :style="{ top: '0px', left: auxiliaryRight + 'px' }" v-if="auxiliaryRight !== null">
+        <!-- 右（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
+        <div class="auxiliary-line"
+          :style="{ top: '0px', left: auxiliaryRight + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
+          v-if="auxiliaryRight !== null">
         </div>
       </template>
       <!-- 空数据 -->
@@ -212,6 +217,7 @@
 </template>
 <script setup>
 import Icon from "./components/icon.vue";
+import { dealPositionData, findPosition } from "./js/findPosition";
 const emit = defineEmits(["baseWidthInit", "changeScale", "changeCssScale", "changeTrimModel", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"]);
 const props = defineProps({
   // 包含收缩方向
@@ -563,8 +569,8 @@ const dealItemScaleWH = (item, targetScale = null) => {
   const titHeight = parseInt(styles.getPropertyValue('--group-tit-height').trim());
   if (item.isGroup === true) {
     if (targetScale) {
-      const multipleX = item.width - 2 * nowXSpace.value - 2 * borderWidth;
-      const multipleY = item.height - 2 * nowYSpace.value - 2 * borderWidth - (item.groupTit ? titHeight : 0);
+      const multipleX = item.width;
+      const multipleY = item.height - (item.groupTit ? titHeight : 0);
       item.groupData.forEach(one => {
         one.width = multipleX * one.groupW;
         one.height = multipleY * one.groupH;
@@ -982,7 +988,12 @@ const dragIng = (e) => {
           // 下面有位置时（夹在上下两个中间移动时）
           // 上面有位置时（夹在上下两个中间、底下的优先接触且上面有留空位置时）
           if (dragBg.value.s_y >= Math.min(...obstacleArr.map(item => (item.s_y + item.s_height))) || (linObj.s_y >= 0 && filterCrossArr(deepCopy(comData.value.filter(item => item.move !== true)), linObj, true).length === 0)) {
-            dragBg.value.s_x = resultX;
+            const checkObj3 = deepCopy(dragBg.value);
+            checkObj3.s_x = resultX;
+            // 防止改变X后出现重叠（先左右出现交集再下就会出问题）
+            if (filterCrossArr(deepCopy(comData.value.filter(item => item.move !== true)), checkObj3, true).length === 0) {
+              dragBg.value.s_x = resultX;
+            }
           }
         }
         // 新需求移除横向间距后不可能向上，肯定是下移
@@ -1278,7 +1289,9 @@ const dealSpace = (deal = true) => {
     else if (dragSrc !== null) {
       const obj = copyData.filter(item => item.move === true)[0];
       if (obj) {
-        obj.y = dragBg.value.y;
+        obj.s_x = dragBg.value.s_x;
+        obj.s_y = dragBg.value.s_y;
+        dealItemScaleReverseXY(obj);
       }
     }
   }
@@ -1421,6 +1434,9 @@ const hideGroupSet = (id) => {
 };
 // 计算新增的一个组件的x,y，画布中数量至少一个（原始尺寸）
 const dealMoreItemXY = (item, dataArr, maxWidth) => {
+  // const res1 = dealPositionData(dataArr);
+  // const res2 = dealPositionData(item);
+  // findPosition(res1,res2,maxWidth)
   const yTopArr = dataArr.map(item => item.y);
   // 与最高的y持平
   const yTop = Math.max(...yTopArr);
@@ -2119,6 +2135,7 @@ const getData = (targetWidth = null) => {
     if (targetWidth && baseWidth) {
       data.forEach(item => {
         dealItemScaleWH(item, targetWidth / baseWidth);
+        dealItemScaleXY(item, targetWidth / baseWidth);
       });
     }
     resolve({ data, width: targetWidth || baseWidth });
