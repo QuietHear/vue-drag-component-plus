@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-16 09:57:44
+ * @LastEditTime: 2025-06-16 14:39:05
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -1434,55 +1434,71 @@ const hideGroupSet = (id) => {
 };
 // 计算新增的一个组件的x,y，画布中数量至少一个（原始尺寸）
 const dealMoreItemXY = (item, dataArr, maxWidth) => {
-  // const res1 = dealPositionData(dataArr);
-  // const res2 = dealPositionData(item);
-  // findPosition(res1,res2,maxWidth)
-  const yTopArr = dataArr.map(item => item.y);
-  // 与最高的y持平
-  const yTop = Math.max(...yTopArr);
-  // 找到所有包含在当前y的组件
-  const xArr = dataArr.filter(item => (item.y + item.height) > yTop);
-  xArr.sort((a, b) => {
-    const x = a.x;
-    const y = b.x;
-    return x - y;
-  });
-  // x在y的高度向右平铺
-  for (let i = 0; i < xArr.length; i++) {
-    // 第一个
-    if (i === 0) {
-      // 判断左面是否有空位置
-      if (xArr[i].x >= item.width) {
-        item.y = yTop;
-        item.x = 0;
-        break;
-      }
-    }
-    // 非最后一个，长度大于1
-    if (xArr.length > 1 && i !== (xArr.length - 1)) {
-      // 判断两个中间是否有空位置
-      if ((xArr[i].x + xArr[i].width + item.width) <= xArr[i + 1].x) {
-        item.y = yTop;
-        item.x = xArr[i].x + xArr[i].width;
-        break;
-      }
-    }
-    // 最后一个
-    if (i === (xArr.length - 1)) {
-      // 判断右面是否有空位置
-      if ((xArr[i].x + xArr[i].width + item.width) <= maxWidth) {
-        item.y = yTop;
-        item.x = xArr[i].x + xArr[i].width;
-        break;
-      }
-    }
-  };
-  // 当行放不下
-  if (item.y == undefined) {
-    item.x = 0;
-    const lin = dataArr.map(item => (item.y + item.height));
-    item.y = Math.max(...lin);
+  const data1 = dealPositionData(item);
+  const data2 = dealPositionData(dataArr);
+  const res = findPosition(data2, data1, maxWidth);
+  if (res) {
+    item.x = res.x;
+    item.y = res.y;
   }
+  // 前面的行放不下时
+  else {
+    item.x = 0;
+    const lin = data2.map(item => (item.y + item.height));
+    if (lin.length > 0) {
+      item.y = Math.max(...lin);
+    } else {
+      try {
+        console.error('组件宽度太大');
+      } catch (error) { }
+    }
+  }
+  // const yTopArr = dataArr.map(item => item.y);
+  // // 与最高的y持平
+  // const yTop = Math.max(...yTopArr);
+  // // 找到所有包含在当前y的组件
+  // const xArr = dataArr.filter(item => (item.y + item.height) > yTop);
+  // xArr.sort((a, b) => {
+  //   const x = a.x;
+  //   const y = b.x;
+  //   return x - y;
+  // });
+  // // x在y的高度向右平铺
+  // for (let i = 0; i < xArr.length; i++) {
+  //   // 第一个
+  //   if (i === 0) {
+  //     // 判断左面是否有空位置
+  //     if (xArr[i].x >= item.width) {
+  //       item.y = yTop;
+  //       item.x = 0;
+  //       break;
+  //     }
+  //   }
+  //   // 非最后一个，长度大于1
+  //   if (xArr.length > 1 && i !== (xArr.length - 1)) {
+  //     // 判断两个中间是否有空位置
+  //     if ((xArr[i].x + xArr[i].width + item.width) <= xArr[i + 1].x) {
+  //       item.y = yTop;
+  //       item.x = xArr[i].x + xArr[i].width;
+  //       break;
+  //     }
+  //   }
+  //   // 最后一个
+  //   if (i === (xArr.length - 1)) {
+  //     // 判断右面是否有空位置
+  //     if ((xArr[i].x + xArr[i].width + item.width) <= maxWidth) {
+  //       item.y = yTop;
+  //       item.x = xArr[i].x + xArr[i].width;
+  //       break;
+  //     }
+  //   }
+  // };
+  // // 当行放不下
+  // if (item.y == undefined) {
+  //   item.x = 0;
+  //   const lin = dataArr.map(item => (item.y + item.height));
+  //   item.y = Math.max(...lin);
+  // }
 };
 // 添加一个组件（原始尺寸）
 const addItem = (obj, pid = null, keepPosition = false) => {
@@ -1511,12 +1527,7 @@ const addItem = (obj, pid = null, keepPosition = false) => {
       });
       dealMoreItemXY(item, pArr[0].groupData, pArr[0].width);
     } else {
-      if (comData.value.length === 0) {
-        item.x = 0;
-        item.y = 0;
-      } else {
-        dealMoreItemXY(item, comData.value, (baseWidth || pageWidth) - nowXSpace.value * 2);
-      }
+      dealMoreItemXY(item, comData.value, (baseWidth || pageWidth) - nowXSpace.value * 2);
     }
   }
   // 添加到画布
@@ -1527,12 +1538,15 @@ const addItem = (obj, pid = null, keepPosition = false) => {
     // 递归解除重叠
     dealComStacking([result], (arr, obj) => arr.filter(item => item.id !== obj.id));
   } else {
-    if (comData.value.length === 0) {
-      setBaseWidth(pageWidth);
+    // 防止错误数据添加
+    if (item.x !== undefined && item.y !== undefined) {
+      if (comData.value.length === 0) {
+        setBaseWidth(pageWidth);
+      }
+      // 计算实际大小
+      dealItemScaleWH(item);
+      comData.value.push(item);
     }
-    // 计算实际大小
-    dealItemScaleWH(item);
-    comData.value.push(item);
   }
   dealBg();
 };
@@ -1601,7 +1615,9 @@ const deleteItem = (id, pid = null, deelEmpty = true) => {
         setNowScale(1);
       }
     }
-    dealBg();
+    if (deelEmpty) {
+      dealBg();
+    }
   } else {
     try {
       console.error('未找到组件');

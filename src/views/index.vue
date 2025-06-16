@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-09 13:50:37
+ * @LastEditTime: 2025-06-16 14:26:21
 */
 <template>
   <div class="demo">
@@ -96,8 +96,8 @@ const initTest = () => {
       id: "1732599290360G",
       isGroup: true,
       groupTit: "",
-      width: 202,
-      height: 202,
+      width: 200,
+      height: 200,
       groupData: [
         {
           detail: {

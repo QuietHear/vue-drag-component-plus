@@ -1,5 +1,5 @@
-import { resolveComponent as Yt, openBlock as x, createBlock as me, resolveDynamicComponent as ht, normalizeProps as dt, mergeProps as Ae, withCtx as Bt, createElementBlock as b, toDisplayString as K, ref as W, watch as pt, onMounted as Rt, onBeforeUnmount as Ht, normalizeStyle as V, unref as d, createElementVNode as B, Fragment as ge, renderList as Ke, normalizeClass as te, withModifiers as L, createCommentVNode as I, renderSlot as ye, createVNode as ft, createTextVNode as Lt, nextTick as gt, isVNode as yt } from "vue";
-const vt = {
+import { resolveComponent as Ht, openBlock as w, createBlock as st, resolveDynamicComponent as wt, normalizeProps as bt, mergeProps as Ye, withCtx as Rt, createElementBlock as k, toDisplayString as Q, ref as R, watch as rt, onMounted as Nt, onBeforeUnmount as Yt, normalizeStyle as q, unref as c, createElementVNode as N, Fragment as ke, renderList as nt, normalizeClass as he, withModifiers as m, createCommentVNode as A, renderSlot as Me, createVNode as kt, createTextVNode as Wt, nextTick as Mt, isVNode as St } from "vue";
+const Et = {
   __name: "icon",
   props: {
     iconObj: {
@@ -7,31 +7,112 @@ const vt = {
       requured: !0
     }
   },
-  setup(g) {
-    return (F, Fe) => {
-      const O = Yt("el-icon");
-      return g.iconObj.type === "custom" ? (x(), me(ht(g.iconObj.icon), dt(Ae({ key: 0 }, g.iconObj.attrs)), null, 16)) : g.iconObj.type === "el" ? (x(), me(O, dt(Ae({ key: 1 }, g.iconObj.attrs)), {
-        default: Bt(() => [
-          (x(), me(ht(g.iconObj.icon)))
+  setup(u) {
+    return (y, B) => {
+      const S = Ht("el-icon");
+      return u.iconObj.type === "custom" ? (w(), st(wt(u.iconObj.icon), bt(Ye({ key: 0 }, u.iconObj.attrs)), null, 16)) : u.iconObj.type === "el" ? (w(), st(S, bt(Ye({ key: 1 }, u.iconObj.attrs)), {
+        default: Rt(() => [
+          (w(), st(wt(u.iconObj.icon)))
         ]),
         _: 1
-      }, 16)) : g.iconObj.type === "iconfont" ? (x(), b("i", Ae({
+      }, 16)) : u.iconObj.type === "iconfont" ? (w(), k("i", Ye({
         key: 2,
-        class: ["icon iconfont", "icon-" + g.iconObj.icon]
-      }, g.iconObj.attrs), null, 16)) : (x(), b("i", Ae({
+        class: ["icon iconfont", "icon-" + u.iconObj.icon]
+      }, u.iconObj.attrs), null, 16)) : (w(), k("i", Ye({
         key: 3,
-        class: g.iconObj.type
-      }, g.iconObj.attrs), K(g.iconObj.icon), 17));
+        class: u.iconObj.type
+      }, u.iconObj.attrs), Q(u.iconObj.icon), 17));
     };
   }
+}, Pt = (u, y = { x: "x", y: "y", width: "width", height: "height" }) => {
+  let B = null;
+  return u instanceof Array ? (B = [], u.forEach((S) => {
+    typeof S[y.x] == "number" && typeof S[y.y] == "number" && typeof S[y.width] == "number" && typeof S[y.height] == "number" && B.push({
+      x: S[y.x],
+      y: S[y.y],
+      width: S[y.width],
+      height: S[y.height]
+    });
+  })) : typeof u[y.width] == "number" && typeof u[y.height] == "number" && (B = {
+    width: u[y.width],
+    height: u[y.height]
+  }), B;
+}, Vt = (u) => {
+  const y = /* @__PURE__ */ new Map();
+  return u.forEach((B) => {
+    y.has(B.x) || y.set(B.x, []), y.get(B.x).push(B);
+  }), y;
+}, Kt = (u, y) => u.filter((B) => B.x <= y.x && B.x + B.width > y.x || B.x > y.x && B.x < y.x + y.width), mt = (u, y, B, S = !1) => {
+  if (y.width > B)
+    return null;
+  let b = [];
+  if (u.length === 0) {
+    const L = { x: 0, y: 0 };
+    return S ? [L] : L;
+  }
+  const v = Math.max(...u.map((L) => L.y + L.height)), Se = /* @__PURE__ */ new Set([0]);
+  u.forEach((L) => {
+    Se.add(L.y), Se.add(L.y + L.height);
+  });
+  const We = Array.from(Se).sort((L, O) => L - O);
+  for (const L of We) {
+    const O = L + y.height;
+    if (O > v)
+      continue;
+    const $ = u.filter((E) => E.y < O && E.y + E.height > L);
+    if ($.length === 0) {
+      const E = { x: 0, y: L };
+      if (!S)
+        return E;
+      b.push(E);
+      continue;
+    }
+    const W = $.map((E) => [E.x, E.x + E.width]);
+    W.sort((E, le) => E[0] - le[0]);
+    const Y = [];
+    let [z, r] = W[0];
+    for (let E = 1; E < W.length; E++) {
+      const [le, se] = W[E];
+      le <= r ? r = Math.max(r, se) : (Y.push([z, r]), [z, r] = [le, se]);
+    }
+    if (Y.push([z, r]), Y[0][0] >= y.width) {
+      const E = { x: 0, y: L };
+      if (!S)
+        return E;
+      b.push(E);
+    }
+    let ee = Y[0][1];
+    for (let E = 1; E < Y.length; E++) {
+      if (Y[E][0] - ee >= y.width) {
+        const se = { x: ee, y: L };
+        if (!S)
+          return se;
+        b.push(se);
+      }
+      ee = Math.max(ee, Y[E][1]);
+    }
+    if (B - ee >= y.width) {
+      const E = { x: ee, y: L };
+      if (!S)
+        return E;
+      b.push(E);
+    }
+  }
+  return S ? (Vt(b).forEach((O, $) => {
+    if (O.length > 1)
+      for (let W = 0; W < O.length - 1; W++) {
+        let Y = { ...y, ...O[W] };
+        Kt(u.filter((z) => z.y >= Y.y + Y.height && z.y <= O[W + 1].y), Y).length === 0 && (b = b.filter((z) => !(z.x === O[W + 1].x && z.y === O[W + 1].y)), O.splice(W, 1), W--);
+      }
+  }), b.sort((O, $) => O.y !== $.y ? O.y - $.y : O.x - $.x), b.length === 0 ? null : b) : null;
 };
-const Xt = { class: "content-box" }, $t = ["onMousedown", "onMouseenter", "onMouseleave"], Wt = { class: "com-item-box" }, Nt = ["title"], Vt = { class: "com-item-box-content" }, mt = ["onClick"], Kt = ["onClick"], Ft = ["onClick"], qt = {
+const Ft = { class: "content-box" }, qt = ["onMousedown", "onMouseenter", "onMouseleave"], Ut = { class: "com-item-box" }, Jt = ["title"], Qt = { class: "com-item-box-content" }, Zt = ["onClick"], jt = ["onClick"], eo = ["onClick"], to = {
   key: 1,
   class: "com-item-box-content"
-}, Ut = ["onClick"], Jt = ["onClick"], Qt = ["onClick"], Zt = ["onClick"], jt = ["onClick"], eo = ["onClick"], to = ["onMousedown"], oo = ["onMousedown"], so = ["onMousedown"], lo = ["onMousedown"], ro = ["onMousedown"], no = ["onMousedown"], ao = ["onMousedown"], io = ["onMousedown"], uo = {
+}, oo = ["onClick"], lo = ["onClick"], so = ["onClick"], ro = ["onClick"], no = ["onClick"], io = ["onClick"], ao = ["onClick"], uo = ["onClick"], co = ["onClick"], ho = ["onClick"], fo = ["onMousedown"], po = ["onMousedown"], go = ["onMousedown"], yo = ["onMousedown"], vo = ["onMousedown"], _o = ["onMousedown"], xo = ["onMousedown"], wo = ["onMousedown"], bo = {
   key: 2,
   class: "com-empty"
-}, co = {
+}, ko = {
   __name: "index",
   props: {
     // 包含收缩方向
@@ -53,40 +134,64 @@ const Xt = { class: "content-box" }, $t = ["onMousedown", "onMouseenter", "onMou
     seeModelMinBg: {
       type: Number,
       default: 50,
-      validator(g, F) {
-        return g >= 0;
+      validator(u, y) {
+        return u >= 0;
       }
     },
     // 组件项最小宽度（原始尺寸）
     itemMinWidth: {
       type: Number,
-      default: 15,
-      validator(g, F) {
-        return g >= 15;
+      default: 50,
+      validator(u, y) {
+        return u >= 20;
       }
     },
     // 组件项最小高度（原始尺寸）
     itemMinHeight: {
       type: Number,
-      default: 15,
-      validator(g, F) {
-        return g >= 15;
+      default: 50,
+      validator(u, y) {
+        return u >= 20;
       }
     },
     // 纵向相邻元素的自动间距（原始尺寸）
     xSpace: {
       type: Number,
       default: 10,
-      validator(g, F) {
-        return g >= 0;
+      validator(u, y) {
+        return u >= 0;
       }
     },
     // 横向相邻元素的自动间距（原始尺寸）
     ySpace: {
       type: Number,
       default: null,
-      validator(g, F) {
-        return g >= 0;
+      validator(u, y) {
+        return u >= 0;
+      }
+    },
+    // 高度缩放折扣率（让高度没那么大变化）
+    hScaleDiscount: {
+      type: Number,
+      default: 0.2,
+      validator(u, y) {
+        return u > 0;
+      }
+    },
+    // 预览模式组件内css缩放比例最小值
+    cssScaleMin: {
+      type: Number,
+      default: 0.75,
+      validator(u, y) {
+        return u > 0;
+      }
+    },
+    // 预览模式组件内css缩放比例最大值
+    cssScaleMax: {
+      type: Number,
+      default: 1.2,
+      validator(u, y) {
+        return u > 0 && u >= y.cssScaleMin;
       }
     },
     // 设置图标
@@ -114,524 +219,570 @@ const Xt = { class: "content-box" }, $t = ["onMousedown", "onMouseenter", "onMou
     // 组合前数据处理
     beforeAddGroup: {
       type: Function,
-      default: (g) => g
+      default: (u) => u
     },
     // 解散/移出组合前数据处理
     beforeRemoveGroup: {
       type: Function,
-      default: (g) => g
+      default: (u) => u
+    },
+    // 拖拽事件触发延迟时间（防止不小心单击了一下而开始拖动）
+    dragDelayTime: {
+      type: Number,
+      default: 200,
+      validator(u, y) {
+        return u >= 0 && u < 1e3;
+      }
     }
   },
-  emits: ["baseWidthInit", "changeScle", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"],
-  setup(g, { expose: F, emit: Fe }) {
-    const O = Fe, z = g, D = (t) => {
-      if (typeof t == "object" && !yt(t) && t !== null && !(t instanceof Date)) {
+  emits: ["baseWidthInit", "changeScale", "changeCssScale", "changeTrimModel", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"],
+  setup(u, { expose: y, emit: B }) {
+    const S = B, b = u, v = (t) => {
+      if (typeof t == "object" && !St(t) && t !== null && !(t instanceof Date)) {
         let o = t instanceof Array ? [] : {};
         for (let e in t)
-          o[e] = typeof t[e] == "object" && !yt(t[e]) && t[e] !== null && !(t[e] instanceof Date) ? D(t[e]) : t[e];
+          o[e] = typeof t[e] == "object" && !St(t[e]) && t[e] !== null && !(t[e] instanceof Date) ? v(t[e]) : t[e];
         return o;
       } else
         return t;
-    }, _t = (t, o) => {
+    }, Se = (t, o) => {
       let e = t.matches || t.webkitMatchesSelector || t.mozMatchesSelector || t.msMatchesSelector;
       for (; t && !e.call(t, o); )
         t = t.parentElement;
       return t;
-    }, xt = (t, o) => t.classList ? t.classList.contains(o) : new RegExp("\\s" + o + "\\s").test(" " + t.className + " "), qe = (t, o) => {
-      let e = [], l = (s) => {
-        s.forEach((r) => {
-          xt(r, o) && e.push(r), r.childNodes && r.childNodes.length > 0 && l(r.childNodes);
+    }, We = (t, o) => t.classList ? t.classList.contains(o) : new RegExp("\\s" + o + "\\s").test(" " + t.className + " "), L = (t, o) => {
+      let e = [], s = (l) => {
+        l.forEach((n) => {
+          We(n, o) && e.push(n), n.childNodes && n.childNodes.length > 0 && s(n.childNodes);
         });
       };
-      return l(t.childNodes), e;
-    }, Pe = (t, o, e = !1) => wt(oe(t, o, e), o, e), oe = (t, o, e = !1) => t.filter((l) => l[e ? "s_x" : "x"] <= o[e ? "s_x" : "x"] && l[e ? "s_x" : "x"] + l[e ? "s_width" : "width"] > o[e ? "s_x" : "x"] || l[e ? "s_x" : "x"] > o[e ? "s_x" : "x"] && l[e ? "s_x" : "x"] < o[e ? "s_x" : "x"] + o[e ? "s_width" : "width"]), wt = (t, o, e = !1) => t.filter((l) => l[e ? "s_y" : "y"] <= o[e ? "s_y" : "y"] && l[e ? "s_y" : "y"] + l[e ? "s_height" : "height"] > o[e ? "s_y" : "y"] || l[e ? "s_y" : "y"] > o[e ? "s_y" : "y"] && l[e ? "s_y" : "y"] < o[e ? "s_y" : "y"] + o[e ? "s_height" : "height"]), se = (t, o = (l) => l, e = !1) => {
-      const l = D(n.value), s = D(t);
-      s.sort((i, y) => {
-        const c = i[e ? "s_y" : "y"], f = y[e ? "s_y" : "y"];
-        if (c !== f)
-          return c - f;
+      return s(t.childNodes), e;
+    }, O = (t, o, e = !1) => W($(t, o, e), o, e), $ = (t, o, e = !1) => t.filter((s) => s[e ? "s_x" : "x"] <= o[e ? "s_x" : "x"] && s[e ? "s_x" : "x"] + s[e ? "s_width" : "width"] > o[e ? "s_x" : "x"] || s[e ? "s_x" : "x"] > o[e ? "s_x" : "x"] && s[e ? "s_x" : "x"] < o[e ? "s_x" : "x"] + o[e ? "s_width" : "width"]), W = (t, o, e = !1) => t.filter((s) => s[e ? "s_y" : "y"] <= o[e ? "s_y" : "y"] && s[e ? "s_y" : "y"] + s[e ? "s_height" : "height"] > o[e ? "s_y" : "y"] || s[e ? "s_y" : "y"] > o[e ? "s_y" : "y"] && s[e ? "s_y" : "y"] < o[e ? "s_y" : "y"] + o[e ? "s_height" : "height"]), Y = (t, o = (s) => s, e = !1) => {
+      const s = v(r.value), l = v(t);
+      l.sort((p, f) => {
+        const P = p[e ? "s_y" : "y"], H = f[e ? "s_y" : "y"];
+        if (P !== H)
+          return P - H;
         {
-          const a = i[e ? "s_x" : "x"], w = y[e ? "s_x" : "x"];
-          return a - w;
+          const a = p[e ? "s_x" : "x"], x = f[e ? "s_x" : "x"];
+          return a - x;
         }
       });
-      const r = (i) => {
-        Pe(o(l, i), i, e).forEach((c) => {
-          c[e ? "s_y" : "y"] = i[e ? "s_y" : "y"] + i[e ? "s_height" : "height"], r(c);
+      const n = (p) => {
+        O(o(s, p), p, e).forEach((P) => {
+          P[e ? "s_y" : "y"] = p[e ? "s_y" : "y"] + p[e ? "s_height" : "height"], n(P);
         });
       };
-      s.forEach((i) => r(l.filter((y) => y.id === i.id)[0])), l.forEach((i) => {
-        n.value.filter((y) => y.id === i.id)[0][e ? "s_y" : "y"] = i[e ? "s_y" : "y"];
+      l.forEach((p) => n(s.filter((f) => f.id === p.id)[0])), s.forEach((p) => {
+        r.value.filter((f) => f.id === p.id)[0][e ? "s_y" : "y"] = p[e ? "s_y" : "y"];
       });
-    }, R = (t) => {
-      const o = D(t);
+    }, z = (t) => {
+      const o = v(t);
       return delete o.showPop, delete o.showSet, o.groupData ? o.groupData.forEach((e) => {
-        delete e.showPop, delete e.showSet, j(e, o), delete e.s_width, delete e.s_height, delete e.s_x, delete e.s_y;
-      }) : o.inGroupId && (delete o.showPop, delete o.showSet, j(o, n.value.filter((e) => e.id === o.inGroupId)[0])), delete o.btnPosition, delete o.s_width, delete o.s_height, delete o.s_x, delete o.s_y, o;
-    }, n = W([]), Ue = () => {
-      z.insertResizeKeys.forEach((t) => {
-        z.excludeResizeKeys.indexOf(t) === -1 && q.value.push(t);
+        delete e.showPop, delete e.showSet, ce(e, o), delete e.s_width, delete e.s_height, delete e.s_x, delete e.s_y;
+      }) : o.inGroupId && (delete o.showPop, delete o.showSet, ce(o, r.value.filter((e) => e.id === o.inGroupId)[0])), delete o.btnPosition, delete o.s_width, delete o.s_height, delete o.s_x, delete o.s_y, delete o.syCopy, o;
+    }, r = R([]), ee = () => {
+      b.insertResizeKeys.forEach((t) => {
+        b.excludeResizeKeys.indexOf(t) === -1 && E.value.push(t);
       });
     };
-    pt(
-      () => [z.insertResizeKeys, z.excludeResizeKeys],
+    rt(
+      () => [b.insertResizeKeys, b.excludeResizeKeys],
       () => {
-        Ue();
+        ee();
       }
     );
-    const q = W([]);
-    Ue();
-    const Je = () => {
-      n.value.length > 0 && n.value.filter((t) => t.isGroup === !0).forEach((t) => {
-        ue(t);
+    const E = R([]);
+    ee();
+    const le = () => {
+      r.value.length > 0 && r.value.filter((t) => t.isGroup === !0).forEach((t) => {
+        de(t);
       });
-    }, Qe = () => {
-      z.xSpace !== null && z.xSpace !== void 0 ? X.value = z.xSpace / 2 : X.value = 10 / 2, z.ySpace !== null && z.ySpace !== void 0 && z.ySpace >= 0 ? U.value = z.ySpace / 2 : U.value = X.value, Je();
+    }, se = () => {
+      b.xSpace !== null && b.xSpace !== void 0 ? V.value = b.xSpace / 2 : V.value = 10 / 2, b.ySpace !== null && b.ySpace !== void 0 && b.ySpace >= 0 ? re.value = b.ySpace / 2 : re.value = V.value, le();
     };
-    pt(
-      () => [z.xSpace, z.ySpace],
+    rt(
+      () => [b.xSpace, b.ySpace],
       () => {
-        Qe();
+        se();
       }
     );
-    const X = W(0), U = W(0);
-    Qe();
-    const $ = W(null);
-    let ie = null;
-    const ve = (t) => {
-      ie = t, O("baseWidthInit", ie);
-    }, S = W(1), _e = (t) => {
-      S.value = t, O("changeScle", S.value);
-    }, ue = (t) => {
-      t.s_width = t.width * S.value, t.s_height = t.height * S.value;
-      const o = getComputedStyle($.value), e = parseInt(o.getPropertyValue("--com-item-border-width").trim()), l = parseInt(o.getPropertyValue("--group-tit-height").trim());
+    const V = R(0), re = R(0);
+    se();
+    const K = R(null);
+    let te = null;
+    const Ee = (t) => {
+      te = t, S("baseWidthInit", te);
+    }, j = R(1), Pe = R(1), ve = (t) => {
+      j.value = t, t < b.cssScaleMin ? Pe.value = b.cssScaleMin : t > b.cssScaleMax ? Pe.value = b.cssScaleMax : Pe.value = t, S("changeScale", j.value), S("changeCssScale", b.seeModel ? Pe.value : 1);
+    }, U = () => 1 + (j.value - 1) * b.hScaleDiscount;
+    rt(
+      () => b.seeModel,
+      () => {
+        ve(j.value);
+      }
+    );
+    const de = (t, o = null) => {
+      o ? (t.width = t.width * o, t.height = t.height * o) : (t.s_width = t.width * j.value, t.s_height = t.height * U());
+      const e = getComputedStyle(K.value), s = parseInt(e.getPropertyValue("--com-item-border-width").trim()), l = parseInt(e.getPropertyValue("--group-tit-height").trim());
+      if (t.isGroup === !0)
+        if (o) {
+          const n = t.width, p = t.height - (t.groupTit ? l : 0);
+          t.groupData.forEach((f) => {
+            f.width = n * f.groupW, f.height = p * f.groupH, f.x = n * f.groupX, f.y = p * f.groupY;
+          });
+        } else {
+          const n = t.s_width - 2 * V.value - 2 * s, p = t.s_height - 2 * re.value - 2 * s - (t.groupTit ? l : 0);
+          t.groupData.forEach((f) => {
+            f.s_width = n * f.groupW, f.s_height = p * f.groupH, f.s_x = n * f.groupX, f.s_y = p * f.groupY;
+          });
+        }
+    }, it = (t, o = null) => {
+      o ? (t.s_x = t.x * o, t.s_y = t.y * o) : (t.s_x = t.x * j.value, t.s_y = t.y * U());
+    }, Ct = (t) => {
+      t.width = t.s_width / j.value, t.height = t.s_height / U();
+      const o = getComputedStyle(K.value), e = parseInt(o.getPropertyValue("--group-tit-height").trim());
       if (t.isGroup === !0) {
-        const s = t.s_width - 2 * X.value * S.value - 2 * e, r = t.s_height - 2 * U.value * S.value - 2 * e - (t.groupTit ? l : 0);
-        t.groupData.forEach((i) => {
-          i.s_width = s * i.groupW, i.s_height = r * i.groupH, i.s_x = s * i.groupX, i.s_y = r * i.groupY;
+        const s = t.width, l = t.height - (t.groupTit ? e : 0);
+        t.groupData.forEach((n) => {
+          n.x = s * n.groupX, n.y = l * n.groupY;
         });
       }
-    }, bt = (t) => {
-      t.s_x = t.x * S.value, t.s_y = t.y * S.value;
-    }, kt = (t) => {
-      t.width = t.s_width / S.value, t.height = t.s_height / S.value;
-      const o = getComputedStyle($.value), e = parseInt(o.getPropertyValue("--group-tit-height").trim());
-      if (t.isGroup === !0) {
-        const l = t.width, s = t.height - (t.groupTit ? e : 0);
-        t.groupData.forEach((r) => {
-          r.x = l * r.groupX, r.y = s * r.groupY;
-        });
-      }
-    }, Ye = (t) => {
-      t.x = t.s_x / S.value, t.y = t.s_y / S.value;
+    }, Ce = (t) => {
+      t.x = t.s_x / j.value, t.y = t.s_y / U();
     };
-    let J = null, Ze = null;
-    const xe = W(0), we = W(null), be = W(null), ke = W(null), Me = W(null), ce = (t) => {
-      const o = D(t);
-      if (!z.showAuxiliary || t === null)
-        we.value = null, be.value = null, ke.value = null, Me.value = null;
+    let ne = null, at = null;
+    const ie = R(0), De = R(null), Ie = R(null), Ge = R(null), Te = R(null), ze = R(null), Ae = R(null), fe = (t) => {
+      const o = v(t);
+      if (!b.showAuxiliary || t === null)
+        De.value = null, Ie.value = null, Ge.value = null, Te.value = null, ze.value = null, Ae.value = null;
       else {
-        const e = getComputedStyle($.value), l = parseInt(e.getPropertyValue("--auxiliary-width").trim()), s = n.value.filter((a) => a.id !== o.id).map((a) => a.s_y), r = n.value.filter((a) => a.id !== o.id).map((a) => a.s_y + a.s_height), i = [...s, ...r];
-        i.sort(), i.filter((a) => a === o.s_y).length > 0 ? we.value = o.s_y : we.value = null, i.filter((a) => a === o.s_y + o.s_height).length > 0 ? be.value = o.s_y + o.s_height - l : be.value = null;
-        const y = n.value.filter((a) => a.id !== o.id).map((a) => a.s_x), c = n.value.filter((a) => a.id !== o.id).map((a) => a.s_x + a.s_width), f = [...y, ...c];
-        f.sort(), f.filter((a) => a === o.s_x).length > 0 ? ke.value = o.s_x : ke.value = null, f.filter((a) => a === o.s_x + o.s_width).length > 0 ? Me.value = o.s_x + o.s_width - l : Me.value = null;
+        const e = getComputedStyle(K.value), s = parseInt(e.getPropertyValue("--auxiliary-width").trim()), l = r.value.filter((i) => i.id !== o.id).map((i) => Math.round(i.s_y)), n = r.value.filter((i) => i.id !== o.id).map((i) => Math.round(i.s_y + i.s_height / 2)), p = r.value.filter((i) => i.id !== o.id).map((i) => Math.round(i.s_y + i.s_height)), f = [...l, ...n, ...p];
+        f.sort(), f.filter((i) => i === Math.round(o.s_y)).length > 0 ? De.value = o.s_y : De.value = null, f.filter((i) => i === Math.round(o.s_y + o.s_height / 2)).length > 0 ? Ie.value = o.s_y + o.s_height / 2 : Ie.value = null, f.filter((i) => i === Math.round(o.s_y + o.s_height)).length > 0 ? Ge.value = o.s_y + o.s_height - s : Ge.value = null;
+        const P = r.value.filter((i) => i.id !== o.id).map((i) => Math.round(i.s_x)), H = r.value.filter((i) => i.id !== o.id).map((i) => Math.round(i.s_x + i.s_width / 2)), a = r.value.filter((i) => i.id !== o.id).map((i) => Math.round(i.s_x + i.s_width)), x = [...P, ...H, ...a];
+        x.sort(), x.filter((i) => i === Math.round(o.s_x)).length > 0 ? Te.value = o.s_x : Te.value = null, x.filter((i) => i === Math.round(o.s_x + o.s_width / 2)).length > 0 ? ze.value = o.s_x + o.s_width / 2 : ze.value = null, x.filter((i) => i === Math.round(o.s_x + o.s_width)).length > 0 ? Ae.value = o.s_x + o.s_width - s : Ae.value = null;
       }
-    };
-    let P = null, je = null, et = null;
-    const G = W({});
-    let Be = null;
-    const Mt = (t, o) => {
-      clearTimeout(Be), Ee(), P = o, G.value = D(n.value[P]), O("dragStart", R(n.value[P])), n.value[P].move = !0, ce(n.value[P]);
-      const e = _t(t.target, ".com-item");
-      je = t.clientX - e.offsetLeft, et = t.clientY - e.offsetTop, window.addEventListener("mousemove", tt), window.addEventListener("mouseup", ot);
-    }, tt = (t) => {
-      clearTimeout(Be);
-      const o = t.clientX - je, e = t.clientY - et, l = o <= Q("left") ? Q("left") : o >= Q("right") ? Q("right") : o, s = e <= Q("top") ? Q("top") : e >= Q("bottom") ? Q("bottom") : e, r = l - n.value[P].s_x, i = s - n.value[P].s_y;
-      let y = "";
-      i > 0 ? y = "bottom" : i < 0 ? y = "top" : r > 2 ? y = "right" : r < -2 && (y = "left"), n.value[P].s_x = l, n.value[P].s_y = s, ce(n.value[P]);
-      let c = Pe(D(n.value.filter((f) => f.move !== !0)), n.value[P], !0);
-      if (c.length === 0)
-        G.value.s_x = l, G.value.s_y = s;
+    }, F = R(!1), Ve = (t) => {
+      let o = null;
+      if (o = r.value.filter((e) => e.id === t)[0], o && o.static !== !0 && o.dragable !== !1)
+        F.value = !0, ht(r.value.findIndex((e) => e.id === t)), setTimeout(() => {
+          window.addEventListener("click", Oe), window.addEventListener("keydown", Ke);
+        }, 50), S("changeTrimModel", F.value, z(r.value.filter((e) => e.id === o.id)[0]));
       else
-        switch (y) {
+        try {
+        } catch {
+        }
+    }, Ke = (t) => {
+      switch (t.keyCode) {
+        case 13:
+        case 27:
+        case 32:
+          Oe();
+          break;
+        case 37:
+          _e("left");
+          break;
+        case 38:
+          _e("top");
+          break;
+        case 39:
+          _e("right");
+          break;
+        case 40:
+          _e("bottom");
+          break;
+      }
+    }, Oe = () => {
+      window.removeEventListener("click", Oe), window.removeEventListener("keydown", Ke), Fe(), F.value = !1, S("changeTrimModel", F.value);
+    };
+    let g = null, ut = null, ct = null;
+    const M = R({});
+    let me = null, oe = null;
+    const ht = (t, o) => {
+      if (clearTimeout(me), clearTimeout(oe), Be(), F.value)
+        oe = null, g = t, M.value = v(r.value[g]), S("dragStart", z(r.value[g])), r.value[g].move = !0, fe(r.value[g]);
+      else {
+        const e = Se(t.target, ".com-item");
+        e && (oe = setTimeout(() => {
+          oe = null, g = o, M.value = v(r.value[g]), S("dragStart", z(r.value[g])), r.value[g].move = !0, fe(r.value[g]), ut = t.clientX - e.offsetLeft, ct = t.clientY - e.offsetTop, window.addEventListener("mousemove", _e);
+        }, b.dragDelayTime), window.addEventListener("mouseup", Fe));
+      }
+    }, _e = (t) => {
+      clearTimeout(me), clearTimeout(oe), oe = null;
+      let o = null, e = null;
+      if (F.value) {
+        const H = L(K.value, "i" + r.value[g].id + "d")[0];
+        switch (o = H.offsetLeft, e = H.offsetTop, t) {
           case "top":
-            c = c.filter((u) => u.s_y < G.value.s_y);
-            const f = Math.min(...c.map((u) => u.s_y + u.s_height));
-            c.forEach((u) => {
-              Math.abs(u.s_y + u.s_height - f) < 5 && (u.s_y = f - u.s_height);
-            });
-            let a = G.value.s_y - s, w = !0, p = [...c];
-            const E = (u) => {
-              oe(D(n.value.filter((h) => h.move !== !0 && Math.abs(h.s_y + h.s_height - u.s_y) <= 3)), u, !0).forEach((h) => {
-                p.findIndex((v) => v.id === h.id) === -1 && (p.push(h), E(h));
-              });
-            };
-            if (c.forEach((u) => {
-              E(u);
-            }), p.sort((u, k) => {
-              const h = u.s_y, v = k.s_y;
-              return h - v;
-            }), (p.length === 0 || p.filter((u) => u.s_y === 0).length > 0) && (w = !1), w) {
-              let u = 0;
-              p.filter((h) => h.s_y === p[0].s_y).forEach((h) => {
-                oe(D(n.value.filter((C) => C.move !== !0 && C.s_y + C.s_height < h.s_y)), h, !0).forEach((C) => {
-                  C.s_y + C.s_height > u && (u = C.s_y + C.s_height);
+            e -= 1;
+            break;
+          case "bottom":
+            e += 1;
+            break;
+          case "left":
+            o -= 1;
+            break;
+          case "right":
+            o += 1;
+            break;
+        }
+      } else
+        o = t.clientX - ut, e = t.clientY - ct;
+      const s = o <= ae("left") ? ae("left") : o >= ae("right") ? ae("right") : o, l = e <= ae("top") ? ae("top") : e >= ae("bottom") ? ae("bottom") : e, n = s - r.value[g].s_x, p = l - r.value[g].s_y;
+      let f = "";
+      n > 0 ? f = "right" : n < 0 ? f = "left" : p > 0 ? f = "bottom" : p < 0 && (f = "top"), r.value[g].s_x = s, r.value[g].s_y = l;
+      let P = O(v(r.value.filter((H) => H.move !== !0)), r.value[g], !0);
+      if (P.length === 0)
+        M.value.s_x = s, M.value.s_y = l;
+      else
+        switch (f) {
+          case "top":
+            const H = v(M.value);
+            H.s_x = s, O(v(r.value.filter((h) => h.move !== !0)), H, !0).length === 0 && (M.value.s_x = s);
+            const a = P.filter((h) => r.value[g].s_height >= h.s_height && l - h.s_y <= 15 || r.value[g].s_height < h.s_height && l - h.s_y <= r.value[g].s_height / 2);
+            if (a.length > 0) {
+              const h = $(v(r.value.filter((d) => d.move !== !0 && d.s_y + d.s_height <= M.value.s_y && a.filter((D) => D.id === d.id).length === 0)), M.value, !0);
+              let C = r.value[g].s_height;
+              if (h.length === 0 && (C -= Math.min(...a.map((d) => d.s_y))), P.length === a.length ? M.value.s_y = h.length === 0 ? 0 : Math.max(...h.map((d) => d.s_y + d.s_height)) : M.value.s_y = Math.max(...h.map((d) => d.s_y + d.s_height)), M.value.s_x = s, C > 0) {
+                const d = v(a);
+                a.forEach((D) => {
+                  $(r.value.filter((X) => X.move !== !0 && X.s_y >= D.s_y + D.s_height), D, !0).forEach((X) => {
+                    d.filter((lt) => lt.id === X.id).length === 0 && d.push(v(X));
+                  });
+                }), d.forEach((D) => {
+                  P.length !== a.length && a.filter((I) => I.id === D.id).length === 1 && (D.s_y = M.value.s_y), D.s_y += C, r.value.filter((I) => I.id === D.id)[0].s_y = D.s_y;
                 });
-              }), u = p[0].s_y - u, u < a && (a = u), p.forEach((h) => {
-                h.s_y -= a, n.value.filter((v) => v.id === h.id)[0].s_y = h.s_y;
-              }), G.value.s_x = l, G.value.s_y = n.value.filter((h) => h.id === p[p.length - 1].id)[0].s_y + n.value.filter((h) => h.id === p[p.length - 1].id)[0].s_height;
-            } else {
-              let u = 0;
-              c.forEach((v) => {
-                const C = oe(n.value.filter((Y) => Y.move !== !0), v, !0).filter((Y) => Y.s_y > v.s_y + v.s_height);
-                C.length > 0 && (u = Math.min(...C.map((Y) => Y.s_y)));
-              });
-              const k = u === 0 ? 0 : u - G.value.s_height - (Math.max(...c.map((v) => v.s_y + v.s_height)) - Math.min(...c.map((v) => v.s_y))), h = k === 0 ? s + G.value.s_height - Math.min(...c.map((v) => v.s_y)) : u - Math.min(...c.map((v) => v.s_y)) - (Math.max(...c.map((v) => v.s_y + v.s_height)) - Math.min(...c.map((v) => v.s_y)));
-              (k === 0 || s <= k) && (c.filter((v) => v.s_y < G.value.s_y).forEach((v) => {
-                v.s_y += h, n.value.filter((C) => C.id === v.id)[0].s_y = v.s_y;
-              }), G.value.s_x = l, G.value.s_y = s, se(n.value, (v, C) => v.filter((Y) => Y.move !== !0 && Y.id !== C.id), !0));
+              }
             }
             break;
           case "bottom":
-            let T = 0;
-            c.forEach((u) => {
-              const k = oe(n.value.filter((h) => h.move !== !0), u, !0).filter((h) => h.s_y + h.s_height < u.s_y);
-              k.length > 0 && (T = Math.max(...k.map((h) => h.s_y + h.s_height)));
-            });
-            const H = T + (Math.max(...c.map((u) => u.s_height + u.s_y)) - Math.min(...c.map((u) => u.s_y))), A = Math.min(...c.map((u) => u.s_y)) - T;
-            s >= H && (c.filter((u) => u.s_y > G.value.s_y).forEach((u) => {
-              u.s_y -= A, n.value.filter((h) => h.id === u.id)[0].s_y = u.s_y;
-              const k = Pe(n.value.filter((h) => h.move !== !0 && h.id !== u.id), u, !0);
-              k.length > 0 && (u.s_y = Math.max(...k.map((h) => h.s_y + h.s_height)), n.value.filter((h) => h.id === u.id)[0].s_y = u.s_y);
-            }), G.value.s_x = l, G.value.s_y = H, se(n.value, (u, k) => u.filter((h) => h.move !== !0 && h.id !== k.id), !0));
+            const x = v(M.value);
+            x.s_x = s, O(v(r.value.filter((h) => h.move !== !0)), x, !0).length === 0 && (M.value.s_x = s);
+            const i = P.filter((h) => r.value[g].s_height >= h.s_height && h.s_y + h.s_height - l - r.value[g].s_height <= 15 || r.value[g].s_height < h.s_height && h.s_y + h.s_height - l - r.value[g].s_height <= h.s_height / 2);
+            if (i.length > 0) {
+              i.forEach((d) => {
+                const D = $(v(r.value.filter((I) => I.move !== !0 && I.s_y + I.s_height <= d.s_y)), d, !0);
+                d.s_y = D.length === 0 ? 0 : Math.max(...D.map((I) => I.s_y + I.s_height)), r.value.filter((I) => I.id === d.id)[0].s_y = d.s_y;
+              });
+              const h = [...O(i, r.value[g], !0), ...$(v(r.value.filter((d) => d.move !== !0 && d.s_y + d.s_height <= r.value[g].s_y + r.value[g].s_height)), r.value[g], !0)];
+              let C = Math.max(...h.map((d) => d.s_y + d.s_height)) - M.value.s_y;
+              if (M.value.s_y = Math.max(...h.map((d) => d.s_y + d.s_height)), M.value.s_x = s, C > 0) {
+                const d = $(r.value.filter((D) => D.move !== !0 && D.s_y >= M.value.s_y), M.value, !0);
+                v(d).forEach((D) => {
+                  $(r.value.filter((X) => X.move !== !0 && X.s_y >= D.s_y + D.s_height), D, !0).forEach((X) => {
+                    d.filter((lt) => lt.id === X.id).length === 0 && d.push(v(X));
+                  });
+                }), d.forEach((D) => {
+                  D.s_y += C, r.value.filter((I) => I.id === D.id)[0].s_y = D.s_y;
+                });
+              }
+            }
             break;
           case "left":
           case "right":
-            c.sort((u, k) => {
-              const h = u.s_y, v = k.s_y;
-              return h - v;
+            const T = P.filter((h) => h.s_x + h.s_width - s >= V.value * 2 && s + r.value[g].s_width - h.s_x >= V.value * 2).filter((h) => l < h.s_y || l >= h.s_y && l - h.s_y <= 15).sort((h, C) => {
+              const d = h.s_y, D = C.s_y;
+              return d - D;
             });
-            let ee = !0;
-            for (let u = 0; u < c.length; u++) {
-              if (ee) {
-                const k = D(n.value);
-                for (let h = 0; h <= u; h++) {
-                  let v = null;
-                  const C = oe(k.filter((Y) => Y.move !== !0 && Y.s_y < c[h].s_y), c[h], !0);
-                  if (C.length === 0 ? v = 0 : v = Math.max(...C.map((Y) => Y.s_y + Y.s_height)), h === u) {
-                    if (c[h].s_y - (c[h].s_y + c[h].s_height - s) < v) {
-                      ee = !1;
-                      break;
-                    }
-                  } else if (c[h].s_y - c[u].s_height < v) {
-                    ee = !1;
-                    break;
-                  } else
-                    k.filter((Y) => Y.id === c[h].id)[0].s_y -= c[u].s_height;
-                }
+            if (T.length > 0)
+              M.value.s_x = s, M.value.s_y = Math.min(...T.map((h) => h.s_y));
+            else {
+              let h = v(r.value[g]);
+              if (h.s_y = Math.min(...P.map((C) => C.s_y)) - h.s_height, M.value.s_y >= Math.min(...P.map((C) => C.s_y + C.s_height)) || h.s_y >= 0 && O(v(r.value.filter((C) => C.move !== !0)), h, !0).length === 0) {
+                const C = v(M.value);
+                C.s_x = s, O(v(r.value.filter((d) => d.move !== !0)), C, !0).length === 0 && (M.value.s_x = s);
               }
-              if (ee) {
-                c[u].s_y -= c[u].s_y + c[u].s_height - s, n.value.filter((k) => k.id === c[u].id)[0].s_y = c[u].s_y;
-                for (let k = u; k > 0; k--)
-                  c[u - 1].s_y -= c[u].s_height, n.value.filter((h) => h.id === c[u - 1].id)[0].s_y = c[u - 1].s_y;
-              } else
-                c.filter((k) => k.id === c[u].id).forEach((k) => {
-                  k.s_y += n.value[P].s_y + n.value[P].s_height - k.s_y, n.value.filter((h) => h.id === k.id)[0].s_y = k.s_y, se([k], (h, v) => h.filter((C) => C.move !== !0 && C.id !== v.id), !0);
-                });
             }
-            G.value.s_x = l;
+            T.forEach((h) => {
+              const C = M.value.s_y + M.value.s_height - h.s_y > 0 ? M.value.s_y + M.value.s_height - h.s_y : 0, d = v([h]);
+              $(r.value.filter((I) => I.move !== !0 && I.s_y >= h.s_y + h.s_height), h, !0).forEach((I) => {
+                d.filter((X) => X.id === I.id).length === 0 && d.push(v(I));
+              }), d.forEach((I) => {
+                I.s_y += C, T.filter((X) => X.id === I.id).length === 1 && (T.filter((X) => X.id === I.id)[0].s_y = I.s_y), r.value.filter((X) => X.id === I.id)[0].s_y = I.s_y;
+              });
+            });
             break;
         }
-      n.value.forEach((f) => {
-        Ye(f);
-      }), m(!1), O("dragIng", R(n.value[P]));
-    }, ot = () => {
-      window.removeEventListener("mousemove", tt), window.removeEventListener("mouseup", ot), delete n.value[P].move, n.value[P].s_x = G.value.s_x, n.value[P].s_y = G.value.s_y, ce(null), n.value.forEach((t) => {
-        Ye(t);
-      }), m(), O("dragEnd", R(n.value[P])), P = null, Be = setTimeout(() => {
-        m();
-      }, 500);
-    }, Q = (t) => {
+      r.value.forEach((H) => {
+        Ce(H);
+      }), Ce(M.value), Z(!1), fe(r.value[g]), S("dragIng", z(r.value[g])), M.value.s_y = r.value[g].syCopy, delete r.value[g].syCopy;
+    }, Fe = () => {
+      window.removeEventListener("mouseup", Fe), clearTimeout(oe), oe ? oe = null : (window.removeEventListener("mousemove", _e), delete r.value[g].move, r.value[g].s_x = M.value.s_x, r.value[g].s_y = M.value.s_y, fe(null), r.value.forEach((t) => {
+        Ce(t);
+      }), Z(), S("dragEnd", z(r.value[g])), g = null, me = setTimeout(() => {
+        Z();
+      }, 500));
+    }, ae = (t) => {
       switch (t) {
         case "top":
           return 0;
         case "right":
-          return J - X.value * 2 * S.value - n.value[P].s_width;
+          return ne - V.value * 2 - r.value[g].s_width;
         case "bottom":
           return 999999999;
         case "left":
           return 0;
       }
     };
-    let _ = null, Re = "", Ie = 0, Ge = 0, le = 0, re = 0, ne = 0, ae = 0, he = 0, Ce = 0, de = 0, ze = 0;
-    const Z = (t, o, e) => {
-      Ee(), _ = o, O("resizeStart", R(_)), Re = e, Ie = t.clientX, Ge = t.clientY, le = o.s_width, re = o.s_height, ne = o.s_y, ae = o.s_x, _.drag = !0, ce(_);
-      const l = n.value.filter((f) => f.static === !0 && (f.s_x < o.s_x ? f.s_x + f.s_width >= o.s_x : f.s_x <= o.s_x + o.s_width)), s = n.value.filter((f) => f.static === !0 && (f.s_y < o.s_y ? f.s_y + f.s_height >= o.s_y : f.s_y <= o.s_y + o.s_height)), r = l.filter((f) => f.s_y + f.s_height <= o.s_y).map((f) => f.s_y + f.s_height);
-      r.length > 0 ? he = Math.max(...r) : he = 0;
-      const i = l.filter((f) => f.s_y >= o.s_y + o.s_height).map((f) => f.s_y);
-      i.length > 0 ? Ce = Math.min(...i) : Ce = 0;
-      const y = s.filter((f) => f.s_x + f.s_width <= o.s_x).map((f) => f.s_x + f.s_width);
-      y.length > 0 ? de = Math.max(...y) : de = 0;
-      const c = s.filter((f) => f.s_x >= o.s_x + o.s_width).map((f) => f.s_x);
-      c.length > 0 ? ze = Math.min(...c) : ze = 0, window.addEventListener("mousemove", st), window.addEventListener("mouseup", lt);
-    }, st = (t) => {
-      const o = le + (t.clientX - Ie), e = re + (t.clientY - Ge), l = le - (t.clientX - Ie), s = re - (t.clientY - Ge), r = ne + (t.clientY - Ge), i = ae + (t.clientX - Ie), y = getComputedStyle($.value), c = parseInt(y.getPropertyValue("--com-item-border-width").trim()), f = parseInt(y.getPropertyValue("--group-tit-height").trim()), a = () => {
+    let _ = null, qe = "", $e = 0, He = 0, pe = 0, ge = 0, xe = 0, ye = 0;
+    const ue = (t, o, e) => {
+      Be(), _ = o, S("resizeStart", z(_)), qe = e, $e = t.clientX, He = t.clientY, pe = o.s_width, ge = o.s_height, xe = o.s_y, ye = o.s_x, _.drag = !0, fe(_), window.addEventListener("mousemove", dt), window.addEventListener("mouseup", ft);
+    }, dt = (t) => {
+      const o = pe + (t.clientX - $e), e = ge + (t.clientY - He), s = pe - (t.clientX - $e), l = ge - (t.clientY - He), n = xe + (t.clientY - He), p = ye + (t.clientX - $e), f = getComputedStyle(K.value), P = parseInt(f.getPropertyValue("--com-item-border-width").trim()), H = parseInt(f.getPropertyValue("--group-tit-height").trim()), a = () => {
         if (_.isGroup === !0) {
-          const T = _.s_width - 2 * X.value * S.value - 2 * c, H = _.s_height - 2 * U.value * S.value - 2 * c - (_.groupTit ? f : 0);
-          _.groupData.forEach((A) => {
-            A.s_width = T * A.groupW, A.s_height = H * A.groupH, A.s_x = T * A.groupX, A.s_y = H * A.groupY;
+          const h = _.s_width - 2 * V.value - 2 * P, C = _.s_height - 2 * re.value - 2 * P - (_.groupTit ? H : 0);
+          _.groupData.forEach((d) => {
+            d.s_width = h * d.groupW, d.s_height = C * d.groupH, d.s_x = h * d.groupX, d.s_y = C * d.groupY;
           });
         }
-      }, w = (z.itemMinWidth + X.value * 2) * S.value, p = (z.itemMinHeight + U.value * 2) * S.value;
-      switch (Re) {
+      }, x = b.itemMinWidth * j.value, i = b.itemMinHeight * U();
+      switch (qe) {
         case "top-left":
-          _.s_height = s < p ? p : s > M("top") ? M("top") : s, _.s_y = s < p ? ne + re - p : s > M("top") ? he : r, _.s_width = l < w ? w : l > M("left") ? M("left") : l, _.s_x = l < w ? ae + le - w : l > M("left") ? de : i, a();
+          _.s_height = l < i ? i : l > G("top") ? G("top") : l, _.s_y = l < i ? xe + ge - i : l > G("top") ? 0 : n, _.s_width = s < x ? x : s > G("left") ? G("left") : s, _.s_x = s < x ? ye + pe - x : s > G("left") ? 0 : p, a();
           break;
         case "top":
-          _.s_height = s < p ? p : s > M("top") ? M("top") : s, _.s_y = s < p ? ne + re - p : s > M("top") ? he : r, a();
+          _.s_height = l < i ? i : l > G("top") ? G("top") : l, _.s_y = l < i ? xe + ge - i : l > G("top") ? 0 : n, a();
           break;
         case "top-right":
-          _.s_height = s < p ? p : s > M("top") ? M("top") : s, _.s_y = s < p ? ne + re - p : s > M("top") ? he : r, _.s_width = o < w ? w : o > M("right") ? M("right") : o, a();
+          _.s_height = l < i ? i : l > G("top") ? G("top") : l, _.s_y = l < i ? xe + ge - i : l > G("top") ? 0 : n, _.s_width = o < x ? x : o > G("right") ? G("right") : o, a();
           break;
         case "left":
-          _.s_width = l < w ? w : l > M("left") ? M("left") : l, _.s_x = l < w ? ae + le - w : l > M("left") ? de : i, a();
+          _.s_width = s < x ? x : s > G("left") ? G("left") : s, _.s_x = s < x ? ye + pe - x : s > G("left") ? 0 : p, a();
           break;
         case "right":
-          _.s_width = o < w ? w : o > M("right") ? M("right") : o, a();
+          _.s_width = o < x ? x : o > G("right") ? G("right") : o, a();
           break;
         case "bottom-left":
-          _.s_height = e < p ? p : e > M("bottom") ? M("bottom") : e, _.s_width = l < w ? w : l > M("left") ? M("left") : l, _.s_x = l < w ? ae + le - w : l > M("left") ? de : i, a();
+          _.s_height = e < i ? i : e > G("bottom") ? G("bottom") : e, _.s_width = s < x ? x : s > G("left") ? G("left") : s, _.s_x = s < x ? ye + pe - x : s > G("left") ? 0 : p, a();
           break;
         case "bottom":
-          _.s_height = e < p ? p : e > M("bottom") ? M("bottom") : e, a();
+          _.s_height = e < i ? i : e > G("bottom") ? G("bottom") : e, a();
           break;
         case "bottom-right":
-          _.s_height = e < p ? p : e > M("bottom") ? M("bottom") : e, _.s_width = o < w ? w : o > M("right") ? M("right") : o, a();
+          _.s_height = e < i ? i : e > G("bottom") ? G("bottom") : e, _.s_width = o < x ? x : o > G("right") ? G("right") : o, a();
           break;
       }
-      kt(_), ce(_);
-      let E = Pe(D(n.value.filter((T) => T.drag !== !0)), _, !0);
-      if (E.length > 0) {
-        E.sort((T, H) => {
-          const A = T.s_y, ee = H.s_y;
-          return A - ee;
+      Ct(_);
+      let T = O(v(r.value.filter((h) => h.drag !== !0)), _, !0);
+      if (T.length > 0) {
+        T.sort((h, C) => {
+          const d = h.s_y, D = C.s_y;
+          return d - D;
         });
-        for (let T = 0; T < E.length; T++)
-          E.filter((H) => H.id === E[T].id).forEach((H) => {
-            H.s_y += _.s_y + _.s_height - H.s_y, n.value.filter((A) => A.id === H.id)[0].s_y = H.s_y, se([H], (A, ee) => A.filter((u) => u.drag !== !0 && u.id !== ee.id), !0);
+        for (let h = 0; h < T.length; h++)
+          T.filter((C) => C.id === T[h].id).forEach((C) => {
+            C.s_y += _.s_y + _.s_height - C.s_y, r.value.filter((d) => d.id === C.id)[0].s_y = C.s_y, Y([C], (d, D) => d.filter((I) => I.drag !== !0 && I.id !== D.id), !0);
           });
       }
-      n.value.forEach((T) => {
-        Ye(T);
-      }), m(!1), O("resizeIng", R(_));
-    }, lt = (t) => {
-      delete _.drag, Re = "", ce(null), window.removeEventListener("mousemove", st), window.removeEventListener("mouseup", lt), m(), O("resizeEnd", R(_)), _ = null;
-    }, M = (t) => {
+      r.value.forEach((h) => {
+        Ce(h);
+      }), Z(!1), fe(_), S("resizeIng", z(_));
+    }, ft = (t) => {
+      delete _.drag, qe = "", fe(null), window.removeEventListener("mousemove", dt), window.removeEventListener("mouseup", ft), Z(), S("resizeEnd", z(_)), _ = null;
+    }, G = (t) => {
       switch (t) {
         case "top":
-          return ne + re - he;
+          return xe + ge;
         case "left":
-          return ae + le - de;
+          return ye + pe;
         case "right":
-          return (ze > 0 ? ze : J - X.value * 2 * S.value) - ae;
+          return ne - V.value * 2 - ye;
         case "bottom":
-          return Ce > 0 ? Ce - ne : 999999999;
+          return 999999999;
       }
-    }, m = (t = !0) => {
-      t === !0 && (se(n.value, (e, l) => e.filter((s) => s.id !== l.id)), St(), n.value.forEach((e) => {
-        bt(e);
-      }), Et());
-      const o = n.value.map((e) => e.y + e.height);
-      o.length > 0 ? xe.value = Math.max(...o) : xe.value = 0;
-    }, St = () => {
-      const t = D(n.value).sort((o, e) => {
-        const l = o.y, s = e.y;
-        return l - s;
+    }, Z = (t = !0) => {
+      t === !0 && Y(r.value, (e, s) => e.filter((l) => l.id !== s.id)), Dt(t), r.value.forEach((e) => {
+        (t === !0 || e.move !== !0 && e.drag !== !0) && it(e);
+      }), t === !0 && It();
+      const o = r.value.map((e) => e.y + e.height);
+      o.length > 0 ? ie.value = Math.max(...o) : ie.value = 0;
+    }, Dt = (t = !0) => {
+      const o = v(r.value).sort((e, s) => {
+        const l = e.y, n = s.y;
+        return l - n;
       });
-      for (let o = 0; o < t.length; o++) {
-        const e = oe(t, t[o]).filter((l) => l.y + l.height <= t[o].y);
-        e.length > 0 ? t[o].y = Math.max(...e.map((l) => l.y + l.height)) : t[o].y = 0;
+      if (!t) {
+        if (_ !== null) {
+          const e = $(v(o.filter((l) => l.drag !== !0 && l.s_y + l.s_height < _.s_y)), _), s = o.filter((l) => l.drag === !0)[0];
+          s && (e.length > 0 ? (s.height += s.y - Math.max(...e.map((l) => l.y + l.height)), s.y = Math.max(...e.map((l) => l.y + l.height))) : (s.height += s.y, s.y = 0));
+        } else if (g !== null) {
+          const e = o.filter((s) => s.move === !0)[0];
+          e && (e.s_x = M.value.s_x, e.s_y = M.value.s_y, Ce(e));
+        }
       }
-      t.forEach((o) => {
-        n.value.filter((e) => e.id === o.id)[0].y = o.y;
+      for (let e = 0; e < o.length; e++) {
+        const s = $(o, o[e]).filter((l) => l.y + l.height <= o[e].y);
+        s.length > 0 ? o[e].y = Math.max(...s.map((l) => l.y + l.height)) : o[e].y = 0;
+      }
+      o.forEach((e) => {
+        t === !0 || e.move !== !0 && e.drag !== !0 ? r.value.filter((s) => s.id === e.id)[0].y = e.y : e.move === !0 && (r.value.filter((s) => s.id === e.id)[0].syCopy = e.y * U());
       });
-    }, Et = () => {
-      const t = n.value.filter((o) => o.isGroup === !0);
+    }, It = () => {
+      const t = r.value.filter((o) => o.isGroup === !0);
       if (t.length > 0) {
-        const o = getComputedStyle($.value), e = parseInt(o.getPropertyValue("--setting-icon-group-width").trim()), l = parseInt(o.getPropertyValue("--setting-icon-group-height").trim());
-        t.forEach((s) => {
-          X.value + s.s_x + s.s_width + e > J ? X.value + s.s_x - e < 0 ? z.groupBtnPosMore ? U.value + s.s_y - l < 0 ? s.btnPosition = "bottom" : s.btnPosition = "top" : s.btnPosition = "center" : s.btnPosition = "left" : s.btnPosition = "right";
+        const o = getComputedStyle(K.value), e = parseInt(o.getPropertyValue("--setting-icon-group-width").trim()), s = parseInt(o.getPropertyValue("--setting-icon-group-height").trim());
+        t.forEach((l) => {
+          V.value + l.s_x + l.s_width + e > ne ? V.value + l.s_x - e < 0 ? b.groupBtnPosMore ? re.value + l.s_y - s < 0 ? l.btnPosition = "bottom" : l.btnPosition = "top" : l.btnPosition = "center" : l.btnPosition = "left" : l.btnPosition = "right";
         });
       }
-    };
-    Rt(() => {
-      rt.observe($.value);
+    }, pt = new ResizeObserver((t) => {
+      At(ne === t[0].borderBoxSize[0].inlineSize ? null : t[0].borderBoxSize[0].inlineSize, at === t[0].borderBoxSize[0].blockSize ? null : t[0].borderBoxSize[0].blockSize);
     });
-    const rt = new ResizeObserver((t) => {
-      Gt(J === t[0].borderBoxSize[0].inlineSize ? null : t[0].borderBoxSize[0].inlineSize, Ze === t[0].borderBoxSize[0].blockSize ? null : t[0].borderBoxSize[0].blockSize);
-    }), Se = W("");
-    let He = 0, Le = 0, Xe = null, $e = !1;
-    const Dt = (t = [], o = null) => {
-      clearInterval(Xe), Se.value = (/* @__PURE__ */ new Date()).getTime() + "", He = 0, Le = 0, t.forEach((e) => {
-        He += 1, e.isGroup === !0 && (Le += e.groupData.length);
-      }), ct(), O("domStart"), n.value = D(t), n.value.filter((e) => e.isGroup === !0).forEach((e) => {
+    Nt(() => {
+      pt.observe(K.value);
+    });
+    const Le = R("");
+    let Ue = 0, Je = 0, Qe = null, Ze = !1;
+    const Gt = (t = [], o = null) => {
+      clearInterval(Qe), Le.value = (/* @__PURE__ */ new Date()).getTime() + "", Ue = 0, Je = 0, t.forEach((e) => {
+        Ue += 1, e.isGroup === !0 && (Je += e.groupData.length);
+      }), xt(), S("domStart"), r.value = v(t), r.value.filter((e) => e.isGroup === !0).forEach((e) => {
         if (e.groupData.length < 2)
-          De(e.id);
+          Xe(e.id);
         else {
-          const l = Te(e.groupData, e);
-          Oe(l);
+          const s = Ne(e.groupData, e);
+          Re(s);
         }
-      }), $e = !0, gt(() => {
-        const e = $.value.getBoundingClientRect();
-        o != null ? (ve(o), _e(e.width / o)) : (ve(n.value.length > 0 ? e.width : null), _e(1)), n.value.forEach((l) => {
-          ue(l);
-        }), m(), Xe = setInterval(() => {
-          qe($.value, Se.value + "p").length === He && qe($.value, Se.value + "c").length === Le && (clearInterval(Xe), O("domReady"));
+      }), Ze = !0, Mt(() => {
+        const e = K.value.getBoundingClientRect();
+        o != null ? (Ee(o), ve(e.width / o)) : (Ee(r.value.length > 0 ? e.width : null), ve(1)), r.value.forEach((s) => {
+          de(s);
+        }), Z(), Qe = setInterval(() => {
+          L(K.value, Le.value + "p").length === Ue && L(K.value, Le.value + "c").length === Je && (clearInterval(Qe), S("domReady"));
         }, 10), setTimeout(() => {
-          $e = !1;
+          Ze = !1;
         }, 500);
       });
-    }, Pt = (t) => {
+    }, Tt = (t) => {
       t.showSet = !0;
-    }, We = (t) => {
-      const o = n.value.filter((e) => e.id === t);
+    }, je = (t) => {
+      const o = r.value.filter((e) => e.id === t);
       if (o.length === 1)
         delete o[0].showSet;
       else
         try {
         } catch {
         }
-    }, nt = (t, o, e) => {
-      const l = o.map((i) => i.y), s = Math.max(...l), r = o.filter((i) => i.y + i.height > s);
-      r.sort((i, y) => {
-        const c = i.x, f = y.x;
-        return c - f;
-      });
-      for (let i = 0; i < r.length; i++) {
-        if (i === 0 && r[i].x >= t.width) {
-          t.y = s, t.x = 0;
-          break;
-        }
-        if (r.length > 1 && i !== r.length - 1 && r[i].x + r[i].width + t.width <= r[i + 1].x) {
-          t.y = s, t.x = r[i].x + r[i].width;
-          break;
-        }
-        if (i === r.length - 1 && r[i].x + r[i].width + t.width <= e) {
-          t.y = s, t.x = r[i].x + r[i].width;
-          break;
-        }
-      }
-      if (t.y == null) {
+    }, gt = (t, o, e) => {
+      const s = Pt(t), l = Pt(o), n = mt(l, s, e);
+      if (n)
+        t.x = n.x, t.y = n.y;
+      else {
         t.x = 0;
-        const i = o.map((y) => y.y + y.height);
-        t.y = Math.max(...i);
+        const p = l.map((f) => f.y + f.height);
+        if (p.length > 0)
+          t.y = Math.max(...p);
+        else
+          try {
+          } catch {
+          }
       }
-    }, pe = (t, o = null, e = !1) => {
-      const l = D(t), s = n.value.filter((r) => r.id === o);
-      if (l.id || (l.id = (/* @__PURE__ */ new Date()).getTime() + ""), o && s.length !== 1)
+    }, we = (t, o = null, e = !1) => {
+      const s = v(t), l = r.value.filter((n) => n.id === o);
+      if (s.id || (s.id = (/* @__PURE__ */ new Date()).getTime() + ""), o && l.length !== 1)
         try {
         } catch {
         } finally {
           return;
         }
-      if (e !== !0 && (delete l.x, delete l.y, o ? (s[0].groupData.forEach((r) => {
-        j(r, s[0]);
-      }), nt(l, s[0].groupData, s[0].width)) : n.value.length === 0 ? (l.x = 0, l.y = 0) : nt(l, n.value, (ie || J) - X.value * 2)), o) {
-        s[0].groupData.push(l);
-        const r = Te(s[0].groupData, s[0]);
-        Oe(r), se([r], (i, y) => i.filter((c) => c.id !== y.id));
+      if (e !== !0 && (delete s.x, delete s.y, o ? (l[0].groupData.forEach((n) => {
+        ce(n, l[0]);
+      }), gt(s, l[0].groupData, l[0].width)) : gt(s, r.value, (te || ne) - V.value * 2)), o) {
+        l[0].groupData.push(s);
+        const n = Ne(l[0].groupData, l[0]);
+        Re(n), Y([n], (p, f) => p.filter((P) => P.id !== f.id));
       } else
-        n.value.length === 0 && ve(J), ue(l), n.value.push(l);
-      m();
-    }, Ne = (t, o = null, e = null) => {
-      let l = null;
-      const s = n.value.filter((r) => r.id === o);
-      if (o ? s.length === 1 && (l = D(s[0].groupData.filter((r) => r.id === t)[0])) : l = D(n.value.filter((r) => r.id === t)[0]), l)
-        return l.id = e || (/* @__PURE__ */ new Date()).getTime() + "", o ? (j(l, s[0]), pe(l, o)) : pe(l), R(o ? n.value.filter((r) => r.id === o)[0].groupData.filter((r) => r.id === l.id)[0] : n.value.filter((r) => r.id === l.id)[0]);
+        s.x !== void 0 && s.y !== void 0 && (r.value.length === 0 && Ee(ne), de(s), r.value.push(s));
+      Z();
+    }, et = (t, o = null, e = null) => {
+      let s = null;
+      const l = r.value.filter((n) => n.id === o);
+      if (o ? l.length === 1 && (s = v(l[0].groupData.filter((n) => n.id === t)[0])) : s = v(r.value.filter((n) => n.id === t)[0]), s)
+        return s.id = e || (/* @__PURE__ */ new Date()).getTime() + "", o ? (ce(s, l[0]), we(s, o)) : we(s), z(o ? r.value.filter((n) => n.id === o)[0].groupData.filter((n) => n.id === s.id)[0] : r.value.filter((n) => n.id === s.id)[0]);
       try {
       } catch {
       } finally {
         return null;
       }
-    }, fe = (t, o = null) => {
-      let e = -1;
-      const l = n.value.filter((s) => s.id === o);
-      if (o ? l.length === 1 && (e = l[0].groupData.findIndex((s) => s.id === t)) : e = n.value.findIndex((s) => s.id === t), e !== -1) {
+    }, be = (t, o = null, e = !0) => {
+      let s = -1;
+      const l = r.value.filter((n) => n.id === o);
+      if (o ? l.length === 1 && (s = l[0].groupData.findIndex((n) => n.id === t)) : s = r.value.findIndex((n) => n.id === t), s !== -1) {
         if (o)
-          if (l[0].groupData.splice(e, 1), l[0].groupData.length === 1)
-            De(o);
+          if (l[0].groupData.splice(s, 1), l[0].groupData.length === 1)
+            Xe(o);
           else {
-            l[0].groupData.forEach((r) => {
-              j(r, l[0]);
+            l[0].groupData.forEach((p) => {
+              ce(p, l[0]);
             });
-            const s = Te(l[0].groupData, l[0]);
-            Oe(s);
+            const n = Ne(l[0].groupData, l[0]);
+            Re(n);
           }
         else
-          n.value.splice(e, 1), n.value.length === 0 && (ve(null), _e(1));
-        m();
+          r.value.splice(s, 1), r.value.length === 0 && e && (Ee(null), ve(1));
+        e && Z();
       } else
         try {
         } catch {
         }
-    }, It = (t) => {
-      Oe(t, !1);
-    }, Oe = (t, o = !0) => {
+    }, zt = (t) => {
+      Re(t, !1);
+    }, Re = (t, o = !0) => {
       if (t.id) {
-        const e = D(t);
-        let l = -1;
-        const s = n.value.filter((r) => r.id === e.inGroupId);
-        if (e.inGroupId ? s.length === 1 && (l = s[0].groupData.findIndex((r) => r.id === e.id)) : l = n.value.findIndex((r) => r.id === e.id), l !== -1) {
-          if (o && (delete e.showPop, delete e.showSet, delete e.btnPosition, e.groupData && e.groupData.forEach((r) => {
-            delete r.showPop, delete r.showSet;
+        const e = v(t);
+        let s = -1;
+        const l = r.value.filter((n) => n.id === e.inGroupId);
+        if (e.inGroupId ? l.length === 1 && (s = l[0].groupData.findIndex((n) => n.id === e.id)) : s = r.value.findIndex((n) => n.id === e.id), s !== -1) {
+          if (o && (delete e.showPop, delete e.showSet, delete e.btnPosition, e.groupData && e.groupData.forEach((n) => {
+            delete n.showPop, delete n.showSet;
           })), e.inGroupId) {
             if (o)
-              s[0].groupData[l] = e;
+              l[0].groupData[s] = e;
             else
               try {
-                delete s[0].showPop, delete s[0].showSet, delete s[0].btnPosition, s[0].groupData && s[0].groupData.forEach((r) => {
-                  delete r.showPop, delete r.showSet;
+                delete l[0].showPop, delete l[0].showSet, delete l[0].btnPosition, l[0].groupData && l[0].groupData.forEach((n) => {
+                  delete n.showPop, delete n.showSet;
                 });
-                for (let r in e) {
-                  const i = r.split(".");
-                  let y = s[0].groupData[l];
-                  for (let c = 0; c < i.length; c++)
-                    if (c === i.length - 1)
-                      y[i[c]] = e[r];
-                    else if (y = y[i[c]], !y)
-                      throw new Error(r);
+                for (let n in e) {
+                  const p = n.split(".");
+                  let f = l[0].groupData[s];
+                  for (let P = 0; P < p.length; P++)
+                    if (P === p.length - 1)
+                      f[p[P]] = e[n];
+                    else if (f = f[p[P]], !f)
+                      throw new Error(n);
                 }
               } catch {
                 try {
                 } catch {
                 }
               }
-            ue(s[0]);
+            de(l[0]);
           } else {
             if (o)
-              n.value[l] = e;
+              r.value[s] = e;
             else
               try {
-                delete n.value[l].showPop, delete n.value[l].showSet, delete n.value[l].btnPosition, n.value[l].groupData && n.value[l].groupData.forEach((r) => {
-                  delete r.showPop, delete r.showSet;
+                delete r.value[s].showPop, delete r.value[s].showSet, delete r.value[s].btnPosition, r.value[s].groupData && r.value[s].groupData.forEach((n) => {
+                  delete n.showPop, delete n.showSet;
                 });
-                for (let r in e) {
-                  const i = r.split(".");
-                  let y = n.value[l];
-                  for (let c = 0; c < i.length; c++)
-                    if (c === i.length - 1)
-                      y[i[c]] = e[r];
-                    else if (y = y[i[c]], !y)
-                      throw new Error(r);
+                for (let n in e) {
+                  const p = n.split(".");
+                  let f = r.value[s];
+                  for (let P = 0; P < p.length; P++)
+                    if (P === p.length - 1)
+                      f[p[P]] = e[n];
+                    else if (f = f[p[P]], !f)
+                      throw new Error(n);
                 }
               } catch {
                 try {
                 } catch {
                 }
               }
-            ue(n.value[l]);
+            de(r.value[s]);
           }
-          m();
+          Z();
         } else
           try {
           } catch {
@@ -640,103 +791,112 @@ const Xt = { class: "content-box" }, $t = ["onMousedown", "onMouseenter", "onMou
         try {
         } catch {
         }
-    }, Gt = (t, o) => {
-      t !== null && (J = t, $e || (_e(ie && J ? t / ie : 1), n.value.forEach((e) => {
-        ue(e);
-      }), m())), o !== null && (Ze = o);
-    }, at = (t) => {
-      t.showPop || (n.value.forEach((o) => {
+    }, tt = (t, o = !1) => {
+      let e = null;
+      if (e = r.value.filter((s) => s.id === t)[0], e)
+        return typeof o == "boolean" ? e.static = o : o && typeof o == "object" && (typeof o.static == "boolean" && (e.static = o.static), typeof o.dragable == "boolean" && (e.dragable = o.dragable), typeof o.resizable == "boolean" && (e.resizable = o.resizable)), z(r.value.filter((s) => s.id === e.id)[0]);
+      try {
+      } catch {
+      } finally {
+        return null;
+      }
+    }, At = (t, o) => {
+      t !== null && (ne = t, Ze || (ve(te && ne ? t / te : 1), r.value.forEach((e) => {
+        de(e);
+      }), Z())), o !== null && (at = o);
+    }, yt = (t) => {
+      t.showPop || (r.value.forEach((o) => {
         delete o.showPop, o.groupData && o.groupData.forEach((e) => {
           delete e.showPop;
         });
-      }), O("openSetMenu", R(t)), t.showPop = !0, window.addEventListener("click", Ee));
-    }, Ee = () => {
-      n.value.forEach((t) => {
+      }), S("openSetMenu", z(t)), t.showPop = !0, window.addEventListener("click", Be));
+    }, Be = () => {
+      r.value.forEach((t) => {
         delete t.showPop, t.groupData && t.groupData.forEach((o) => {
           delete o.showPop;
         });
-      }), window.removeEventListener("click", Ee);
-    }, N = W(!1), it = (t) => {
-      const o = n.value.findIndex((e) => e.id === t);
+      }), window.removeEventListener("click", Be);
+    }, J = R(!1), vt = (t) => {
+      const o = r.value.findIndex((e) => e.id === t);
       if (o !== -1)
-        n.value[o].checked = !0, n.value[o].checkDis = !0, N.value = !0, O("showGroup", N.value);
+        r.value[o].checked = !0, r.value[o].checkDis = !0, J.value = !0, S("showGroup", J.value);
       else
         try {
         } catch {
         }
-    }, Ve = () => {
-      N.value = !1, n.value.forEach((t) => {
+    }, ot = () => {
+      J.value = !1, r.value.forEach((t) => {
         delete t.checked, delete t.checkDis, t.groupData && t.groupData.forEach((o) => {
           delete o.checked, delete o.checkDis;
         });
-      }), O("showGroup", N.value);
-    }, Ct = (t) => {
-      t.checked = !t.checked, O("updateChecked", n.value.filter((o) => o.checked).length);
-    }, Te = (t, o) => {
-      const e = D(t), l = D(o);
-      e.sort((a, w) => {
-        const p = a.x, E = w.x;
-        return p - E;
+      }), S("showGroup", J.value);
+    }, Ot = (t) => {
+      t.checked = !t.checked, S("updateChecked", r.value.filter((o) => o.checked).length);
+    }, Ne = (t, o) => {
+      const e = v(t), s = v(o);
+      e.sort((a, x) => {
+        const i = a.x, T = x.x;
+        return i - T;
       });
       for (let a = 0; a < e.length - 1; a++) {
         if (a === 0 && e[a].x > 0) {
-          const w = e[a].x;
-          for (let p = a; p < e.length; p++)
-            e[p].x -= w;
+          const x = e[a].x;
+          for (let i = a; i < e.length; i++)
+            e[i].x -= x;
         }
         if (e[a + 1].x > e[a].x + e[a].width) {
-          const w = D(e.slice(0, a + 1));
-          if (e[a + 1].x > Math.max(...w.map((p) => p.x + p.width))) {
-            const p = e[a + 1].x - Math.max(...w.map((E) => E.x + E.width));
-            for (let E = a + 1; E < e.length; E++)
-              e[E].x -= p;
+          const x = v(e.slice(0, a + 1));
+          if (e[a + 1].x > Math.max(...x.map((i) => i.x + i.width))) {
+            const i = e[a + 1].x - Math.max(...x.map((T) => T.x + T.width));
+            for (let T = a + 1; T < e.length; T++)
+              e[T].x -= i;
           }
         }
       }
-      e.sort((a, w) => {
-        const p = a.y, E = w.y;
-        return p - E;
+      e.sort((a, x) => {
+        const i = a.y, T = x.y;
+        return i - T;
       });
       for (let a = 0; a < e.length - 1; a++) {
         if (a === 0 && e[a].y > 0) {
-          const w = e[a].y;
-          for (let p = a; p < e.length; p++)
-            e[p].y -= w;
+          const x = e[a].y;
+          for (let i = a; i < e.length; i++)
+            e[i].y -= x;
         }
         if (e[a + 1].y > e[a].y + e[a].height) {
-          const w = D(e.slice(0, a + 1));
-          if (e[a + 1].y > Math.max(...w.map((p) => p.y + p.height))) {
-            const p = e[a + 1].y - Math.max(...w.map((E) => E.y + E.height));
-            for (let E = a + 1; E < e.length; E++)
-              e[E].y -= p;
+          const x = v(e.slice(0, a + 1));
+          if (e[a + 1].y > Math.max(...x.map((i) => i.y + i.height))) {
+            const i = e[a + 1].y - Math.max(...x.map((T) => T.y + T.height));
+            for (let T = a + 1; T < e.length; T++)
+              e[T].y -= i;
           }
         }
       }
-      const s = e.map((a) => a.x + a.width), r = Math.max(...s), i = e.map((a) => a.y + a.height), y = Math.max(...i);
+      const l = e.map((a) => a.x + a.width), n = Math.max(...l), p = e.map((a) => a.y + a.height), f = Math.max(...p);
       e.forEach((a) => {
-        a.inGroupId || (a.inGroupId = l.id), a.groupW = a.width / r, a.groupH = a.height / y, a.groupX = a.x / r, a.groupY = a.y / y, a.isObstacle = a.x + a.width === r && a.y === 0, delete a.width, delete a.height;
+        a.inGroupId || (a.inGroupId = s.id), a.groupW = a.width / n, a.groupH = a.height / f, a.groupX = a.x / n, a.groupY = a.y / f, a.isObstacle = a.x + a.width === n && a.y === 0, delete a.width, delete a.height;
       });
-      const c = getComputedStyle($.value), f = parseInt(c.getPropertyValue("--group-tit-height").trim());
-      return l.width = r, l.height = y + (l.groupTit ? f : 0), l.groupData = [...e], l;
-    }, j = (t, o) => {
-      const e = getComputedStyle($.value), l = parseInt(e.getPropertyValue("--group-tit-height").trim());
-      t.width = o.width * t.groupW, t.height = (o.height - (o.groupTit ? l : 0)) * t.groupH;
-    }, zt = () => {
-      gt(() => {
-        Je();
+      const P = getComputedStyle(K.value), H = parseInt(P.getPropertyValue("--group-tit-height").trim());
+      return s.width = n, s.height = f + (s.groupTit ? H : 0), s.groupData = [...e], s;
+    }, ce = (t, o) => {
+      const e = getComputedStyle(K.value), s = parseInt(e.getPropertyValue("--group-tit-height").trim());
+      t.width = o.width * t.groupW, t.height = (o.height - (o.groupTit ? s : 0)) * t.groupH;
+    }, Lt = () => {
+      Mt(() => {
+        le();
       });
-    }, Ot = () => {
-      let t = n.value.filter((o) => o.checked);
+    }, Bt = () => {
+      let t = r.value.filter((o) => o.checked);
       if (t.length > 1)
-        if (t = z.beforeAddGroup(D(t)), typeof t == "object" && t instanceof Array && t.length > 0 && t.filter((o) => o.id).length === t.length) {
+        if (t = b.beforeAddGroup(v(t)), typeof t == "object" && t instanceof Array && t.length > 0 && t.filter((o) => o.id).length === t.length) {
           const o = {
             id: (/* @__PURE__ */ new Date()).getTime() + "G",
             isGroup: !0,
             groupTit: ""
-          }, e = Te(t, o);
-          return e.groupData.forEach((l) => {
-            fe(l.id);
-          }), pe(e), Ve(), R(n.value.filter((l) => l.id === e.id)[0]);
+          }, e = Ne(t, o);
+          return e.groupData.forEach((s) => {
+            be(s.id, null, !1);
+          }), we(e), ot(), z(r.value.filter((s) => s.id === e.id)[0]);
         } else
           try {
           } catch {
@@ -744,16 +904,16 @@ const Xt = { class: "content-box" }, $t = ["onMousedown", "onMouseenter", "onMou
             return null;
           }
       else
-        return Ve(), null;
-    }, ut = (t, o) => {
-      const e = n.value.filter((l) => l.id === o)[0];
+        return ot(), null;
+    }, _t = (t, o) => {
+      const e = r.value.filter((s) => s.id === o)[0];
       if (e) {
-        let l = e.groupData.filter((s) => s.id === t)[0];
-        if (l) {
+        let s = e.groupData.filter((l) => l.id === t)[0];
+        if (s) {
           if (e.groupData.length === 2)
-            return De(o);
-          if (l = z.beforeRemoveGroup(D([l])), typeof l == "object" && l instanceof Array && l.length === 1 && l.filter((s) => s.id).length === 1)
-            return l = l[0], j(l, e), delete l.inGroupId, delete l.groupW, delete l.groupH, delete l.groupX, delete l.groupY, delete l.isObstacle, fe(l.id, e.id), pe(l), [R(n.value.filter((s) => s.id === t)[0])];
+            return Xe(o);
+          if (s = b.beforeRemoveGroup(v([s])), typeof s == "object" && s instanceof Array && s.length === 1 && s.filter((l) => l.id).length === 1)
+            return s = s[0], ce(s, e), delete s.inGroupId, delete s.groupW, delete s.groupH, delete s.groupX, delete s.groupY, delete s.isObstacle, be(s.id, e.id), we(s), [z(r.value.filter((l) => l.id === t)[0])];
           try {
           } catch {
           } finally {
@@ -771,27 +931,27 @@ const Xt = { class: "content-box" }, $t = ["onMousedown", "onMouseenter", "onMou
         } finally {
           return [];
         }
-    }, De = (t) => {
-      const o = n.value.filter((e) => e.id === t)[0];
+    }, Xe = (t) => {
+      const o = r.value.filter((e) => e.id === t)[0];
       if (o) {
-        let e = [], l = !0;
+        let e = [], s = !0;
         try {
-          o.groupData.forEach((s) => {
-            if (s = z.beforeRemoveGroup(D([o])), typeof s == "object" && s instanceof Array && s.length === 1 && s.filter((r) => r.id).length === 1)
-              s = s[0];
+          o.groupData.forEach((l) => {
+            if (l = b.beforeRemoveGroup(v([o])), typeof l == "object" && l instanceof Array && l.length === 1 && l.filter((n) => n.id).length === 1)
+              l = l[0];
             else
-              throw l = !1, new Error();
+              throw s = !1, new Error();
           });
         } catch {
         }
-        if (l) {
-          o.groupData.forEach((r) => {
-            j(r, o), r.x += o.x, r.y += o.y, delete r.inGroupId, delete r.groupW, delete r.groupH, delete r.groupX, delete r.groupY, delete r.isObstacle, e.push(r.id), pe(r, null, !0);
-          }), fe(o.id);
-          let s = [];
-          return e.forEach((r) => {
-            s.push(R(n.value.filter((i) => i.id === r)[0]));
-          }), s;
+        if (s) {
+          o.groupData.forEach((n) => {
+            ce(n, o), n.x += o.x, n.y += o.y, delete n.inGroupId, delete n.groupW, delete n.groupH, delete n.groupX, delete n.groupY, delete n.isObstacle, e.push(n.id), we(n, null, !0);
+          }), be(o.id);
+          let l = [];
+          return e.forEach((n) => {
+            l.push(z(r.value.filter((p) => p.id === n)[0]));
+          }), l;
         } else
           return [];
       } else
@@ -800,287 +960,339 @@ const Xt = { class: "content-box" }, $t = ["onMousedown", "onMouseenter", "onMou
         } finally {
           return [];
         }
-    }, Tt = (t = "", o) => {
-      const e = n.value.filter((l) => l.id === o)[0];
+    }, Xt = (t = "", o) => {
+      const e = r.value.filter((s) => s.id === o)[0];
       if (e) {
         if (!e.groupTit || !t) {
-          const l = getComputedStyle($.value), s = parseInt(l.getPropertyValue("--group-tit-height").trim());
-          e.groupTit && !t && (e.height -= s, e.s_height -= s * S.value), !e.groupTit && t && (e.height += s, e.s_height += s * S.value);
+          const s = getComputedStyle(K.value), l = parseInt(s.getPropertyValue("--group-tit-height").trim());
+          e.groupTit && !t && (e.height -= l, e.s_height -= l * U()), !e.groupTit && t && (e.height += l, e.s_height += l * U());
         }
-        e.groupTit = t, se([e], (l, s) => l.filter((r) => r.id !== s.id)), m();
+        e.groupTit = t, Y([e], (s, l) => s.filter((n) => n.id !== l.id)), Z();
       } else
         try {
         } catch {
         }
-    }, ct = () => {
-      n.value = [], ve(null), _e(1), xe.value = 0;
-    }, At = () => new Promise((t, o) => {
-      n.value.forEach((l) => {
-        delete l.showPop, delete l.showSet, l.groupData && l.groupData.forEach((s) => {
-          delete s.showPop, delete s.showSet;
+    }, xt = () => {
+      r.value = [], Ee(null), ve(1), ie.value = 0;
+    }, $t = (t = null) => new Promise((o, e) => {
+      r.value.forEach((l) => {
+        delete l.showPop, delete l.showSet, l.groupData && l.groupData.forEach((n) => {
+          delete n.showPop, delete n.showSet;
         });
       });
-      const e = D(n.value);
-      e.forEach((l) => {
-        l.isGroup === !0 && l.groupData.forEach((s) => {
-          j(s, l), delete s.s_width, delete s.s_height, delete s.s_x, delete s.s_y;
+      const s = v(r.value);
+      s.forEach((l) => {
+        l.isGroup === !0 && l.groupData.forEach((n) => {
+          ce(n, l), delete n.s_width, delete n.s_height, delete n.s_x, delete n.s_y;
         }), delete l.btnPosition, delete l.s_width, delete l.s_height, delete l.s_x, delete l.s_y;
-      }), t({ data: e, width: ie });
+      }), t && te && s.forEach((l) => {
+        de(l, t / te), it(l, t / te);
+      }), o({ data: s, width: t || te });
     });
-    return Ht(() => {
-      rt.unobserve($.value), window.removeEventListener("click", Ee);
-    }), F({ init: Dt, addItem: pe, copyItem: Ne, deleteItem: fe, updateItem: It, hideGroupSet: We, openGroup: it, closeGroup: Ve, changeGroupBorder: zt, addGroup: Ot, removeGroupItem: ut, removeGroup: De, changeGroupTit: Tt, resetData: ct, getData: At }), (t, o) => (x(), b("div", {
+    return Yt(() => {
+      pt.unobserve(K.value), window.removeEventListener("click", Be), window.removeEventListener("click", Oe), window.removeEventListener("keydown", Ke);
+    }), y({ init: Gt, addItem: we, copyItem: et, deleteItem: be, updateItem: zt, toggleLockItem: tt, hideGroupSet: je, openGroup: vt, closeGroup: ot, changeGroupBorder: Lt, addGroup: Bt, removeGroupItem: _t, removeGroup: Xe, changeGroupTit: Xt, openTrimModel: Ve, closeTrimModel: Oe, resetData: xt, getData: $t }), (t, o) => (w(), k("div", {
       class: "vue-drag-component-plus",
-      style: V({ "--css-scle": d(S), "--com-x-space": d(X) + "px", "--com-y-space": d(U) + "px" }),
+      style: q({ "--item-scale": c(j), "--css-scale": u.seeModel ? c(Pe) : 1, "--com-x-space": c(V) + "px", "--com-y-space": c(re) + "px" }),
       ref_key: "pageRef",
-      ref: $
+      ref: K
     }, [
-      B("div", Xt, [
-        (x(!0), b(ge, null, Ke(d(n), (e, l) => (x(), b("div", {
-          class: te(["com-item", e.move ? "is-move" : "", e.drag ? "is-drag" : "", e.showPop || e.isGroup && e.groupData.filter((s) => s.showPop).length > 0 ? "on-top" : "", d(Se) + "p"]),
-          style: V({
+      N("div", Ft, [
+        (w(!0), k(ke, null, nt(c(r), (e, s) => (w(), k("div", {
+          class: he([
+            "com-item",
+            c(g) !== null ? "" : "not-move-animate",
+            e.move ? "is-move" : "",
+            e.drag ? "is-drag" : "",
+            e.showPop || e.isGroup && e.groupData.filter((l) => l.showPop).length > 0 ? "on-top" : "",
+            // 初始化标记
+            c(Le) + "p",
+            "i" + e.id + "d"
+          ]),
+          style: q({
             width: e.s_width + "px",
             height: e.s_height + "px",
             top: e.s_y + "px",
             left: e.s_x + "px"
           }),
-          key: l
+          key: s
         }, [
-          B("div", {
-            class: te(["com-item-inner", g.seeModel || d(N) || e.static === !0 || e.dragable === !1 ? "" : "can-drag", g.seeModel ? "no-hover" : ""]),
-            onMousedown: L((s) => g.seeModel || d(N) || e.static === !0 || e.dragable === !1 ? null : Mt(s, l), ["prevent"]),
-            onMouseenter: (s) => g.seeModel || d(N) || d(P) || d(_) || !e.isGroup ? null : Pt(e),
-            onMouseleave: (s) => g.seeModel || d(N) || d(P) || d(_) || !e.isGroup ? null : We(e.id)
+          N("div", {
+            class: he([
+              "com-item-inner",
+              u.seeModel || c(F) || c(J) || e.static === !0 || e.dragable === !1 ? "" : "can-drag",
+              u.seeModel || c(F) ? "no-hover" : ""
+            ]),
+            onMousedown: m((l) => u.seeModel || c(F) || c(J) || e.static === !0 || e.dragable === !1 ? null : ht(l, s), ["prevent"]),
+            onMouseenter: (l) => u.seeModel || c(F) || c(J) || c(g) !== null || c(_) || !e.isGroup ? null : Tt(e),
+            onMouseleave: (l) => u.seeModel || c(F) || c(J) || c(g) !== null || c(_) || !e.isGroup ? null : je(e.id)
           }, [
-            B("div", Wt, [
-              e.isGroup ? (x(), b(ge, { key: 0 }, [
-                e.groupTit ? (x(), b("div", {
+            N("div", Ut, [
+              e.isGroup ? (w(), k(ke, { key: 0 }, [
+                e.groupTit ? (w(), k("div", {
                   key: 0,
                   class: "group-item-tit",
                   title: e.groupTit
-                }, K(e.groupTit), 9, Nt)) : I("", !0),
-                B("div", {
-                  class: te(["group-item-content", e.groupTit ? "" : "full"])
+                }, Q(e.groupTit), 9, Jt)) : A("", !0),
+                N("div", {
+                  class: he(["group-item-content", e.groupTit ? "" : "full"])
                 }, [
-                  (x(!0), b(ge, null, Ke(e.groupData, (s, r) => (x(), b("div", {
-                    class: te(["com-item-box-child", s.isObstacle ? "is-obstacle" : "", d(Se) + "c"]),
-                    style: V({
-                      width: s.s_width + "px",
-                      height: s.s_height + "px",
-                      top: s.s_y + "px",
-                      left: s.s_x + "px"
+                  (w(!0), k(ke, null, nt(e.groupData, (l, n) => (w(), k("div", {
+                    class: he([
+                      "com-item-box-child",
+                      l.isObstacle ? "is-obstacle" : "",
+                      c(Le) + "c"
+                    ]),
+                    style: q({
+                      width: l.s_width + "px",
+                      height: l.s_height + "px",
+                      top: l.s_y + "px",
+                      left: l.s_x + "px"
                     }),
-                    key: r
+                    key: n
                   }, [
-                    B("div", Vt, [
-                      ye(t.$slots, "item", { data: s }, () => [
-                        B("p", null, K(Math.round(s.s_width * 100) / 100) + "," + K(Math.round(s.s_height * 100) / 100), 1),
-                        B("p", null, K(Math.round(s.s_x * 100) / 100) + "," + K(Math.round(s.s_y * 100) / 100), 1)
+                    N("div", Qt, [
+                      Me(t.$slots, "item", { data: l }, () => [
+                        N("p", null, Q(Math.round(l.s_width * 100) / 100) + "," + Q(Math.round(l.s_height * 100) / 100), 1),
+                        N("p", null, Q(Math.round(l.s_x * 100) / 100) + "," + Q(Math.round(l.s_y * 100) / 100), 1)
                       ])
                     ]),
-                    !g.seeModel && !d(N) && d(P) === null && d(_) === null ? (x(), b("div", {
+                    !u.seeModel && !c(F) && !c(J) && c(g) === null && c(_) === null ? (w(), k("div", {
                       key: 0,
                       class: "setting-box",
-                      style: V({ display: s.showPop ? "flex" : "none" }),
-                      onMousedown: L((i) => null, ["prevent", "stop"])
+                      style: q({ display: l.showPop ? "flex" : "none" }),
+                      onMousedown: m((p) => null, ["prevent", "stop"])
                     }, [
-                      ft(vt, {
-                        iconObj: g.settingIcon,
-                        onClick: L((i) => at(s), ["prevent", "stop"])
+                      kt(Et, {
+                        iconObj: u.settingIcon,
+                        onClick: m((p) => yt(l), ["prevent", "stop"])
                       }, null, 8, ["iconObj", "onClick"])
-                    ], 36)) : I("", !0),
-                    s.showPop ? (x(), b("div", {
+                    ], 36)) : A("", !0),
+                    l.showPop ? (w(), k("div", {
                       key: 1,
                       class: "setting-box-pop",
-                      onMousedown: L((i) => null, ["prevent", "stop"])
+                      onMousedown: m((p) => null, ["prevent", "stop"])
                     }, [
-                      ye(t.$slots, "setPopNormal", {
-                        data: R(s)
+                      Me(t.$slots, "setPopNormal", {
+                        data: z(l)
                       }, () => [
-                        B("div", {
+                        N("div", {
                           class: "setting-box-pop-item",
-                          onClick: (i) => ut(s.id, s.inGroupId)
-                        }, "移出组合", 8, mt),
-                        B("div", {
+                          onClick: (p) => _t(l.id, l.inGroupId)
+                        }, "移出组合", 8, Zt),
+                        N("div", {
                           class: "setting-box-pop-item",
-                          onClick: (i) => Ne(s.id, s.inGroupId)
-                        }, "复制", 8, Kt),
-                        B("div", {
+                          onClick: (p) => et(l.id, l.inGroupId)
+                        }, "复制", 8, jt),
+                        N("div", {
                           class: "setting-box-pop-item",
-                          onClick: (i) => fe(s.id, s.inGroupId)
-                        }, "删除", 8, Ft)
+                          onClick: (p) => be(l.id, l.inGroupId)
+                        }, "删除", 8, eo)
                       ])
-                    ], 32)) : I("", !0)
+                    ], 32)) : A("", !0)
                   ], 6))), 128))
                 ], 2)
-              ], 64)) : (x(), b("div", qt, [
-                ye(t.$slots, "item", { data: e }, () => [
-                  B("p", null, K(Math.round(e.s_width * 100) / 100) + "," + K(Math.round(e.s_height * 100) / 100), 1),
-                  B("p", null, K(Math.round(e.s_x * 100) / 100) + "," + K(Math.round(e.s_y * 100) / 100), 1)
+              ], 64)) : (w(), k("div", to, [
+                Me(t.$slots, "item", { data: e }, () => [
+                  N("p", null, Q(Math.round(e.s_width * 100) / 100) + "," + Q(Math.round(e.s_height * 100) / 100), 1),
+                  N("p", null, Q(Math.round(e.s_x * 100) / 100) + "," + Q(Math.round(e.s_y * 100) / 100), 1)
                 ])
               ])),
-              !e.isGroup && e.notGroup !== !0 && d(N) ? (x(), b("div", {
+              !e.isGroup && e.notGroup !== !0 && c(J) ? (w(), k("div", {
                 key: 2,
-                class: te(["group-checkbox", e.checked ? "is-checked" : "", e.checkDis ? "disabled" : ""]),
-                onClick: (s) => e.checkDis ? null : Ct(e)
-              }, null, 10, Ut)) : I("", !0),
-              !g.seeModel && !d(N) && d(P) === null && d(_) === null ? (x(), b("div", {
+                class: he(["group-checkbox", e.checked ? "is-checked" : "", e.checkDis ? "disabled" : ""]),
+                onClick: (l) => e.checkDis ? null : Ot(e)
+              }, null, 10, oo)) : A("", !0),
+              !u.seeModel && !c(F) && !c(J) && c(g) === null && c(_) === null ? (w(), k("div", {
                 key: 3,
-                class: te(["setting-box", e.isGroup === !0 ? e.btnPosition === "right" ? "only-g" : e.btnPosition === "left" ? "only-g l" : e.btnPosition === "top" ? "only-g t" : e.btnPosition === "bottom" ? "only-g b" : e.btnPosition === "center" ? "only-g c" : "" : ""]),
-                style: V({ display: e.showPop || e.showSet ? "flex" : "none" }),
-                onMousedown: L((s) => null, ["prevent", "stop"])
+                class: he(["setting-box", e.isGroup === !0 ? e.btnPosition === "right" ? "only-g" : e.btnPosition === "left" ? "only-g l" : e.btnPosition === "top" ? "only-g t" : e.btnPosition === "bottom" ? "only-g b" : e.btnPosition === "center" ? "only-g c" : "" : ""]),
+                style: q({ display: e.showPop || e.showSet ? "flex" : "none" }),
+                onMousedown: m((l) => null, ["prevent", "stop"])
               }, [
-                ft(vt, {
-                  iconObj: g.settingIcon,
-                  onClick: L((s) => at(e), ["prevent", "stop"])
+                kt(Et, {
+                  iconObj: u.settingIcon,
+                  onClick: m((l) => yt(e), ["prevent", "stop"])
                 }, null, 8, ["iconObj", "onClick"])
-              ], 38)) : I("", !0),
-              e.showPop ? (x(), b("div", {
+              ], 38)) : A("", !0),
+              e.showPop ? (w(), k("div", {
                 key: 4,
-                class: te(["setting-box-pop", e.isGroup === !0 ? e.btnPosition === "right" ? "special" : e.btnPosition === "left" ? "special l" : e.btnPosition === "top" ? "special t" : e.btnPosition === "bottom" ? "special b" : e.btnPosition === "center" ? "special c" : "" : ""]),
-                onMousedown: L((s) => null, ["prevent", "stop"])
+                class: he(["setting-box-pop", e.isGroup === !0 ? e.btnPosition === "right" ? "special" : e.btnPosition === "left" ? "special l" : e.btnPosition === "top" ? "special t" : e.btnPosition === "bottom" ? "special b" : e.btnPosition === "center" ? "special c" : "" : ""]),
+                onMousedown: m((l) => null, ["prevent", "stop"])
               }, [
-                e.isGroup === !0 ? ye(t.$slots, "setPopSpecial", {
+                e.isGroup === !0 ? Me(t.$slots, "setPopSpecial", {
                   key: 0,
-                  data: R(e)
+                  data: z(e)
                 }, () => [
-                  g.hideTit ? I("", !0) : (x(), b("div", {
+                  N("div", {
+                    class: "setting-box-pop-item",
+                    onClick: (l) => tt(e.id, e.static !== !0)
+                  }, Q(e.static === !0 ? "解除" : "") + "锁定 ", 9, lo),
+                  e.static !== !0 ? (w(), k("div", {
                     key: 0,
                     class: "setting-box-pop-item",
-                    onClick: (s) => {
-                      We(e.id), O("showTitPop", e.groupTit, e.id);
+                    onClick: (l) => Ve(e.id)
+                  }, " 微调 ", 8, so)) : A("", !0),
+                  u.hideTit ? A("", !0) : (w(), k("div", {
+                    key: 1,
+                    class: "setting-box-pop-item",
+                    onClick: (l) => {
+                      je(e.id), S("showTitPop", e.groupTit, e.id);
                     }
-                  }, " 设置组合标题", 8, Jt)),
-                  B("div", {
+                  }, " 设置组合标题 ", 8, ro)),
+                  N("div", {
                     class: "setting-box-pop-item",
-                    onClick: (s) => De(e.id)
-                  }, "解除组合", 8, Qt)
-                ]) : ye(t.$slots, "setPopNormal", {
+                    onClick: (l) => Xe(e.id)
+                  }, "解除组合", 8, no)
+                ]) : Me(t.$slots, "setPopNormal", {
                   key: 1,
-                  data: R(e)
+                  data: z(e)
                 }, () => [
-                  e.notGroup !== !0 ? (x(), b("div", {
+                  e.notGroup !== !0 ? (w(), k("div", {
                     key: 0,
                     class: "setting-box-pop-item",
-                    onClick: (s) => it(e.id)
-                  }, "组合", 8, Zt)) : I("", !0),
-                  B("div", {
+                    onClick: (l) => vt(e.id)
+                  }, "组合", 8, io)) : A("", !0),
+                  N("div", {
                     class: "setting-box-pop-item",
-                    onClick: (s) => Ne(e.id)
-                  }, "复制", 8, jt),
-                  B("div", {
+                    onClick: (l) => tt(e.id, e.static !== !0)
+                  }, Q(e.static === !0 ? "解除" : "") + "锁定 ", 9, ao),
+                  e.static !== !0 ? (w(), k("div", {
+                    key: 1,
                     class: "setting-box-pop-item",
-                    onClick: (s) => fe(e.id)
-                  }, "删除", 8, eo)
+                    onClick: (l) => Ve(e.id)
+                  }, " 微调 ", 8, uo)) : A("", !0),
+                  N("div", {
+                    class: "setting-box-pop-item",
+                    onClick: (l) => et(e.id)
+                  }, "复制", 8, co),
+                  N("div", {
+                    class: "setting-box-pop-item",
+                    onClick: (l) => be(e.id)
+                  }, "删除", 8, ho)
                 ])
-              ], 34)) : I("", !0)
+              ], 34)) : A("", !0)
             ]),
-            !g.seeModel && !d(N) && !e.showPop && !(e.isGroup && e.groupData.filter((s) => s.showPop).length > 0) && !e.move && e.static !== !0 && e.resizable !== !1 ? (x(), b(ge, { key: 0 }, [
-              d(q).indexOf("topLeft") !== -1 ? (x(), b("div", {
+            !u.seeModel && !c(F) && !c(J) && !e.showPop && !(e.isGroup && e.groupData.filter((l) => l.showPop).length > 0) && !e.move && e.static !== !0 && e.resizable !== !1 ? (w(), k(ke, { key: 0 }, [
+              c(E).indexOf("topLeft") !== -1 ? (w(), k("div", {
                 key: 0,
                 class: "resize-line top-left",
-                onMousedown: L((s) => Z(s, e, "top-left"), ["prevent", "stop"])
-              }, null, 40, to)) : I("", !0),
-              d(q).indexOf("top") !== -1 ? (x(), b("div", {
+                onMousedown: m((l) => ue(l, e, "top-left"), ["prevent", "stop"])
+              }, null, 40, fo)) : A("", !0),
+              c(E).indexOf("top") !== -1 ? (w(), k("div", {
                 key: 1,
                 class: "resize-line top",
-                onMousedown: L((s) => Z(s, e, "top"), ["prevent", "stop"])
-              }, null, 40, oo)) : I("", !0),
-              d(q).indexOf("topRight") !== -1 ? (x(), b("div", {
+                onMousedown: m((l) => ue(l, e, "top"), ["prevent", "stop"])
+              }, null, 40, po)) : A("", !0),
+              c(E).indexOf("topRight") !== -1 ? (w(), k("div", {
                 key: 2,
                 class: "resize-line top-right",
-                onMousedown: L((s) => Z(s, e, "top-right"), ["prevent", "stop"])
-              }, null, 40, so)) : I("", !0),
-              d(q).indexOf("left") !== -1 ? (x(), b("div", {
+                onMousedown: m((l) => ue(l, e, "top-right"), ["prevent", "stop"])
+              }, null, 40, go)) : A("", !0),
+              c(E).indexOf("left") !== -1 ? (w(), k("div", {
                 key: 3,
                 class: "resize-line left",
-                onMousedown: L((s) => Z(s, e, "left"), ["prevent", "stop"])
-              }, null, 40, lo)) : I("", !0),
-              d(q).indexOf("right") !== -1 ? (x(), b("div", {
+                onMousedown: m((l) => ue(l, e, "left"), ["prevent", "stop"])
+              }, null, 40, yo)) : A("", !0),
+              c(E).indexOf("right") !== -1 ? (w(), k("div", {
                 key: 4,
                 class: "resize-line right",
-                onMousedown: L((s) => Z(s, e, "right"), ["prevent", "stop"])
-              }, null, 40, ro)) : I("", !0),
-              d(q).indexOf("bottomLeft") !== -1 ? (x(), b("div", {
+                onMousedown: m((l) => ue(l, e, "right"), ["prevent", "stop"])
+              }, null, 40, vo)) : A("", !0),
+              c(E).indexOf("bottomLeft") !== -1 ? (w(), k("div", {
                 key: 5,
                 class: "resize-line bottom-left",
-                onMousedown: L((s) => Z(s, e, "bottom-left"), ["prevent", "stop"])
-              }, null, 40, no)) : I("", !0),
-              d(q).indexOf("bottom") !== -1 ? (x(), b("div", {
+                onMousedown: m((l) => ue(l, e, "bottom-left"), ["prevent", "stop"])
+              }, null, 40, _o)) : A("", !0),
+              c(E).indexOf("bottom") !== -1 ? (w(), k("div", {
                 key: 6,
                 class: "resize-line bottom",
-                onMousedown: L((s) => Z(s, e, "bottom"), ["prevent", "stop"])
-              }, null, 40, ao)) : I("", !0),
-              d(q).indexOf("bottomRight") !== -1 ? (x(), b("div", {
+                onMousedown: m((l) => ue(l, e, "bottom"), ["prevent", "stop"])
+              }, null, 40, xo)) : A("", !0),
+              c(E).indexOf("bottomRight") !== -1 ? (w(), k("div", {
                 key: 7,
                 class: "resize-line bottom-right",
-                onMousedown: L((s) => Z(s, e, "bottom-right"), ["prevent", "stop"])
-              }, null, 40, io)) : I("", !0)
-            ], 64)) : I("", !0)
-          ], 42, $t)
+                onMousedown: m((l) => ue(l, e, "bottom-right"), ["prevent", "stop"])
+              }, null, 40, wo)) : A("", !0)
+            ], 64)) : A("", !0)
+          ], 42, qt)
         ], 6))), 128)),
-        (x(!0), b(ge, null, Ke(d(n), (e, l) => (x(), b("div", {
-          class: te(["shadow-bg", e.move ? "is-move" : ""]),
-          style: V({
-            width: e.s_width - d(X) * 2 * d(S) + "px",
-            height: e.s_height - d(U) * 2 * d(S) + "px",
-            top: e.s_y + d(U) * d(S) + "px",
-            left: e.s_x + d(X) * d(S) + "px"
+        (w(!0), k(ke, null, nt(c(r), (e, s) => (w(), k("div", {
+          class: he([
+            "shadow-bg",
+            c(g) !== null ? "" : "not-move-animate",
+            e.move ? "is-move" : "",
+            e.drag ? "is-drag" : ""
+          ]),
+          style: q({
+            width: e.s_width - c(V) * 2 + "px",
+            height: e.s_height - c(re) * 2 + "px",
+            top: e.s_y + c(re) + "px",
+            left: e.s_x + c(V) + "px"
           }),
-          key: l
+          key: s
         }, null, 6))), 128)),
-        d(P) !== null ? (x(), b("div", {
+        c(g) !== null ? (w(), k("div", {
           key: 0,
           class: "drag-bg",
-          style: V({
-            width: d(G).s_width + "px",
-            height: d(G).s_height + "px",
-            top: d(G).s_y + "px",
-            left: d(G).s_x + "px"
+          style: q({
+            width: c(M).s_width + "px",
+            height: c(M).s_height + "px",
+            top: c(M).s_y + "px",
+            left: c(M).s_x + "px"
           })
-        }, null, 4)) : I("", !0),
-        B("div", {
+        }, null, 4)) : A("", !0),
+        N("div", {
           class: "height-bg",
-          style: V({ height: (d(xe) > 0 ? +(d(xe) * d(S) + (g.seeModel ? g.seeModelMinBg : 220)) : 0) + "px" })
+          style: q({ height: (c(ie) > 0 ? c(ie) * U() + (u.seeModel ? u.seeModelMinBg : 220) : 0) + "px" })
         }, null, 4),
-        g.showAuxiliary ? (x(), b(ge, { key: 1 }, [
-          d(we) !== null ? (x(), b("div", {
+        u.showAuxiliary ? (w(), k(ke, { key: 1 }, [
+          c(De) !== null ? (w(), k("div", {
             key: 0,
             class: "auxiliary-line hor",
-            style: V({ top: d(we) + "px", left: "0px" })
-          }, null, 4)) : I("", !0),
-          d(be) !== null ? (x(), b("div", {
+            style: q({ top: c(De) + "px", left: "0px" })
+          }, null, 4)) : A("", !0),
+          c(Ie) !== null ? (w(), k("div", {
             key: 1,
             class: "auxiliary-line hor",
-            style: V({ top: d(be) + "px", left: "0px" })
-          }, null, 4)) : I("", !0),
-          d(ke) !== null ? (x(), b("div", {
+            style: q({ top: c(Ie) + "px", left: "0px" })
+          }, null, 4)) : A("", !0),
+          c(Ge) !== null ? (w(), k("div", {
             key: 2,
-            class: "auxiliary-line",
-            style: V({ top: "0px", left: d(ke) + "px" })
-          }, null, 4)) : I("", !0),
-          d(Me) !== null ? (x(), b("div", {
+            class: "auxiliary-line hor",
+            style: q({ top: c(Ge) + "px", left: "0px" })
+          }, null, 4)) : A("", !0),
+          c(Te) !== null ? (w(), k("div", {
             key: 3,
             class: "auxiliary-line",
-            style: V({ top: "0px", left: d(Me) + "px" })
-          }, null, 4)) : I("", !0)
-        ], 64)) : I("", !0),
-        d(n).length === 0 ? (x(), b("div", uo, [
-          ye(t.$slots, "empty", {}, () => [
-            o[0] || (o[0] = Lt(" 暂无数据 "))
+            style: q({ top: "0px", left: c(Te) + "px", height: c(ie) * U() + 220 + "px" })
+          }, null, 4)) : A("", !0),
+          c(ze) !== null ? (w(), k("div", {
+            key: 4,
+            class: "auxiliary-line",
+            style: q({ top: "0px", left: c(ze) + "px", height: c(ie) * U() + 220 + "px" })
+          }, null, 4)) : A("", !0),
+          c(Ae) !== null ? (w(), k("div", {
+            key: 5,
+            class: "auxiliary-line",
+            style: q({ top: "0px", left: c(Ae) + "px", height: c(ie) * U() + 220 + "px" })
+          }, null, 4)) : A("", !0)
+        ], 64)) : A("", !0),
+        c(r).length === 0 ? (w(), k("div", bo, [
+          Me(t.$slots, "empty", {}, () => [
+            o[0] || (o[0] = Wt(" 暂无数据 "))
           ])
-        ])) : I("", !0)
+        ])) : A("", !0)
       ])
     ], 4));
   }
-}, ho = [co], po = {
-  install(g) {
-    ho.forEach((F) => {
-      g.component("vueDragComponentPlus", F);
+}, Mo = [ko], So = {
+  install(u) {
+    Mo.forEach((y) => {
+      u.component("vueDragComponentPlus", y);
     });
   }
 };
-typeof window < "u" && window.Vue && window.Vue.use(po);
+typeof window < "u" && window.Vue && window.Vue.use(So);
 export {
-  po as default
+  So as default
 };
