@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-18 09:29:46
+ * @LastEditTime: 2025-06-18 16:53:00
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -1133,8 +1133,8 @@ const resizeIng = (e) => {
       });
     }
   };
-  const realMinWidth = props.itemMinWidth * nowScale.value;
-  const realMinHeight = props.itemMinHeight * getNowHScale();
+  const realMinWidth = (typeof resizeObj.itemMinWidth === 'number' ? resizeObj.itemMinWidth : props.itemMinWidth) * nowScale.value;
+  const realMinHeight = (typeof resizeObj.itemMinHeight === 'number' ? resizeObj.itemMinHeight : props.itemMinHeight) * getNowHScale();
   switch (resizeDirection) {
     case 'top-left':
       resizeObj.s_height = y_rever < realMinHeight ? realMinHeight : y_rever > dealResizeMax('top') ? dealResizeMax('top') : y_rever;

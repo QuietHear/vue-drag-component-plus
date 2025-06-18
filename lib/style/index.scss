@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-18 09:32:05
+ * @LastEditTime: 2025-06-18 13:19:06
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -51,6 +51,7 @@
   padding                    : var(--com-y-space) var(--com-x-space) 0;
 
   > {
+
     // 这里可能得根据实际业务调整width和background-color，系统自带的滚动属性可能会滚动的时候出现与元素等宽的横线（元素上下边框）
     ::-webkit-scrollbar {
       width: 0px;
@@ -85,11 +86,16 @@
       transition: none;
     }
 
+
+    // 层级必须要高，不然容易让其他元素影响到交互
     &.is-move,
-    &.is-drag,
-    &:hover {
-      z-index   : 3;
+    &.is-drag {
+      z-index   : 6;
       transition: none;
+    }
+
+    &:hover {
+      z-index: 3;
     }
 
     &.on-top {
