@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-16 14:39:05
+ * @LastEditTime: 2025-06-18 09:29:46
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -300,7 +300,8 @@ const props = defineProps({
     type: Number,
     default: 1.2,
     validator(value, props) {
-      return value > 0 && value >= props.cssScaleMin;
+      // 有时候初始化的时候这里还没有值
+      return value > 0 && value >= (props ? props.cssScaleMin : 0.1);
     }
   },
   // 设置图标
@@ -2044,6 +2045,7 @@ const removeGroup = (id) => {
       console.error('自定义方法抛出数据格式不正确');
     }
     if (reg) {
+      deleteItem(lin.id, null, false);
       lin.groupData.forEach(item => {
         // 反推原始尺寸
         dealGroupItemWH(item, lin);
@@ -2058,8 +2060,6 @@ const removeGroup = (id) => {
         ids.push(item.id);
         addItem(item, null, true);
       });
-      // 先删除的话，后面的会移动上去
-      deleteItem(lin.id);
       let result = [];
       ids.forEach(item => {
         result.push(outDataInit(comData.value.filter(one => one.id === item)[0]));

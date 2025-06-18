@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-13 14:24:42
+ * @LastEditTime: 2025-06-18 09:32:05
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -51,12 +51,13 @@
   padding                    : var(--com-y-space) var(--com-x-space) 0;
 
   > {
+    // 这里可能得根据实际业务调整width和background-color，系统自带的滚动属性可能会滚动的时候出现与元素等宽的横线（元素上下边框）
     ::-webkit-scrollbar {
-      width: 0;
+      width: 0px;
     }
 
     ::-webkit-scrollbar-track {
-      background-color: transparent;
+      background-color: var(--bg);
     }
 
     ::-webkit-scrollbar-thumb {

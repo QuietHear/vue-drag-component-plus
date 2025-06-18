@@ -191,7 +191,7 @@ const Ft = { class: "content-box" }, qt = ["onMousedown", "onMouseenter", "onMou
       type: Number,
       default: 1.2,
       validator(u, y) {
-        return u > 0 && u >= y.cssScaleMin;
+        return u > 0 && u >= (y ? y.cssScaleMin : 0.1);
       }
     },
     // 设置图标
@@ -945,9 +945,9 @@ const Ft = { class: "content-box" }, qt = ["onMousedown", "onMouseenter", "onMou
         } catch {
         }
         if (s) {
-          o.groupData.forEach((n) => {
+          be(o.id, null, !1), o.groupData.forEach((n) => {
             ce(n, o), n.x += o.x, n.y += o.y, delete n.inGroupId, delete n.groupW, delete n.groupH, delete n.groupX, delete n.groupY, delete n.isObstacle, e.push(n.id), we(n, null, !0);
-          }), be(o.id);
+          });
           let l = [];
           return e.forEach((n) => {
             l.push(z(r.value.filter((p) => p.id === n)[0]));
