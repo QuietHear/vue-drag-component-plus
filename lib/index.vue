@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-18 16:53:00
+ * @LastEditTime: 2025-06-20 14:05:24
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -1394,7 +1394,8 @@ const init = (historyData = [], historyWidth = null) => {
   initIng = true;
   nextTick(() => {
     const obj = pageRef.value.getBoundingClientRect();
-    if (historyWidth !== null && historyWidth !== undefined) {
+    // 进第一步必须有数据，空数据的时候会导致已存在缩放比例等数据，实际不应该有
+    if (historyWidth !== null && historyWidth !== undefined && comData.value.length > 0) {
       setBaseWidth(historyWidth);
       setNowScale(obj.width / historyWidth);
     } else {
