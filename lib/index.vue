@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-06-24 10:25:52
+* @LastEditors: aFei
+* @LastEditTime: 2025-06-24 14:46:43
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -421,6 +421,11 @@ const closest = (ele, selector) => {
 const hasClass = (ele, className) => {
   return ele.classList ? ele.classList.contains(className) : new RegExp('\\s' + className + '\\s').test(' ' + ele.className + ' ');
 };
+// 保留7位小数（JS本身就有乘法漏洞，所以数据取7位有效小数四舍五入做对比就行了）
+// 例如：634*0.98=621.3199999999999≈621.32; 621.3199999999999/0.98=634; 621.32/0.98=634.0000000000001≈634;
+const getFloat7 = (num) => {
+  return parseFloat(num.toFixed(7));
+};
 // 根据class查找子元素集合
 const findByClass = (ele, className) => {
   let result = [];
@@ -443,11 +448,11 @@ const filterCrossArr = (arr, obj, scale = false) => {
 };
 // 过滤数组中与组件项X方向有交集的
 const filterCrossXArr = (arr, obj, scale = false) => {
-  return arr.filter(item => (item[scale ? 's_x' : 'x'] <= obj[scale ? 's_x' : 'x'] && (item[scale ? 's_x' : 'x'] + item[scale ? 's_width' : 'width']) > obj[scale ? 's_x' : 'x']) || (item[scale ? 's_x' : 'x'] > obj[scale ? 's_x' : 'x'] && item[scale ? 's_x' : 'x'] < (obj[scale ? 's_x' : 'x'] + obj[scale ? 's_width' : 'width'])));
+  return arr.filter(item => (getFloat7(item[scale ? 's_x' : 'x']) <= getFloat7(obj[scale ? 's_x' : 'x']) && (getFloat7(item[scale ? 's_x' : 'x']) + getFloat7(item[scale ? 's_width' : 'width'])) > getFloat7(obj[scale ? 's_x' : 'x'])) || (getFloat7(item[scale ? 's_x' : 'x']) > getFloat7(obj[scale ? 's_x' : 'x']) && getFloat7(item[scale ? 's_x' : 'x']) < (getFloat7(obj[scale ? 's_x' : 'x']) + getFloat7(obj[scale ? 's_width' : 'width']))));
 };
 // 过滤数组中与组件项Y方向有交集的
 const filterCrossYArr = (arr, obj, scale = false) => {
-  return arr.filter(item => (item[scale ? 's_y' : 'y'] <= obj[scale ? 's_y' : 'y'] && (item[scale ? 's_y' : 'y'] + item[scale ? 's_height' : 'height']) > obj[scale ? 's_y' : 'y']) || (item[scale ? 's_y' : 'y'] > obj[scale ? 's_y' : 'y'] && item[scale ? 's_y' : 'y'] < (obj[scale ? 's_y' : 'y'] + obj[scale ? 's_height' : 'height'])));
+  return arr.filter(item => (getFloat7(item[scale ? 's_y' : 'y']) <= getFloat7(obj[scale ? 's_y' : 'y']) && (getFloat7(item[scale ? 's_y' : 'y']) + getFloat7(item[scale ? 's_height' : 'height'])) > getFloat7(obj[scale ? 's_y' : 'y'])) || (getFloat7(item[scale ? 's_y' : 'y']) > getFloat7(obj[scale ? 's_y' : 'y']) && getFloat7(item[scale ? 's_y' : 'y']) < (getFloat7(obj[scale ? 's_y' : 'y']) + getFloat7(obj[scale ? 's_height' : 'height']))));
 };
 // 递归解除组件叠加
 const dealComStacking = (orginArr, filters = (arr) => arr, scale = false) => {
@@ -455,13 +460,13 @@ const dealComStacking = (orginArr, filters = (arr) => arr, scale = false) => {
   const copyArr = getPureData(orginArr);
   // 先按y排序，再按x排序
   copyArr.sort((a, b) => {
-    const x = a[scale ? 's_y' : 'y'];
-    const y = b[scale ? 's_y' : 'y'];
+    const x = getFloat7(a[scale ? 's_y' : 'y']);
+    const y = getFloat7(b[scale ? 's_y' : 'y']);
     if (x !== y) {
       return x - y;
     } else {
-      const x1 = a[scale ? 's_x' : 'x'];
-      const y1 = b[scale ? 's_x' : 'x'];
+      const x1 = getFloat7(a[scale ? 's_x' : 'x']);
+      const y1 = getFloat7(b[scale ? 's_x' : 'x']);
       return x1 - y1;
     }
   });
@@ -1019,8 +1024,8 @@ const dragIng = (e) => {
           // 拖动元素顶部低于等于触发元素顶部，距离接触元素顶部距离小于等于15px时触发
           return (resultY < item.s_y) || (resultY >= item.s_y && (resultY - item.s_y) <= 15);
         }).sort((a, b) => {
-          const x = a.s_y;
-          const y = b.s_y;
+          const x = getFloat7(a.s_y);
+          const y = getFloat7(b.s_y);
           return x - y;
         });
         if (obstacleArrCopy3.length > 0) {
@@ -1233,8 +1238,8 @@ const resizeIng = (e) => {
   let obstacleArr = filterCrossArr(getPureData(comData.value.filter(item => item.drag !== true)), resizeObj, true);
   if (obstacleArr.length > 0) {
     obstacleArr.sort((a, b) => {
-      const x = a.s_y;
-      const y = b.s_y;
+      const x = getFloat7(a.s_y);
+      const y = getFloat7(b.s_y);
       return x - y;
     });
     for (let i = 0; i < obstacleArr.length; i++) {
@@ -1312,8 +1317,8 @@ const dealBg = (deal = true) => {
 const dealSpace = (deal = true) => {
   // 按y从小到大排列
   const copyData = getPureData(comData.value).sort((a, b) => {
-    const x = a.y;
-    const y = b.y;
+    const x = getFloat7(a.y);
+    const y = getFloat7(b.y);
     return x - y;
   });
   if (!deal) {
@@ -1507,8 +1512,8 @@ const dealMoreItemXY = (item, dataArr, maxWidth) => {
   // // 找到所有包含在当前y的组件
   // const xArr = dataArr.filter(item => (item.y + item.height) > yTop);
   // xArr.sort((a, b) => {
-  //   const x = a.x;
-  //   const y = b.x;
+  //   const x = getFloat7(a.x);
+  //   const y = getFloat7(b.x);
   //   return x - y;
   // });
   // // x在y的高度向右平铺
@@ -1907,8 +1912,8 @@ const dealGroupSize = (childData, parentObj) => {
   const result = deepCopy(parentObj);
   // 压缩纵向间距
   childList.sort((a, b) => {
-    const x = a.x;
-    const y = b.x;
+    const x = getFloat7(a.x);
+    const y = getFloat7(b.x);
     return x - y;
   });
   for (let i = 0; i < (childList.length - 1); i++) {
@@ -1930,8 +1935,8 @@ const dealGroupSize = (childData, parentObj) => {
   };
   // 压缩横向间距
   childList.sort((a, b) => {
-    const x = a.y;
-    const y = b.y;
+    const x = getFloat7(a.y);
+    const y = getFloat7(b.y);
     return x - y;
   });
   for (let i = 0; i < (childList.length - 1); i++) {
