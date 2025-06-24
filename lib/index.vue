@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-20 14:05:24
+ * @LastEditTime: 2025-06-24 10:25:52
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -363,6 +363,49 @@ const deepCopy = (obj) => {
     return obj;
   }
 };
+// 获取纯数据（外部数据可能存在很多业务数据，使用deepCopy时会影响性能）
+const getPureData = (obj) => {
+  let result = {};
+  if (obj instanceof Array) {
+    result = [];
+    obj.forEach(item => {
+      result.push(getPureData(item));
+    });
+  } else {
+    for (let keys in obj) {
+      if ([
+        'id',
+        'move',
+        'drag',
+        'itemMinWidth',
+        'width',
+        's_width',
+        'itemMinHeight',
+        'height',
+        's_height',
+        'x',
+        's_x',
+        'y',
+        's_y',
+        'isGroup',
+        'groupTit',
+        'groupData',
+        'inGroupId',
+        'groupW',
+        'groupH',
+        'groupX',
+        'groupY'
+      ].indexOf(keys) !== -1) {
+        if (keys === 'groupData') {
+          result[keys] = getPureData(obj[keys]);
+        } else {
+          result[keys] = obj[keys];
+        }
+      }
+    }
+  }
+  return result;
+};
 // JQ的closest()方法
 const closest = (ele, selector) => {
   let matchesSelector = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || ele.msMatchesSelector;
@@ -408,8 +451,8 @@ const filterCrossYArr = (arr, obj, scale = false) => {
 };
 // 递归解除组件叠加
 const dealComStacking = (orginArr, filters = (arr) => arr, scale = false) => {
-  const copyData = deepCopy(comData.value);
-  const copyArr = deepCopy(orginArr);
+  const copyData = getPureData(comData.value);
+  const copyArr = getPureData(orginArr);
   // 先按y排序，再按x排序
   copyArr.sort((a, b) => {
     const x = a[scale ? 's_y' : 'y'];
@@ -640,7 +683,7 @@ const auxiliaryLeftRight = ref(null);
 const auxiliaryRight = ref(null);
 // 处理辅助线显示位置（缩放尺寸）
 const dealAuxiliary = (obj) => {
-  const position = deepCopy(obj);
+  const position = getPureData(obj);
   if (!props.showAuxiliary || obj === null) {
     auxiliaryTop.value = null;
     auxiliaryTopBottom.value = null;
@@ -780,7 +823,7 @@ const dragStart = (e, index) => {
   if (trimModel.value) {
     dragDelayInt = null;
     dragSrc = e;
-    dragBg.value = deepCopy(comData.value[dragSrc]);
+    dragBg.value = getPureData(comData.value[dragSrc]);
     emit('dragStart', outDataInit(comData.value[dragSrc]));
     comData.value[dragSrc].move = true;
     dealAuxiliary(comData.value[dragSrc]);
@@ -792,7 +835,7 @@ const dragStart = (e, index) => {
         // 触发间隔太短时，会先触发定时器中的内容，再触发end事件
         dragDelayInt = null;
         dragSrc = index;
-        dragBg.value = deepCopy(comData.value[dragSrc]);
+        dragBg.value = getPureData(comData.value[dragSrc]);
         emit('dragStart', outDataInit(comData.value[dragSrc]));
         comData.value[dragSrc].move = true;
         dealAuxiliary(comData.value[dragSrc]);
@@ -852,7 +895,7 @@ const dragIng = (e) => {
   comData.value[dragSrc].s_x = resultX;
   comData.value[dragSrc].s_y = resultY;
   // 当前直接接触的组件
-  let obstacleArr = filterCrossArr(deepCopy(comData.value.filter(item => item.move !== true)), comData.value[dragSrc], true);
+  let obstacleArr = filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), comData.value[dragSrc], true);
   if (obstacleArr.length === 0) {
     dragBg.value.s_x = resultX;
     dragBg.value.s_y = resultY;
@@ -864,7 +907,7 @@ const dragIng = (e) => {
         const checkObj1 = deepCopy(dragBg.value);
         checkObj1.s_x = resultX;
         // 防止改变X后出现重叠（先左右出现交集再上就会出问题）
-        if (filterCrossArr(deepCopy(comData.value.filter(item => item.move !== true)), checkObj1, true).length === 0) {
+        if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj1, true).length === 0) {
           dragBg.value.s_x = resultX;
         }
         const obstacleArrCopy1 = obstacleArr.filter(item => {
@@ -875,7 +918,7 @@ const dragIng = (e) => {
         if (obstacleArrCopy1.length > 0) {
           // 新需求移除横向间距后不可能向上，肯定是下移
           // 上方阻碍
-          const topArr = filterCrossXArr(deepCopy(comData.value.filter(item => item.move !== true && (item.s_y + item.s_height) <= dragBg.value.s_y && obstacleArrCopy1.filter(one => one.id === item.id).length === 0)), dragBg.value, true);
+          const topArr = filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (item.s_y + item.s_height) <= dragBg.value.s_y && obstacleArrCopy1.filter(one => one.id === item.id).length === 0)), dragBg.value, true);
           // 需要下移的距离
           let needMove = comData.value[dragSrc].s_height;
           if (topArr.length === 0) {
@@ -899,7 +942,7 @@ const dragIng = (e) => {
               const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && one.s_y >= (item.s_y + item.s_height)), item, true);
               bottomArr.forEach(one => {
                 if (moveArr.filter(it => it.id === one.id).length === 0) {
-                  moveArr.push(deepCopy(one));
+                  moveArr.push(getPureData(one));
                 }
               });
             });
@@ -918,7 +961,7 @@ const dragIng = (e) => {
         const checkObj2 = deepCopy(dragBg.value);
         checkObj2.s_x = resultX;
         // 防止改变X后出现重叠（先左右出现交集再下就会出问题）
-        if (filterCrossArr(deepCopy(comData.value.filter(item => item.move !== true)), checkObj2, true).length === 0) {
+        if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj2, true).length === 0) {
           dragBg.value.s_x = resultX;
         }
         const obstacleArrCopy2 = obstacleArr.filter(item => {
@@ -930,13 +973,13 @@ const dragIng = (e) => {
           obstacleArrCopy2.forEach(item => {
             // 下移时可能出现多个上移的情况，相比之下上移就只会把拖动元素上移
             // 上方阻碍
-            const topArr = filterCrossXArr(deepCopy(comData.value.filter(one => one.move !== true && (one.s_y + one.s_height) <= item.s_y)), item, true);
+            const topArr = filterCrossXArr(getPureData(comData.value.filter(one => one.move !== true && (one.s_y + one.s_height) <= item.s_y)), item, true);
             item.s_y = topArr.length === 0 ? 0 : Math.max(...topArr.map(one => (one.s_y + one.s_height)));
             comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
           });
           // 上方阻碍
           // 需要把现在处于叠加（只在需要有交互的元素中找，而不是全部）的元素计算进去（当拖动元素高度远小于接触元素时，接触元素上移后，目前处于重叠状态而不是完全的上下分离）
-          const topArr = [...filterCrossArr(obstacleArrCopy2, comData.value[dragSrc], true), ...filterCrossXArr(deepCopy(comData.value.filter(item => item.move !== true && (item.s_y + item.s_height) <= (comData.value[dragSrc].s_y + comData.value[dragSrc].s_height))), comData.value[dragSrc], true)];
+          const topArr = [...filterCrossArr(obstacleArrCopy2, comData.value[dragSrc], true), ...filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (item.s_y + item.s_height) <= (comData.value[dragSrc].s_y + comData.value[dragSrc].s_height))), comData.value[dragSrc], true)];
           // 需要下移的距离
           let needMove = Math.max(...topArr.map(item => (item.s_y + item.s_height))) - dragBg.value.s_y;
           // 阴影最终Y轴位置
@@ -947,12 +990,12 @@ const dragIng = (e) => {
             // 需要下移的集合
             // 这里可能会出现平行的情况
             const moveArr = filterCrossXArr(comData.value.filter(item => item.move !== true && item.s_y >= dragBg.value.s_y), dragBg.value, true);
-            deepCopy(moveArr).forEach(item => {
+            getPureData(moveArr).forEach(item => {
               // 下方阻碍
               const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && one.s_y >= (item.s_y + item.s_height)), item, true);
               bottomArr.forEach(one => {
                 if (moveArr.filter(it => it.id === one.id).length === 0) {
-                  moveArr.push(deepCopy(one));
+                  moveArr.push(getPureData(one));
                 }
               });
             });
@@ -984,15 +1027,15 @@ const dragIng = (e) => {
           dragBg.value.s_x = resultX;
           dragBg.value.s_y = Math.min(...obstacleArrCopy3.map(item => item.s_y));
         } else {
-          let linObj = deepCopy(comData.value[dragSrc]);
+          let linObj = getPureData(comData.value[dragSrc]);
           linObj.s_y = Math.min(...obstacleArr.map(item => item.s_y)) - linObj.s_height;
           // 下面有位置时（夹在上下两个中间移动时）
           // 上面有位置时（夹在上下两个中间、底下的优先接触且上面有留空位置时）
-          if (dragBg.value.s_y >= Math.min(...obstacleArr.map(item => (item.s_y + item.s_height))) || (linObj.s_y >= 0 && filterCrossArr(deepCopy(comData.value.filter(item => item.move !== true)), linObj, true).length === 0)) {
+          if (dragBg.value.s_y >= Math.min(...obstacleArr.map(item => (item.s_y + item.s_height))) || (linObj.s_y >= 0 && filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), linObj, true).length === 0)) {
             const checkObj3 = deepCopy(dragBg.value);
             checkObj3.s_x = resultX;
             // 防止改变X后出现重叠（先左右出现交集再下就会出问题）
-            if (filterCrossArr(deepCopy(comData.value.filter(item => item.move !== true)), checkObj3, true).length === 0) {
+            if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj3, true).length === 0) {
               dragBg.value.s_x = resultX;
             }
           }
@@ -1007,7 +1050,7 @@ const dragIng = (e) => {
           const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && one.s_y >= (item.s_y + item.s_height)), item, true);
           bottomArr.forEach(one => {
             if (moveArr.filter(it => it.id === one.id).length === 0) {
-              moveArr.push(deepCopy(one));
+              moveArr.push(getPureData(one));
             }
           });
           moveArr.forEach(one => {
@@ -1029,7 +1072,8 @@ const dragIng = (e) => {
   dealItemScaleReverseXY(dragBg.value);
   dealBg(false);
   dealAuxiliary(comData.value[dragSrc]);
-  emit('dragIng', outDataInit(comData.value[dragSrc]));
+  // 优化性能，不抛出当前对象
+  emit('dragIng');
   dragBg.value.s_y = comData.value[dragSrc].syCopy;
   delete comData.value[dragSrc].syCopy;
 };
@@ -1186,7 +1230,7 @@ const resizeIng = (e) => {
   // 重新计算原始宽高信息
   dealItemScaleReverseWH(resizeObj);
   // 当前直接接触的组件
-  let obstacleArr = filterCrossArr(deepCopy(comData.value.filter(item => item.drag !== true)), resizeObj, true);
+  let obstacleArr = filterCrossArr(getPureData(comData.value.filter(item => item.drag !== true)), resizeObj, true);
   if (obstacleArr.length > 0) {
     obstacleArr.sort((a, b) => {
       const x = a.s_y;
@@ -1208,7 +1252,8 @@ const resizeIng = (e) => {
   });
   dealBg(false);
   dealAuxiliary(resizeObj);
-  emit('resizeIng', outDataInit(resizeObj));
+  // 优化性能，不抛出当前对象
+  emit('resizeIng');
 };
 // 结束收缩（缩放尺寸）
 const resizeEnd = (e) => {
@@ -1266,7 +1311,7 @@ const dealBg = (deal = true) => {
 // 修正横向间距（原始尺寸）
 const dealSpace = (deal = true) => {
   // 按y从小到大排列
-  const copyData = deepCopy(comData.value).sort((a, b) => {
+  const copyData = getPureData(comData.value).sort((a, b) => {
     const x = a.y;
     const y = b.y;
     return x - y;
@@ -1455,6 +1500,7 @@ const dealMoreItemXY = (item, dataArr, maxWidth) => {
       } catch (error) { }
     }
   }
+  // 原计算逻辑（在最后一行平行位置添加）
   // const yTopArr = dataArr.map(item => item.y);
   // // 与最高的y持平
   // const yTop = Math.max(...yTopArr);
@@ -1873,7 +1919,7 @@ const dealGroupSize = (childData, parentObj) => {
       };
     }
     if (childList[i + 1].x > (childList[i].x + childList[i].width)) {
-      const linLeft = deepCopy(childList.slice(0, i + 1));
+      const linLeft = getPureData(childList.slice(0, i + 1));
       if (childList[i + 1].x > Math.max(...linLeft.map(item => (item.x + item.width)))) {
         const space = childList[i + 1].x - Math.max(...linLeft.map(item => (item.x + item.width)));
         for (let x = (i + 1); x < childList.length; x++) {
@@ -1896,7 +1942,7 @@ const dealGroupSize = (childData, parentObj) => {
       }
     }
     if (childList[i + 1].y > (childList[i].y + childList[i].height)) {
-      const linTop = deepCopy(childList.slice(0, i + 1));
+      const linTop = getPureData(childList.slice(0, i + 1));
       if (childList[i + 1].y > Math.max(...linTop.map(item => (item.y + item.height)))) {
         const space = childList[i + 1].y - Math.max(...linTop.map(item => (item.y + item.height)));
         for (let x = (i + 1); x < childList.length; x++) {
