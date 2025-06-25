@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-24 17:19:10
+ * @LastEditTime: 2025-06-25 15:28:04
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -448,11 +448,11 @@ const filterCrossArr = (arr, obj, scale = false) => {
 };
 // 过滤数组中与组件项X方向有交集的
 const filterCrossXArr = (arr, obj, scale = false) => {
-  return arr.filter(item => (getFloat7(item[scale ? 's_x' : 'x']) <= getFloat7(obj[scale ? 's_x' : 'x']) && (getFloat7(item[scale ? 's_x' : 'x']) + getFloat7(item[scale ? 's_width' : 'width'])) > getFloat7(obj[scale ? 's_x' : 'x'])) || (getFloat7(item[scale ? 's_x' : 'x']) > getFloat7(obj[scale ? 's_x' : 'x']) && getFloat7(item[scale ? 's_x' : 'x']) < (getFloat7(obj[scale ? 's_x' : 'x']) + getFloat7(obj[scale ? 's_width' : 'width']))));
+  return arr.filter(item => (getFloat7(item[scale ? 's_x' : 'x']) <= getFloat7(obj[scale ? 's_x' : 'x']) && (getFloat7(item[scale ? 's_x' : 'x'] + item[scale ? 's_width' : 'width'])) > getFloat7(obj[scale ? 's_x' : 'x'])) || (getFloat7(item[scale ? 's_x' : 'x']) > getFloat7(obj[scale ? 's_x' : 'x']) && getFloat7(item[scale ? 's_x' : 'x']) < (getFloat7(obj[scale ? 's_x' : 'x'] + obj[scale ? 's_width' : 'width']))));
 };
 // 过滤数组中与组件项Y方向有交集的
 const filterCrossYArr = (arr, obj, scale = false) => {
-  return arr.filter(item => (getFloat7(item[scale ? 's_y' : 'y']) <= getFloat7(obj[scale ? 's_y' : 'y']) && (getFloat7(item[scale ? 's_y' : 'y']) + getFloat7(item[scale ? 's_height' : 'height'])) > getFloat7(obj[scale ? 's_y' : 'y'])) || (getFloat7(item[scale ? 's_y' : 'y']) > getFloat7(obj[scale ? 's_y' : 'y']) && getFloat7(item[scale ? 's_y' : 'y']) < (getFloat7(obj[scale ? 's_y' : 'y']) + getFloat7(obj[scale ? 's_height' : 'height']))));
+  return arr.filter(item => (getFloat7(item[scale ? 's_y' : 'y']) <= getFloat7(obj[scale ? 's_y' : 'y']) && (getFloat7(item[scale ? 's_y' : 'y'] + item[scale ? 's_height' : 'height'])) > getFloat7(obj[scale ? 's_y' : 'y'])) || (getFloat7(item[scale ? 's_y' : 'y']) > getFloat7(obj[scale ? 's_y' : 'y']) && getFloat7(item[scale ? 's_y' : 'y']) < (getFloat7(obj[scale ? 's_y' : 'y'] + obj[scale ? 's_height' : 'height']))));
 };
 // 递归解除组件叠加
 const dealComStacking = (orginArr, filters = (arr) => arr, scale = false) => {
@@ -751,6 +751,15 @@ const dealAuxiliary = (obj) => {
     }
   }
 };
+// 键盘操作终止当前拖拽/收缩
+const closeDoing = () => {
+  window.removeEventListener('keydown', closeDoing);
+  if (dragSrc !== null) {
+    dragEnd();
+  } else if (resizeObj !== null) {
+    resizeEnd();
+  }
+};
 // 微调模式
 const trimModel = ref(false);
 // 开启微调模式
@@ -847,6 +856,7 @@ const dragStart = (e, index) => {
         differX = e.clientX - parentNode.offsetLeft;
         differY = e.clientY - parentNode.offsetTop;
         window.addEventListener('mousemove', dragIng);
+        window.addEventListener('keydown', closeDoing);
       }, props.dragDelayTime);
       window.addEventListener('mouseup', dragEnd);
     }
@@ -1101,6 +1111,7 @@ const dragEnd = () => {
     dealBg();
     emit('dragEnd', outDataInit(comData.value[dragSrc]));
     dragSrc = null;
+    closeDoing();
     // 修复偶现的拖拽后重叠问题
     dragResetInt = setTimeout(() => {
       dealBg();
@@ -1156,6 +1167,7 @@ const resizeStart = (e, obj, direction) => {
   dealAuxiliary(resizeObj);
   window.addEventListener('mousemove', resizeIng);
   window.addEventListener('mouseup', resizeEnd);
+  window.addEventListener('keydown', closeDoing);
 };
 // 收缩中（缩放尺寸）
 const resizeIng = (e) => {
@@ -1270,6 +1282,7 @@ const resizeEnd = (e) => {
   dealBg();
   emit('resizeEnd', outDataInit(resizeObj));
   resizeObj = null;
+  closeDoing();
 };
 // 计算收缩最大边界（缩放尺寸）
 const dealResizeMax = (direction) => {
@@ -2215,6 +2228,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('click', closeSettingPop);
   window.removeEventListener('click', closeTrimModel);
   window.removeEventListener('keydown', trimMove);
+  window.removeEventListener('keydown', closeDoing);
 });
 defineExpose({ init, addItem, copyItem, deleteItem, updateItem, toggleLockItem, hideGroupSet, openGroup, closeGroup, changeGroupBorder, addGroup, removeGroupItem, removeGroup, changeGroupTit, openTrimModel, closeTrimModel, resetData, getData });
 </script>
