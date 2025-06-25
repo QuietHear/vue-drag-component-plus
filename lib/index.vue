@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2025-06-24 14:46:43
+ * @LastEditors: aFei
+ * @LastEditTime: 2025-06-24 17:19:10
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -923,7 +923,7 @@ const dragIng = (e) => {
         if (obstacleArrCopy1.length > 0) {
           // 新需求移除横向间距后不可能向上，肯定是下移
           // 上方阻碍
-          const topArr = filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (item.s_y + item.s_height) <= dragBg.value.s_y && obstacleArrCopy1.filter(one => one.id === item.id).length === 0)), dragBg.value, true);
+          const topArr = filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_y + item.s_height) <= getFloat7(dragBg.value.s_y) && obstacleArrCopy1.filter(one => one.id === item.id).length === 0)), dragBg.value, true);
           // 需要下移的距离
           let needMove = comData.value[dragSrc].s_height;
           if (topArr.length === 0) {
@@ -944,7 +944,7 @@ const dragIng = (e) => {
             const moveArr = deepCopy(obstacleArrCopy1);
             obstacleArrCopy1.forEach(item => {
               // 下方阻碍
-              const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && one.s_y >= (item.s_y + item.s_height)), item, true);
+              const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
               bottomArr.forEach(one => {
                 if (moveArr.filter(it => it.id === one.id).length === 0) {
                   moveArr.push(getPureData(one));
@@ -978,13 +978,13 @@ const dragIng = (e) => {
           obstacleArrCopy2.forEach(item => {
             // 下移时可能出现多个上移的情况，相比之下上移就只会把拖动元素上移
             // 上方阻碍
-            const topArr = filterCrossXArr(getPureData(comData.value.filter(one => one.move !== true && (one.s_y + one.s_height) <= item.s_y)), item, true);
+            const topArr = filterCrossXArr(getPureData(comData.value.filter(one => one.move !== true && getFloat7(one.s_y + one.s_height) <= getFloat7(item.s_y))), item, true);
             item.s_y = topArr.length === 0 ? 0 : Math.max(...topArr.map(one => (one.s_y + one.s_height)));
             comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
           });
           // 上方阻碍
           // 需要把现在处于叠加（只在需要有交互的元素中找，而不是全部）的元素计算进去（当拖动元素高度远小于接触元素时，接触元素上移后，目前处于重叠状态而不是完全的上下分离）
-          const topArr = [...filterCrossArr(obstacleArrCopy2, comData.value[dragSrc], true), ...filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (item.s_y + item.s_height) <= (comData.value[dragSrc].s_y + comData.value[dragSrc].s_height))), comData.value[dragSrc], true)];
+          const topArr = [...filterCrossArr(obstacleArrCopy2, comData.value[dragSrc], true), ...filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_y + item.s_height) <= getFloat7(comData.value[dragSrc].s_y + comData.value[dragSrc].s_height))), comData.value[dragSrc], true)];
           // 需要下移的距离
           let needMove = Math.max(...topArr.map(item => (item.s_y + item.s_height))) - dragBg.value.s_y;
           // 阴影最终Y轴位置
@@ -994,10 +994,10 @@ const dragIng = (e) => {
           if (needMove > 0) {
             // 需要下移的集合
             // 这里可能会出现平行的情况
-            const moveArr = filterCrossXArr(comData.value.filter(item => item.move !== true && item.s_y >= dragBg.value.s_y), dragBg.value, true);
+            const moveArr = filterCrossXArr(comData.value.filter(item => item.move !== true && getFloat7(item.s_y) >= getFloat7(dragBg.value.s_y)), dragBg.value, true);
             getPureData(moveArr).forEach(item => {
               // 下方阻碍
-              const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && one.s_y >= (item.s_y + item.s_height)), item, true);
+              const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
               bottomArr.forEach(one => {
                 if (moveArr.filter(it => it.id === one.id).length === 0) {
                   moveArr.push(getPureData(one));
@@ -1052,7 +1052,7 @@ const dragIng = (e) => {
           // 需要下移的集合
           const moveArr = deepCopy([item]);
           // 下方阻碍
-          const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && one.s_y >= (item.s_y + item.s_height)), item, true);
+          const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
           bottomArr.forEach(one => {
             if (moveArr.filter(it => it.id === one.id).length === 0) {
               moveArr.push(getPureData(one));
@@ -1324,7 +1324,7 @@ const dealSpace = (deal = true) => {
   if (!deal) {
     // 单独处理缩放数据，占满缩放对象上方的空白
     if (resizeObj !== null) {
-      const topArr = filterCrossXArr(deepCopy(copyData.filter(item => item.drag !== true && (item.s_y + item.s_height) < resizeObj.s_y)), resizeObj);
+      const topArr = filterCrossXArr(deepCopy(copyData.filter(item => item.drag !== true && getFloat7(item.s_y + item.s_height) < getFloat7(resizeObj.s_y))), resizeObj);
       const obj = copyData.filter(item => item.drag === true)[0];
       if (obj) {
         if (topArr.length > 0) {
