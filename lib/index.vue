@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-27 13:17:18
+ * @LastEditTime: 2025-06-27 13:31:52
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -234,6 +234,11 @@ const props = defineProps({
     default: () => {
       return [];
     }
+  },
+  // 手机拖动模式（在窄屏可以开启，将简化上下拖动交换的判断）
+  mobileDragModel: {
+    type: Boolean,
+    default: false
   },
   // 预览模式
   seeModel: {
@@ -927,9 +932,14 @@ const dragIng = (e) => {
           doItemBg.value.s_x = resultX;
         }
         const obstacleArrCopy1 = obstacleArr.filter(item => {
-          // 拖动元素高度大于等于接触元素时，拖动元素顶部距离接触元素顶部小于等于15px时触发
-          // 拖动元素高度小于接触元素时，拖动元素顶部距离接触元素顶部小于等于自身（拖动元素）一半高度时触发
-          return (comData.value[dragSrc].s_height >= item.s_height && (resultY - item.s_y) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((resultY - item.s_y) <= comData.value[dragSrc].s_height / 2));
+          if (props.mobileDragModel) {
+            // 拖动元素顶部距离接触元素底部距离大于横向间距时触发
+            return getFloat7(item.s_height + item.s_y - resultY) > 2 * nowYSpace.value;
+          } else {
+            // 拖动元素高度大于等于接触元素时，拖动元素顶部距离接触元素顶部小于等于15px时触发
+            // 拖动元素高度小于接触元素时，拖动元素顶部距离接触元素顶部小于等于自身（拖动元素）一半高度时触发
+            return (comData.value[dragSrc].s_height >= item.s_height && (resultY - item.s_y) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((resultY - item.s_y) <= comData.value[dragSrc].s_height / 2));
+          }
         });
         if (obstacleArrCopy1.length > 0) {
           // 新需求移除横向间距后不可能向上，肯定是下移
@@ -981,9 +991,14 @@ const dragIng = (e) => {
           doItemBg.value.s_x = resultX;
         }
         const obstacleArrCopy2 = obstacleArr.filter(item => {
-          // 拖动元素高度大于等于接触元素时，拖动元素底部距离接触元素底部小于等于15px时触发
-          // 拖动元素高度小于接触元素时，拖动元素底部距离接触元素底部小于等于接触元素一半高度时触发
-          return (comData.value[dragSrc].s_height >= item.s_height && (item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= item.s_height / 2));
+          if (props.mobileDragModel) {
+            // 拖动元素底部距离接触元素顶部距离大于横向间距时触发
+            return getFloat7(resultY + comData.value[dragSrc].s_height - item.s_y) > 2 * nowYSpace.value;
+          } else {
+            // 拖动元素高度大于等于接触元素时，拖动元素底部距离接触元素底部小于等于15px时触发
+            // 拖动元素高度小于接触元素时，拖动元素底部距离接触元素底部小于等于接触元素一半高度时触发
+            return (comData.value[dragSrc].s_height >= item.s_height && (item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= item.s_height / 2));
+          }
         });
         if (obstacleArrCopy2.length > 0) {
           obstacleArrCopy2.forEach(item => {

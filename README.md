@@ -110,6 +110,8 @@
 
 * `excludeResizeKeys`：排除收缩方向-->Array;非必传;默认*[]*
 
+* `mobileDragModel`：手机拖动模式，在窄屏可以开启，将简化上下拖动交换的判断-->Boolean;非必传;默认*false*
+
 * `seeModel`：预览模式-->Boolean;非必传;默认*false*
 
 * `seeModelMinBg`：预览模式底部最小留白，校验变量不能小于0-->Number;非必传;默认*50*
@@ -394,6 +396,7 @@
 * `item`：替换默认展示的内容区（不包含组合壳子）
 >
 	// 如果插槽需要点击事件阻止默认的拖动事件（这两个事件是冲突的），给需要点击的地方加 @mousedown.prevent.stop="null" (或@mousedown.stop="null"，根据实际情况调整)即可
+	// 如果阻止了拖动事件，建议将鼠标样式修改区分一下：cursor: default;
 	// 此处包含在组合内的设置菜单，可以用data.inGroupId判断当前是独立组件还是在组合内
 	data:返回当前组件项的详细数据（不要随意更改原数据，要编辑先复制一个出来操作）
 >
