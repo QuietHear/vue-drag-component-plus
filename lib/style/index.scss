@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-26 14:45:37
+ * @LastEditTime: 2025-06-27 13:48:01
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -92,11 +92,9 @@
     &.is-drag {
       z-index       : 7;
       transition    : none;
-      // 加这个可以屏蔽hover带来的层级问题
-      pointer-events: none;
     }
 
-    &:hover {
+    &:not(.is-move):not(.is-drag):hover {
       z-index: 3;
     }
 
