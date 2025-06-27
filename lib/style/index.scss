@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-20 14:20:37
+ * @LastEditTime: 2025-06-26 14:45:37
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -87,12 +87,13 @@
       transition: none;
     }
 
-
     // 层级必须要高，不然容易让其他元素影响到交互
     &.is-move,
     &.is-drag {
-      z-index   : 6;
-      transition: none;
+      z-index       : 7;
+      transition    : none;
+      // 加这个可以屏蔽hover带来的层级问题
+      pointer-events: none;
     }
 
     &:hover {
@@ -118,7 +119,8 @@
         cursor: grab;
       }
 
-      &:hover {
+      &:hover,
+      &.always-hover {
         &::after {
           content      : '';
           position     : absolute;
@@ -465,8 +467,9 @@
       transition: none;
     }
 
-    &.is-move {
-      z-index: 2;
+    &.is-move,
+    &.is-drag {
+      z-index: 6;
     }
   }
 
@@ -474,6 +477,7 @@
     background   : var(--move-bg);
     position     : absolute;
     border-radius: var(--com-item-border-radius);
+    z-index      : 5;
   }
 
   .auxiliary-line {
