@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-27 13:31:52
+ * @LastEditTime: 2025-07-01 10:50:02
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -1216,28 +1216,32 @@ const resizeIng = (e) => {
     let obstacleArrCopy = [];
     // 找接触距离足够的元素
     if (resizeDirection.indexOf('top') !== -1) {
-      const lin = obstacleArr.filter(item => getFloat7(item.s_y + item.s_height - doItemBg.value.s_y) > nowXSpace.value * 2);
+      // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
+      const lin = filterCrossXArr(obstacleArr, resizeObj, true).filter(item => getFloat7(item.s_y + item.s_height - doItemBg.value.s_y) > nowXSpace.value * 2);
       if (lin.length > 0) {
         resizeObj.s_height = doItemBg.value.s_height;
         resizeObj.s_y = doItemBg.value.s_y;
         obstacleArrCopy = [...obstacleArrCopy, ...lin];
       }
     } else if (resizeDirection.indexOf('bottom') !== -1) {
-      const lin = obstacleArr.filter(item => getFloat7(doItemBg.value.s_y + doItemBg.value.s_height - item.s_y) > nowYSpace.value * 2);
+      // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
+      const lin = filterCrossXArr(obstacleArr, resizeObj, true).filter(item => getFloat7(doItemBg.value.s_y + doItemBg.value.s_height - item.s_y) > nowYSpace.value * 2);
       if (lin.length > 0) {
         resizeObj.s_height = doItemBg.value.s_height;
         obstacleArrCopy = [...obstacleArrCopy, ...lin];
       }
     }
     if (resizeDirection.indexOf('left') !== -1) {
-      const lin = obstacleArr.filter(item => getFloat7(item.s_x + item.s_width - doItemBg.value.s_x) > nowXSpace.value * 2);
+      // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
+      const lin = filterCrossYArr(obstacleArr, resizeObj, true).filter(item => getFloat7(item.s_x + item.s_width - doItemBg.value.s_x) > nowXSpace.value * 2);
       if (lin.length > 0) {
         resizeObj.s_width = doItemBg.value.s_width;
         resizeObj.s_x = doItemBg.value.s_x;
         obstacleArrCopy = [...obstacleArrCopy, ...lin];
       }
     } else if (resizeDirection.indexOf('right') !== -1) {
-      const lin = obstacleArr.filter(item => getFloat7(doItemBg.value.s_x + doItemBg.value.s_width - item.s_x) > nowXSpace.value * 2);
+      // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
+      const lin = filterCrossYArr(obstacleArr, resizeObj, true).filter(item => getFloat7(doItemBg.value.s_x + doItemBg.value.s_width - item.s_x) > nowXSpace.value * 2);
       if (lin.length > 0) {
         resizeObj.s_width = doItemBg.value.s_width;
         obstacleArrCopy = [...obstacleArrCopy, ...lin];
