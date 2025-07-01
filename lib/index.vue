@@ -4,14 +4,14 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-01 10:50:02
+ * @LastEditTime: 2025-07-01 17:15:21
 */
 <template>
   <div class="vue-drag-component-plus"
     :style="{ '--item-scale': nowScale, '--css-scale': seeModel ? nowCssScale : 1, '--com-x-space': nowXSpace + 'px', '--com-y-space': nowYSpace + 'px' }"
     ref="pageRef">
     <!-- 滚动区 -->
-    <div class="content-box">
+    <div class="content-box" ref="contentBoxRef">
       <!-- 组件项 -->
       <div :class="[
         'com-item',
@@ -21,6 +21,7 @@
         item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '',
         // 初始化标记
         initTime + 'p',
+        // 查找时唯一标识
         'i' + item.id + 'd'
       ]" :style="{
         width: item.s_width + 'px',
@@ -355,6 +356,16 @@ const props = defineProps({
     validator(value, props) {
       return value >= 0 && value < 1000;
     }
+  },
+  // 拖动屏幕上下滚动触发高度
+  moveDistance: {
+    type: [Number, String],
+    default: '50px'
+  },
+  // 滚动条每次移动距离
+  scrollDistance: {
+    type: [Number, String],
+    default: '20px'
   }
 });
 // 深拷贝
@@ -795,22 +806,27 @@ const trimMove = (e) => {
     case 13:
     case 27:
     case 32:
+      e.preventDefault();
       closeTrimModel();
       break;
     // 向左
     case 37:
+      e.preventDefault();
       dragIng('left');
       break;
     // 向上
     case 38:
+      e.preventDefault();
       dragIng('top');
       break;
     // 向右
     case 39:
+      e.preventDefault();
       dragIng('right');
       break;
     // 向下
     case 40:
+      e.preventDefault();
       dragIng('bottom');
       break;
   }
@@ -827,19 +843,49 @@ const closeTrimModel = () => {
 const doItemBg = ref({});
 // 当前拖拽目标
 let dragSrc = null;
-// 横向初始差值
+// 当前接触点距离父组件左边初始差值
 let differX = null;
-// 纵向初始差值
+// 当前接触点距离父组件右边初始差值
 let differY = null;
 // 自动修复定时器
 let dragResetInt = null;
 // 启动延迟定时器
 let dragDelayInt = null;
+// 滚动区
+const contentBoxRef = ref(null);
+// 滚动区左距离屏幕左距离
+let scrollBoxLeft = null;
+// 滚动区顶距离屏幕顶距离
+let scrollBoxTop = null;
+// 滚动区底距离屏幕顶距离
+let scrollBoxBottom = null;
+// 滚动区高度
+let scrollBoxHeight = null;
+// 最终拖动屏幕上下滚动触发高度
+let nowMoveDistance = null;
+// 最终滚动条每次移动距离
+let nowScrollDistance = null;
 // 开始拖拽（缩放尺寸）
 const dragStart = (e, index) => {
   clearTimeout(dragResetInt);
   clearTimeout(dragDelayInt);
   closeSettingPop();
+  const boxRect = contentBoxRef.value.getBoundingClientRect();
+  scrollBoxLeft = boxRect.left;
+  scrollBoxTop = boxRect.top;
+  scrollBoxBottom = boxRect.bottom;
+  scrollBoxHeight = boxRect.height;
+  // 计算最终的监听和移动值
+  if (typeof props.moveDistance === 'string') {
+    nowMoveDistance = props.moveDistance.indexOf('px') !== -1 ? parseFloat(props.moveDistance) : 50;
+  } else {
+    nowMoveDistance = props.moveDistance * scrollBoxHeight;
+  }
+  if (typeof props.scrollDistance === 'string') {
+    nowScrollDistance = props.scrollDistance.indexOf('px') !== -1 ? parseFloat(props.scrollDistance) : 20;
+  } else {
+    nowScrollDistance = props.scrollDistance * scrollBoxHeight;
+  }
   if (trimModel.value) {
     dragDelayInt = null;
     dragSrc = e;
@@ -847,6 +893,8 @@ const dragStart = (e, index) => {
     emit('dragStart', outDataInit(comData.value[dragSrc]));
     comData.value[dragSrc].move = true;
     dealAuxiliary(comData.value[dragSrc]);
+    differX = 0;
+    differY = 0;
   } else {
     const parentNode = closest(e.target, '.com-item');
     // 防止内部组件事件冒泡时触发异常
@@ -859,8 +907,9 @@ const dragStart = (e, index) => {
         emit('dragStart', outDataInit(comData.value[dragSrc]));
         comData.value[dragSrc].move = true;
         dealAuxiliary(comData.value[dragSrc]);
-        differX = e.clientX - parentNode.offsetLeft;
-        differY = e.clientY - parentNode.offsetTop;
+        const parentRect = parentNode.getBoundingClientRect();
+        differX = e.clientX - parentRect.left;
+        differY = e.clientY - parentRect.top;
         window.addEventListener('mousemove', dragIng);
         window.addEventListener('keydown', closeDoing);
       }, props.dragDelayTime);
@@ -876,9 +925,8 @@ const dragIng = (e) => {
   let x = null;
   let y = null;
   if (trimModel.value) {
-    const parentNode = findByClass(pageRef.value, 'i' + comData.value[dragSrc].id + 'd')[0];
-    x = parentNode.offsetLeft;
-    y = parentNode.offsetTop;
+    x = comData.value[dragSrc].s_x;
+    y = comData.value[dragSrc].s_y;
     switch (e) {
       case 'top':
         y -= 1;
@@ -894,8 +942,8 @@ const dragIng = (e) => {
         break;
     }
   } else {
-    x = e.clientX - differX;
-    y = e.clientY - differY;
+    x = e.clientX - scrollBoxLeft - differX;
+    y = e.clientY - scrollBoxTop + contentBoxRef.value.scrollTop - differY;
   }
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
   const resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
@@ -915,6 +963,20 @@ const dragIng = (e) => {
   }
   comData.value[dragSrc].s_x = resultX;
   comData.value[dragSrc].s_y = resultY;
+  // 屏幕到临界值进行滚动
+  // 手动控制元素位置的clientY值
+  let trimClientY = null;
+  if (trimModel.value) {
+    const parentNode = findByClass(pageRef.value, 'i' + comData.value[dragSrc].id + 'd')[0];
+    const parentRect = parentNode.getBoundingClientRect();
+    trimClientY = parentRect.top;
+  }
+  if ((trimClientY || e.clientY) - scrollBoxTop <= nowMoveDistance && direction === 'top') {
+    contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop - nowScrollDistance;
+  }
+  if (scrollBoxBottom - (trimClientY || e.clientY) <= nowMoveDistance && direction === 'bottom') {
+    contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop + nowScrollDistance;
+  }
   // 当前直接接触的组件
   let obstacleArr = filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), comData.value[dragSrc], true);
   if (obstacleArr.length === 0) {
