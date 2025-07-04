@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-01 16:43:05
+ * @LastEditTime: 2025-07-04 11:19:06
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -346,7 +346,8 @@
         border-radius: 2px 2px 2px 2px;
         cursor       : default;
         padding      : 8px 0;
-        z-index      : 10;
+        // 组合内组件的可能会跟组合的设置按钮重叠，层级需要高
+        z-index      : 11;
 
         &.special {
           width: var(--setting-pop-special-width);
