@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-01 17:15:21
+ * @LastEditTime: 2025-07-07 16:52:49
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -865,10 +865,21 @@ let scrollBoxHeight = null;
 let nowMoveDistance = null;
 // 最终滚动条每次移动距离
 let nowScrollDistance = null;
+// 自动滚动定时器
+let autoScrollInt = null;
+// 自动滚动的方向
+let autoScrollDirection = null;
+// 停止自动滚动定时器
+const clearScrollInt = () => {
+  clearInterval(autoScrollInt);
+  autoScrollInt = null;
+  autoScrollDirection = null;
+};
 // 开始拖拽（缩放尺寸）
 const dragStart = (e, index) => {
   clearTimeout(dragResetInt);
   clearTimeout(dragDelayInt);
+  clearScrollInt();
   closeSettingPop();
   const boxRect = contentBoxRef.value.getBoundingClientRect();
   scrollBoxLeft = boxRect.left;
@@ -946,7 +957,7 @@ const dragIng = (e) => {
     y = e.clientY - scrollBoxTop + contentBoxRef.value.scrollTop - differY;
   }
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
-  const resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
+  let resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
   const moveX = resultX - comData.value[dragSrc].s_x;
   const moveY = resultY - comData.value[dragSrc].s_y;
   // 移动方向
@@ -963,212 +974,260 @@ const dragIng = (e) => {
   }
   comData.value[dragSrc].s_x = resultX;
   comData.value[dragSrc].s_y = resultY;
+  // 碰撞处理方法
+  const dealCollision = () => {
+    // 当前直接接触的组件
+    let obstacleArr = filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), comData.value[dragSrc], true);
+    if (obstacleArr.length === 0) {
+      doItemBg.value.s_x = resultX;
+      doItemBg.value.s_y = resultY;
+    }
+    // 与其他组件有重叠 
+    else {
+      switch (direction) {
+        case 'top':
+          const checkObj1 = deepCopy(doItemBg.value);
+          checkObj1.s_x = resultX;
+          // 防止改变X后出现重叠（先左右出现交集再上就会出问题）
+          if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj1, true).length === 0) {
+            doItemBg.value.s_x = resultX;
+          }
+          const obstacleArrCopy1 = obstacleArr.filter(item => {
+            if (props.mobileDragModel) {
+              // 拖动元素顶部距离接触元素底部距离大于横向间距时触发
+              return getFloat7(item.s_height + item.s_y - resultY) > 2 * nowYSpace.value;
+            } else {
+              // 拖动元素高度大于等于接触元素时，拖动元素顶部距离接触元素顶部小于等于15px时触发
+              // 拖动元素高度小于接触元素时，拖动元素顶部距离接触元素顶部小于等于自身（拖动元素）一半高度时触发
+              return (comData.value[dragSrc].s_height >= item.s_height && (resultY - item.s_y) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((resultY - item.s_y) <= comData.value[dragSrc].s_height / 2));
+            }
+          });
+          if (obstacleArrCopy1.length > 0) {
+            // 新需求移除横向间距后不可能向上，肯定是下移
+            // 上方阻碍
+            const topArr = filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_y + item.s_height) <= getFloat7(doItemBg.value.s_y) && obstacleArrCopy1.filter(one => one.id === item.id).length === 0)), doItemBg.value, true);
+            // 需要下移的距离
+            let needMove = comData.value[dragSrc].s_height;
+            if (topArr.length === 0) {
+              needMove -= Math.min(...obstacleArrCopy1.map(item => item.s_y));
+            }
+            // 全部下移
+            if (obstacleArr.length === obstacleArrCopy1.length) {
+              // 上移时碰到一个长横元素，并且其上方有两个有间距的元素，间距宽度正好能放下当前拖动元素
+              doItemBg.value.s_y = topArr.length === 0 ? 0 : Math.max(...topArr.map(item => (item.s_y + item.s_height)));
+            }
+            // 相交多个但只移动部分
+            else {
+              doItemBg.value.s_y = Math.max(...topArr.map(item => (item.s_y + item.s_height)));
+            }
+            doItemBg.value.s_x = resultX;
+            if (needMove > 0) {
+              // 需要下移的集合
+              const moveArr = deepCopy(obstacleArrCopy1);
+              obstacleArrCopy1.forEach(item => {
+                // 下方阻碍
+                const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
+                bottomArr.forEach(one => {
+                  if (moveArr.filter(it => it.id === one.id).length === 0) {
+                    moveArr.push(getPureData(one));
+                  }
+                });
+              });
+              moveArr.forEach(item => {
+                // 这时需要把要移动的拉平到相同水平再向下移动（如果在前面直接更改坐标，在获取bottomArr就可能已经出现了重叠的情况）
+                if (obstacleArr.length !== obstacleArrCopy1.length && obstacleArrCopy1.filter(one => one.id === item.id).length === 1) {
+                  item.s_y = doItemBg.value.s_y;
+                }
+                item.s_y += needMove;
+                comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
+              });
+            }
+          }
+          break;
+        case 'bottom':
+          const checkObj2 = deepCopy(doItemBg.value);
+          checkObj2.s_x = resultX;
+          // 防止改变X后出现重叠（先左右出现交集再下就会出问题）
+          if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj2, true).length === 0) {
+            doItemBg.value.s_x = resultX;
+          }
+          const obstacleArrCopy2 = obstacleArr.filter(item => {
+            if (props.mobileDragModel) {
+              // 拖动元素底部距离接触元素顶部距离大于横向间距时触发
+              return getFloat7(resultY + comData.value[dragSrc].s_height - item.s_y) > 2 * nowYSpace.value;
+            } else {
+              // 拖动元素高度大于等于接触元素时，拖动元素底部距离接触元素底部小于等于15px时触发
+              // 拖动元素高度小于接触元素时，拖动元素底部距离接触元素底部小于等于接触元素一半高度时触发
+              return (comData.value[dragSrc].s_height >= item.s_height && (item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= item.s_height / 2));
+            }
+          });
+          if (obstacleArrCopy2.length > 0) {
+            obstacleArrCopy2.forEach(item => {
+              // 下移时可能出现多个上移的情况，相比之下上移就只会把拖动元素上移
+              // 上方阻碍
+              const topArr = filterCrossXArr(getPureData(comData.value.filter(one => one.move !== true && getFloat7(one.s_y + one.s_height) <= getFloat7(item.s_y))), item, true);
+              item.s_y = topArr.length === 0 ? 0 : Math.max(...topArr.map(one => (one.s_y + one.s_height)));
+              comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
+            });
+            // 上方阻碍
+            // 需要把现在处于叠加（只在需要有交互的元素中找，而不是全部）的元素计算进去（当拖动元素高度远小于接触元素时，接触元素上移后，目前处于重叠状态而不是完全的上下分离）
+            const topArr = [...filterCrossArr(obstacleArrCopy2, comData.value[dragSrc], true), ...filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_y + item.s_height) <= getFloat7(comData.value[dragSrc].s_y + comData.value[dragSrc].s_height))), comData.value[dragSrc], true)];
+            // 需要下移的距离
+            let needMove = Math.max(...topArr.map(item => (item.s_y + item.s_height))) - doItemBg.value.s_y;
+            // 阴影最终Y轴位置
+            doItemBg.value.s_y = Math.max(...topArr.map(item => (item.s_y + item.s_height)));
+            doItemBg.value.s_x = resultX;
+            // 正常情况下下移是交换位置，但是先左右再下这种就是强插进来
+            if (needMove > 0) {
+              // 需要下移的集合
+              // 这里可能会出现平行的情况
+              const moveArr = filterCrossXArr(comData.value.filter(item => item.move !== true && getFloat7(item.s_y) >= getFloat7(doItemBg.value.s_y)), doItemBg.value, true);
+              getPureData(moveArr).forEach(item => {
+                // 下方阻碍
+                const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
+                bottomArr.forEach(one => {
+                  if (moveArr.filter(it => it.id === one.id).length === 0) {
+                    moveArr.push(getPureData(one));
+                  }
+                });
+              });
+              moveArr.forEach(item => {
+                item.s_y += needMove;
+                comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
+              });
+            }
+          }
+          break;
+        case 'left':
+        case 'right':
+          const obstacleArrCopy3 = obstacleArr.filter(item => {
+            // 左右接触距离大于等于3*横向间距
+            // 先右后左/先左后右时必须在非边沿区域，即两一个边距离接触元素的边大于等于3*横向间距（防止在边沿先左后右的反复操作）
+            // 实际编写时发现第二步的代码与第一步相同，故可不分左右
+            // return ((direction === 'left' && (item.s_x + item.s_width - resultX) >= (nowXSpace.value * 3)) || (direction === 'right' && ((resultX + comData.value[dragSrc].s_width - item.s_x) >= (nowXSpace.value * 3))));
+            return (item.s_x + item.s_width - resultX) >= (nowXSpace.value * 3) && (resultX + comData.value[dragSrc].s_width - item.s_x) >= (nowXSpace.value * 3);
+          }).filter(item => {
+            // 拖动元素顶部高于接触元素顶部，直接触发
+            // 拖动元素顶部低于等于触发元素顶部，距离接触元素顶部距离小于等于15px时触发
+            return (resultY < item.s_y) || (resultY >= item.s_y && (resultY - item.s_y) <= 15);
+          }).sort((a, b) => {
+            const x = getFloat7(a.s_y);
+            const y = getFloat7(b.s_y);
+            return x - y;
+          });
+          if (obstacleArrCopy3.length > 0) {
+            doItemBg.value.s_x = resultX;
+            doItemBg.value.s_y = Math.min(...obstacleArrCopy3.map(item => item.s_y));
+          } else {
+            let linObj = getPureData(comData.value[dragSrc]);
+            linObj.s_y = Math.min(...obstacleArr.map(item => item.s_y)) - linObj.s_height;
+            // 下面有位置时（夹在上下两个中间移动时）
+            // 上面有位置时（夹在上下两个中间、底下的优先接触且上面有留空位置时）
+            if (doItemBg.value.s_y >= Math.min(...obstacleArr.map(item => (item.s_y + item.s_height))) || (linObj.s_y >= 0 && filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), linObj, true).length === 0)) {
+              const checkObj3 = deepCopy(doItemBg.value);
+              checkObj3.s_x = resultX;
+              // 防止改变X后出现重叠（先左右出现交集再下就会出问题）
+              if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj3, true).length === 0) {
+                doItemBg.value.s_x = resultX;
+              }
+            }
+          }
+          // 新需求移除横向间距后不可能向上，肯定是下移
+          obstacleArrCopy3.forEach(item => {
+            // 不能为负数（向上移动）
+            const needMove = (doItemBg.value.s_y + doItemBg.value.s_height - item.s_y) > 0 ? (doItemBg.value.s_y + doItemBg.value.s_height - item.s_y) : 0;
+            // 需要下移的集合
+            const moveArr = deepCopy([item]);
+            // 下方阻碍
+            const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
+            bottomArr.forEach(one => {
+              if (moveArr.filter(it => it.id === one.id).length === 0) {
+                moveArr.push(getPureData(one));
+              }
+            });
+            moveArr.forEach(one => {
+              one.s_y += needMove;
+              // 同步一下当前数组，不然计算needMove等数据的时候用的还是老数据
+              if (obstacleArrCopy3.filter(it => it.id === one.id).length === 1) {
+                obstacleArrCopy3.filter(it => it.id === one.id)[0].s_y = one.s_y;
+              }
+              comData.value.filter(it => it.id === one.id)[0].s_y = one.s_y;
+            });
+          });
+          break;
+      }
+    }
+    // 重新计算原始位置信息
+    comData.value.forEach(item => {
+      dealItemScaleReverseXY(item);
+    });
+    dealItemScaleReverseXY(doItemBg.value);
+    dealBg(false);
+    dealAuxiliary(comData.value[dragSrc]);
+    // 优化性能，不抛出当前对象
+    emit('dragIng');
+    doItemBg.value.s_y = comData.value[dragSrc].syCopy;
+    delete comData.value[dragSrc].syCopy;
+  };
   // 屏幕到临界值进行滚动
-  // 手动控制元素位置的clientY值
-  let trimClientY = null;
   if (trimModel.value) {
+    // 手动控制元素位置的clientY值
+    let trimClientY = null;
     const parentNode = findByClass(pageRef.value, 'i' + comData.value[dragSrc].id + 'd')[0];
     const parentRect = parentNode.getBoundingClientRect();
     trimClientY = parentRect.top;
-  }
-  if ((trimClientY || e.clientY) - scrollBoxTop <= nowMoveDistance && direction === 'top') {
-    contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop - nowScrollDistance;
-  }
-  if (scrollBoxBottom - (trimClientY || e.clientY) <= nowMoveDistance && direction === 'bottom') {
-    contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop + nowScrollDistance;
-  }
-  // 当前直接接触的组件
-  let obstacleArr = filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), comData.value[dragSrc], true);
-  if (obstacleArr.length === 0) {
-    doItemBg.value.s_x = resultX;
-    doItemBg.value.s_y = resultY;
-  }
-  // 与其他组件有重叠 
-  else {
-    switch (direction) {
-      case 'top':
-        const checkObj1 = deepCopy(doItemBg.value);
-        checkObj1.s_x = resultX;
-        // 防止改变X后出现重叠（先左右出现交集再上就会出问题）
-        if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj1, true).length === 0) {
-          doItemBg.value.s_x = resultX;
+    if (trimClientY - scrollBoxTop <= nowMoveDistance && direction === 'top') {
+      contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop - nowScrollDistance;
+    }
+    if (scrollBoxBottom - trimClientY <= nowMoveDistance && direction === 'bottom') {
+      contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop + nowScrollDistance;
+    }
+    dealCollision();
+  } else {
+    // 滚动处理方法
+    const scrollMethod = () => {
+      const oldData = contentBoxRef.value.scrollTop;
+      if (autoScrollDirection === 'top') {
+        contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop - nowScrollDistance;
+        // 上移到顶了
+        if (oldData <= nowScrollDistance) {
+          clearScrollInt();
+          resultY = 0;
         }
-        const obstacleArrCopy1 = obstacleArr.filter(item => {
-          if (props.mobileDragModel) {
-            // 拖动元素顶部距离接触元素底部距离大于横向间距时触发
-            return getFloat7(item.s_height + item.s_y - resultY) > 2 * nowYSpace.value;
-          } else {
-            // 拖动元素高度大于等于接触元素时，拖动元素顶部距离接触元素顶部小于等于15px时触发
-            // 拖动元素高度小于接触元素时，拖动元素顶部距离接触元素顶部小于等于自身（拖动元素）一半高度时触发
-            return (comData.value[dragSrc].s_height >= item.s_height && (resultY - item.s_y) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((resultY - item.s_y) <= comData.value[dragSrc].s_height / 2));
-          }
-        });
-        if (obstacleArrCopy1.length > 0) {
-          // 新需求移除横向间距后不可能向上，肯定是下移
-          // 上方阻碍
-          const topArr = filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_y + item.s_height) <= getFloat7(doItemBg.value.s_y) && obstacleArrCopy1.filter(one => one.id === item.id).length === 0)), doItemBg.value, true);
-          // 需要下移的距离
-          let needMove = comData.value[dragSrc].s_height;
-          if (topArr.length === 0) {
-            needMove -= Math.min(...obstacleArrCopy1.map(item => item.s_y));
-          }
-          // 全部下移
-          if (obstacleArr.length === obstacleArrCopy1.length) {
-            // 上移时碰到一个长横元素，并且其上方有两个有间距的元素，间距宽度正好能放下当前拖动元素
-            doItemBg.value.s_y = topArr.length === 0 ? 0 : Math.max(...topArr.map(item => (item.s_y + item.s_height)));
-          }
-          // 相交多个但只移动部分
-          else {
-            doItemBg.value.s_y = Math.max(...topArr.map(item => (item.s_y + item.s_height)));
-          }
-          doItemBg.value.s_x = resultX;
-          if (needMove > 0) {
-            // 需要下移的集合
-            const moveArr = deepCopy(obstacleArrCopy1);
-            obstacleArrCopy1.forEach(item => {
-              // 下方阻碍
-              const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
-              bottomArr.forEach(one => {
-                if (moveArr.filter(it => it.id === one.id).length === 0) {
-                  moveArr.push(getPureData(one));
-                }
-              });
-            });
-            moveArr.forEach(item => {
-              // 这时需要把要移动的拉平到相同水平再向下移动（如果在前面直接更改坐标，在获取bottomArr就可能已经出现了重叠的情况）
-              if (obstacleArr.length !== obstacleArrCopy1.length && obstacleArrCopy1.filter(one => one.id === item.id).length === 1) {
-                item.s_y = doItemBg.value.s_y;
-              }
-              item.s_y += needMove;
-              comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
-            });
-          }
+        // 未到顶部 
+        else {
+          resultY -= nowScrollDistance;
         }
-        break;
-      case 'bottom':
-        const checkObj2 = deepCopy(doItemBg.value);
-        checkObj2.s_x = resultX;
-        // 防止改变X后出现重叠（先左右出现交集再下就会出问题）
-        if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj2, true).length === 0) {
-          doItemBg.value.s_x = resultX;
-        }
-        const obstacleArrCopy2 = obstacleArr.filter(item => {
-          if (props.mobileDragModel) {
-            // 拖动元素底部距离接触元素顶部距离大于横向间距时触发
-            return getFloat7(resultY + comData.value[dragSrc].s_height - item.s_y) > 2 * nowYSpace.value;
-          } else {
-            // 拖动元素高度大于等于接触元素时，拖动元素底部距离接触元素底部小于等于15px时触发
-            // 拖动元素高度小于接触元素时，拖动元素底部距离接触元素底部小于等于接触元素一半高度时触发
-            return (comData.value[dragSrc].s_height >= item.s_height && (item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= 15) || (comData.value[dragSrc].s_height < item.s_height && ((item.s_y + item.s_height - resultY - comData.value[dragSrc].s_height) <= item.s_height / 2));
-          }
-        });
-        if (obstacleArrCopy2.length > 0) {
-          obstacleArrCopy2.forEach(item => {
-            // 下移时可能出现多个上移的情况，相比之下上移就只会把拖动元素上移
-            // 上方阻碍
-            const topArr = filterCrossXArr(getPureData(comData.value.filter(one => one.move !== true && getFloat7(one.s_y + one.s_height) <= getFloat7(item.s_y))), item, true);
-            item.s_y = topArr.length === 0 ? 0 : Math.max(...topArr.map(one => (one.s_y + one.s_height)));
-            comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
-          });
-          // 上方阻碍
-          // 需要把现在处于叠加（只在需要有交互的元素中找，而不是全部）的元素计算进去（当拖动元素高度远小于接触元素时，接触元素上移后，目前处于重叠状态而不是完全的上下分离）
-          const topArr = [...filterCrossArr(obstacleArrCopy2, comData.value[dragSrc], true), ...filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_y + item.s_height) <= getFloat7(comData.value[dragSrc].s_y + comData.value[dragSrc].s_height))), comData.value[dragSrc], true)];
-          // 需要下移的距离
-          let needMove = Math.max(...topArr.map(item => (item.s_y + item.s_height))) - doItemBg.value.s_y;
-          // 阴影最终Y轴位置
-          doItemBg.value.s_y = Math.max(...topArr.map(item => (item.s_y + item.s_height)));
-          doItemBg.value.s_x = resultX;
-          // 正常情况下下移是交换位置，但是先左右再下这种就是强插进来
-          if (needMove > 0) {
-            // 需要下移的集合
-            // 这里可能会出现平行的情况
-            const moveArr = filterCrossXArr(comData.value.filter(item => item.move !== true && getFloat7(item.s_y) >= getFloat7(doItemBg.value.s_y)), doItemBg.value, true);
-            getPureData(moveArr).forEach(item => {
-              // 下方阻碍
-              const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
-              bottomArr.forEach(one => {
-                if (moveArr.filter(it => it.id === one.id).length === 0) {
-                  moveArr.push(getPureData(one));
-                }
-              });
-            });
-            moveArr.forEach(item => {
-              item.s_y += needMove;
-              comData.value.filter(one => one.id === item.id)[0].s_y = item.s_y;
-            });
-          }
-        }
-        break;
-      case 'left':
-      case 'right':
-        const obstacleArrCopy3 = obstacleArr.filter(item => {
-          // 左右接触距离大于等于2*横向间距
-          // 先右后左/先左后右时必须在非边沿区域，即两一个边距离接触元素的边大于等于2*横向间距（防止在边沿先左后右的反复操作）
-          // 实际编写时发现第二步的代码与第一步相同，故可不分左右
-          // return ((direction === 'left' && (item.s_x + item.s_width - resultX) >= (nowXSpace.value * 2)) || (direction === 'right' && ((resultX + comData.value[dragSrc].s_width - item.s_x) >= (nowXSpace.value * 2))));
-          return (item.s_x + item.s_width - resultX) >= (nowXSpace.value * 2) && (resultX + comData.value[dragSrc].s_width - item.s_x) >= (nowXSpace.value * 2);
-        }).filter(item => {
-          // 拖动元素顶部高于接触元素顶部，直接触发
-          // 拖动元素顶部低于等于触发元素顶部，距离接触元素顶部距离小于等于15px时触发
-          return (resultY < item.s_y) || (resultY >= item.s_y && (resultY - item.s_y) <= 15);
-        }).sort((a, b) => {
-          const x = getFloat7(a.s_y);
-          const y = getFloat7(b.s_y);
-          return x - y;
-        });
-        if (obstacleArrCopy3.length > 0) {
-          doItemBg.value.s_x = resultX;
-          doItemBg.value.s_y = Math.min(...obstacleArrCopy3.map(item => item.s_y));
-        } else {
-          let linObj = getPureData(comData.value[dragSrc]);
-          linObj.s_y = Math.min(...obstacleArr.map(item => item.s_y)) - linObj.s_height;
-          // 下面有位置时（夹在上下两个中间移动时）
-          // 上面有位置时（夹在上下两个中间、底下的优先接触且上面有留空位置时）
-          if (doItemBg.value.s_y >= Math.min(...obstacleArr.map(item => (item.s_y + item.s_height))) || (linObj.s_y >= 0 && filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), linObj, true).length === 0)) {
-            const checkObj3 = deepCopy(doItemBg.value);
-            checkObj3.s_x = resultX;
-            // 防止改变X后出现重叠（先左右出现交集再下就会出问题）
-            if (filterCrossArr(getPureData(comData.value.filter(item => item.move !== true)), checkObj3, true).length === 0) {
-              doItemBg.value.s_x = resultX;
-            }
-          }
-        }
-        // 新需求移除横向间距后不可能向上，肯定是下移
-        obstacleArrCopy3.forEach(item => {
-          // 不能为负数（向上移动）
-          const needMove = (doItemBg.value.s_y + doItemBg.value.s_height - item.s_y) > 0 ? (doItemBg.value.s_y + doItemBg.value.s_height - item.s_y) : 0;
-          // 需要下移的集合
-          const moveArr = deepCopy([item]);
-          // 下方阻碍
-          const bottomArr = filterCrossXArr(comData.value.filter(one => one.move !== true && getFloat7(one.s_y) >= getFloat7(item.s_y + item.s_height)), item, true);
-          bottomArr.forEach(one => {
-            if (moveArr.filter(it => it.id === one.id).length === 0) {
-              moveArr.push(getPureData(one));
-            }
-          });
-          moveArr.forEach(one => {
-            one.s_y += needMove;
-            // 同步一下当前数组，不然计算needMove等数据的时候用的还是老数据
-            if (obstacleArrCopy3.filter(it => it.id === one.id).length === 1) {
-              obstacleArrCopy3.filter(it => it.id === one.id)[0].s_y = one.s_y;
-            }
-            comData.value.filter(it => it.id === one.id)[0].s_y = one.s_y;
-          });
-        });
-        break;
+      } else {
+        contentBoxRef.value.scrollTop = contentBoxRef.value.scrollTop + nowScrollDistance;
+        resultY += nowScrollDistance;
+      }
+      comData.value[dragSrc].s_y = resultY;
+      dealCollision();
+    };
+    if (autoScrollDirection === 'top' && direction === 'bottom') {
+      clearScrollInt();
+    }
+    if (e.clientY - scrollBoxTop <= nowMoveDistance && direction === 'top' && !autoScrollInt) {
+      // 得手动触发一次，定时器不是瞬发的
+      dealCollision();
+      autoScrollDirection = 'top';
+      autoScrollInt = setInterval(scrollMethod, 100);
+    }
+    if (autoScrollDirection === 'bottom' && direction === 'top') {
+      clearScrollInt();
+    }
+    if (scrollBoxBottom - e.clientY <= nowMoveDistance && direction === 'bottom' && !autoScrollInt) {
+      // 得手动触发一次，定时器不是瞬发的
+      dealCollision();
+      autoScrollDirection = 'bottom';
+      autoScrollInt = setInterval(scrollMethod, 100);
+    }
+    // 非自动滚动的情况
+    if (!autoScrollInt) {
+      dealCollision();
     }
   }
-  // 重新计算原始位置信息
-  comData.value.forEach(item => {
-    dealItemScaleReverseXY(item);
-  });
-  dealItemScaleReverseXY(doItemBg.value);
-  dealBg(false);
-  dealAuxiliary(comData.value[dragSrc]);
-  // 优化性能，不抛出当前对象
-  emit('dragIng');
-  doItemBg.value.s_y = comData.value[dragSrc].syCopy;
-  delete comData.value[dragSrc].syCopy;
 };
 // 结束拖拽（缩放尺寸）
 const dragEnd = () => {
@@ -1177,6 +1236,7 @@ const dragEnd = () => {
   if (dragDelayInt) {
     dragDelayInt = null;
   } else {
+    clearScrollInt();
     window.removeEventListener('mousemove', dragIng);
     delete comData.value[dragSrc].move;
     comData.value[dragSrc].s_x = doItemBg.value.s_x;
@@ -1402,7 +1462,17 @@ const dealBg = (deal = true) => {
     dealGroupSetting();
   }
   // 计算背景高度
-  const arr = comData.value.map(item => (item.y + item.height));
+  const arr = comData.value.map(item => {
+    // 不这样计算，上移最底下一个元素的时候高度会突然变低
+    if (item.move === true) {
+      const lin = getPureData(item);
+      lin.s_y = doItemBg.value.s_y;
+      dealItemScaleReverseXY(lin);
+      return lin.y + item.height;
+    } else {
+      return item.y + item.height;
+    }
+  });
   if (arr.length > 0) {
     heightBg.value = Math.max(...arr);
   } else {
