@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-07 16:52:49
+ * @LastEditTime: 2025-07-07 17:27:53
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -718,9 +718,13 @@ const dealAuxiliary = (obj) => {
     const auxiliaryWidth = parseInt(styles.getPropertyValue('--auxiliary-width').trim());
     // x轴符合条件的集合统计
     // 可能会出现小数的情况，移动时都是整数px
-    const t1 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_y));
-    const t2 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_y + item.s_height / 2));
-    const t3 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_y + item.s_height));
+    const tArr = comData.value.filter(item => item.id !== position.id).filter(item => {
+      // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
+      return (Math.round(item.s_x) < Math.round(position.s_x) && Math.round(item.s_x + item.s_width) <= Math.round(position.s_x)) || Math.round(item.s_x) >= Math.round(position.s_x + position.s_width);
+    });
+    const t1 = tArr.map(item => Math.round(item.s_y));
+    const t2 = tArr.map(item => Math.round(item.s_y + item.s_height / 2));
+    const t3 = tArr.map(item => Math.round(item.s_y + item.s_height));
     const t = [...t1, ...t2, ...t3];
     t.sort();
     // 上边线计算
