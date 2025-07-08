@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-07 17:27:53
+ * @LastEditTime: 2025-07-08 09:53:46
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -1344,33 +1344,55 @@ const resizeIng = (e) => {
     if (resizeDirection.indexOf('top') !== -1) {
       // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
       const lin = filterCrossXArr(obstacleArr, resizeObj, true).filter(item => getFloat7(item.s_y + item.s_height - doItemBg.value.s_y) > nowXSpace.value * 2);
-      if (lin.length > 0) {
+      // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
+      const tArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
+        // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
+        return (Math.round(item.s_x) < Math.round(doItemBg.value.s_x) && Math.round(item.s_x + item.s_width) <= Math.round(doItemBg.value.s_x)) || Math.round(item.s_x) >= Math.round(doItemBg.value.s_x + doItemBg.value.s_width);
+      }).filter(item => {
+        return Math.round(item.s_y) === Math.round(doItemBg.value.s_y) || Math.round(item.s_y + item.s_height / 2) === Math.round(doItemBg.value.s_y) || Math.round(item.s_y + item.s_height) === Math.round(doItemBg.value.s_y);
+      });
+      if (tArr.length > 0 || lin.length > 0) {
         resizeObj.s_height = doItemBg.value.s_height;
         resizeObj.s_y = doItemBg.value.s_y;
-        obstacleArrCopy = [...obstacleArrCopy, ...lin];
+        obstacleArrCopy = [...obstacleArrCopy, ...(tArr.length > 0 ? filterCrossXArr(obstacleArr, resizeObj, true) : lin)];
       }
     } else if (resizeDirection.indexOf('bottom') !== -1) {
       // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
       const lin = filterCrossXArr(obstacleArr, resizeObj, true).filter(item => getFloat7(doItemBg.value.s_y + doItemBg.value.s_height - item.s_y) > nowYSpace.value * 2);
-      if (lin.length > 0) {
+      // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
+      const tArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
+        // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
+        return (Math.round(item.s_x) < Math.round(doItemBg.value.s_x) && Math.round(item.s_x + item.s_width) <= Math.round(doItemBg.value.s_x)) || Math.round(item.s_x) >= Math.round(doItemBg.value.s_x + doItemBg.value.s_width);
+      }).filter(item => {
+        return Math.round(item.s_y) === Math.round(doItemBg.value.s_y + doItemBg.value.s_height) || Math.round(item.s_y + item.s_height / 2) === Math.round(doItemBg.value.s_y + doItemBg.value.s_height) || Math.round(item.s_y + item.s_height) === Math.round(doItemBg.value.s_y + doItemBg.value.s_height);
+      });
+      if (tArr.length > 0 || lin.length > 0) {
         resizeObj.s_height = doItemBg.value.s_height;
-        obstacleArrCopy = [...obstacleArrCopy, ...lin];
+        obstacleArrCopy = [...obstacleArrCopy, ...(tArr.length > 0 ? filterCrossXArr(obstacleArr, resizeObj, true) : lin)];
       }
     }
     if (resizeDirection.indexOf('left') !== -1) {
       // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
       const lin = filterCrossYArr(obstacleArr, resizeObj, true).filter(item => getFloat7(item.s_x + item.s_width - doItemBg.value.s_x) > nowXSpace.value * 2);
-      if (lin.length > 0) {
+      // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
+      const lArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
+        return Math.round(item.s_x) === Math.round(doItemBg.value.s_x) || Math.round(item.s_x + item.s_width / 2) === Math.round(doItemBg.value.s_x) || Math.round(item.s_x + item.s_width) === Math.round(doItemBg.value.s_x);
+      });
+      if (lArr.length > 0 || lin.length > 0) {
         resizeObj.s_width = doItemBg.value.s_width;
         resizeObj.s_x = doItemBg.value.s_x;
-        obstacleArrCopy = [...obstacleArrCopy, ...lin];
+        obstacleArrCopy = [...obstacleArrCopy, ...(lArr.length > 0 ? filterCrossYArr(obstacleArr, resizeObj, true) : lin)];
       }
     } else if (resizeDirection.indexOf('right') !== -1) {
       // 这里必须过滤一下，四个角双向时，obstacleArr里包含的数据不取重叠的话可能会把没接触的元素算进去
       const lin = filterCrossYArr(obstacleArr, resizeObj, true).filter(item => getFloat7(doItemBg.value.s_x + doItemBg.value.s_width - item.s_x) > nowXSpace.value * 2);
-      if (lin.length > 0) {
+      // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
+      const lArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
+        return Math.round(item.s_x) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width) || Math.round(item.s_x + item.s_width / 2) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width) || Math.round(item.s_x + item.s_width) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width);
+      });
+      if (lArr.length > 0 || lin.length > 0) {
         resizeObj.s_width = doItemBg.value.s_width;
-        obstacleArrCopy = [...obstacleArrCopy, ...lin];
+        obstacleArrCopy = [...obstacleArrCopy, ...(lArr.length > 0 ? filterCrossYArr(obstacleArr, resizeObj, true) : lin)];
       }
     }
     // 符合条件再移动
@@ -1415,7 +1437,8 @@ const resizeIng = (e) => {
     dealItemScaleReverseXY(item);
   });
   dealBg(false);
-  dealAuxiliary(resizeObj);
+  // 已背景显示当前位置线
+  dealAuxiliary(doItemBg.value);
   // 优化性能，不抛出当前对象
   emit('resizeIng');
 };
