@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-08 09:53:46
+ * @LastEditTime: 2025-07-22 14:25:43
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -366,6 +366,11 @@ const props = defineProps({
   scrollDistance: {
     type: [Number, String],
     default: '20px'
+  },
+  // 拖拽时元素不允许超出容器
+  dragInBox: {
+    type: Boolean,
+    default: false
   }
 });
 // 深拷贝
@@ -962,6 +967,14 @@ const dragIng = (e) => {
   }
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
   let resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
+  // 判断是否允许元素移动超出容器
+  if (props.dragInBox) {
+    comData.value[dragSrc].s_x = resultX;
+    comData.value[dragSrc].s_y = resultY;
+  } else {
+    comData.value[dragSrc].s_x = x;
+    comData.value[dragSrc].s_y = y;
+  }
   const moveX = resultX - comData.value[dragSrc].s_x;
   const moveY = resultY - comData.value[dragSrc].s_y;
   // 移动方向
@@ -976,8 +989,6 @@ const dragIng = (e) => {
   } else if (moveY < 0) {
     direction = 'top';
   }
-  comData.value[dragSrc].s_x = resultX;
-  comData.value[dragSrc].s_y = resultY;
   // 碰撞处理方法
   const dealCollision = () => {
     // 当前直接接触的组件
