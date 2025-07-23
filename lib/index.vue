@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-07-22 14:25:43
+* @LastEditors: aFei
+* @LastEditTime: 2025-07-23 17:02:58
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -357,12 +357,12 @@ const props = defineProps({
       return value >= 0 && value < 1000;
     }
   },
-  // 拖动屏幕上下滚动触发高度
+  // 拖动屏幕上下滚动触发高度（缩放尺寸）
   moveDistance: {
     type: [Number, String],
     default: '50px'
   },
-  // 滚动条每次移动距离
+  // 滚动条每次移动距离（缩放尺寸）
   scrollDistance: {
     type: [Number, String],
     default: '20px'
@@ -371,6 +371,14 @@ const props = defineProps({
   dragInBox: {
     type: Boolean,
     default: false
+  },
+  // 拖拽结束时自动吸附的最大间距（缩放尺寸）
+  dragAdsorbSpace: {
+    type: Number,
+    default: 10,
+    validator(value, props) {
+      return value >= 0;
+    }
   }
 });
 // 深拷贝
@@ -1253,6 +1261,46 @@ const dragEnd = () => {
   } else {
     clearScrollInt();
     window.removeEventListener('mousemove', dragIng);
+    if (props.dragAdsorbSpace > 0) {
+      let autoMove = false;
+      // 左右辅助线自动吸附（从左到右），不用考虑上下，底下逻辑会把上下间距删除
+      try {
+        getPureData(comData.value.filter(item => item.move !== true)).forEach(item => {
+          if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x)) > 0 && Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+            doItemBg.value.s_x = item.s_x;
+            autoMove = true;
+            throw new Error("");
+          } else if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x)) > 0 && Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+            doItemBg.value.s_x = item.s_x + item.s_width / 2;
+            autoMove = true;
+            throw new Error("");
+          } else if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x)) > 0 && Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+            doItemBg.value.s_x = item.s_x + item.s_width;
+            autoMove = true;
+            throw new Error("");
+          }
+        });
+      } catch (error) { }
+      if (!autoMove) {
+        try {
+          getPureData(comData.value.filter(item => item.move !== true)).forEach(item => {
+            if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) > 0 && Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+              doItemBg.value.s_x = item.s_x - doItemBg.value.s_width;
+              autoMove = true;
+              throw new Error("");
+            } else if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) > 0 && Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+              doItemBg.value.s_x = item.s_x + item.s_width / 2 - doItemBg.value.s_width;
+              autoMove = true;
+              throw new Error("");
+            } else if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) > 0 && Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+              doItemBg.value.s_x = item.s_x + item.s_width - doItemBg.value.s_width;
+              autoMove = true;
+              throw new Error("");
+            }
+          });
+        } catch (error) { }
+      }
+    }
     delete comData.value[dragSrc].move;
     comData.value[dragSrc].s_x = doItemBg.value.s_x;
     comData.value[dragSrc].s_y = doItemBg.value.s_y;
