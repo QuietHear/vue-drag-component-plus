@@ -54,6 +54,8 @@
 	组件项阴影为outset模式，偏移量等变量全为0的时候即为无阴影效果
 >
 
+* `--com-item-move-transition`：top cubic-bezier(0.46, 0.03, 0.52, 0.96) 0.15s;-->组件项被动移动时动画
+
 * `--move-bg`：rgba(245, 108, 108, .8);-->组件项拖动时占位背景色
 
 * `--setting-icon-color`：#000;-->设置按钮的颜色

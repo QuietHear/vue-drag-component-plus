@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-07 13:50:59
+ * @LastEditTime: 2025-07-28 13:27:57
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -19,6 +19,7 @@
   --com-item-shadow-blur     : 0px;
   --com-item-shadow-spread   : 0px;
   --com-item-shadow-color    : #000;
+  --com-item-move-transition : top cubic-bezier(0.46, 0.03, 0.52, 0.96) 0.15s;
   --move-bg                  : rgba(245, 108, 108, .8);
   --setting-icon-color       : #000;
   --setting-icon-color-act   : #0068ff;
@@ -78,7 +79,7 @@
     box-sizing         : border-box;
     padding            : var(--com-y-space) var(--com-x-space);
     z-index            : 1;
-    transition         : top cubic-bezier(0.46, 0.03, 0.52, 0.96) 0.15s;
+    transition         : var(--com-item-move-transition);
     // 系统自带的滚动属性可能会滚动的时候出现与元素等宽的横线（元素上下边框）,这两个属性暂时都可以解决
     backface-visibility: hidden;
     // transform: translate3d(0, 0, 0);
