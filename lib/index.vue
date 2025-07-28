@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-25 13:47:45
+ * @LastEditTime: 2025-07-28 13:23:59
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -975,14 +975,6 @@ const dragIng = (e) => {
   }
   const resultX = x <= dealDragMax('left') ? dealDragMax('left') : x >= dealDragMax('right') ? dealDragMax('right') : x;
   let resultY = y <= dealDragMax('top') ? dealDragMax('top') : y >= dealDragMax('bottom') ? dealDragMax('bottom') : y;
-  // 判断是否允许元素移动超出容器
-  if (props.dragInBox) {
-    comData.value[dragSrc].s_x = resultX;
-    comData.value[dragSrc].s_y = resultY;
-  } else {
-    comData.value[dragSrc].s_x = x;
-    comData.value[dragSrc].s_y = y;
-  }
   const moveX = resultX - comData.value[dragSrc].s_x;
   const moveY = resultY - comData.value[dragSrc].s_y;
   // 移动方向
@@ -996,6 +988,14 @@ const dragIng = (e) => {
     direction = 'bottom';
   } else if (moveY < 0) {
     direction = 'top';
+  }
+  // 判断是否允许元素移动超出容器（必须写在后面，不然无法判断拖动方向）
+  if (props.dragInBox) {
+    comData.value[dragSrc].s_x = resultX;
+    comData.value[dragSrc].s_y = resultY;
+  } else {
+    comData.value[dragSrc].s_x = x;
+    comData.value[dragSrc].s_y = y;
   }
   // 碰撞处理方法
   const dealCollision = () => {

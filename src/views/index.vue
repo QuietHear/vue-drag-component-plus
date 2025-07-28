@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-06-16 14:26:21
+ * @LastEditTime: 2025-07-25 14:13:59
 */
 <template>
   <div class="demo">
@@ -37,7 +37,7 @@
           <vueDragComponentPlus ref="comRef" :xSpace="xSpace" :ySpace="ySpace" @showGroup="chengGroup"
             @updateChecked="num => groupNum = num" @showTitPop="showTitPop" @baseWidthInit="num => baseWidth = num"
             @changeScale="num => nowScale = num" @changeCssScale="num => nowCssScale = num" @domStart="domStart"
-            @domReady="domReady" :seeModel="seeModel" showAuxiliary>
+            @domReady="domReady" :seeModel="seeModel" showAuxiliary dragInBox>
             <template #item="{ data }">
               <test :obj="data" v-if="data.x === 0 && data.y === 0" />
             </template>
