@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-28 13:23:59
+ * @LastEditTime: 2025-07-29 13:48:48
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -12,202 +12,207 @@
     ref="pageRef">
     <!-- 滚动区 -->
     <div class="content-box" ref="contentBoxRef">
-      <!-- 组件项 -->
-      <div :class="[
-        'com-item',
-        dragSrc !== null ? '' : 'not-move-animate',
-        item.move ? 'is-move' : '',
-        item.drag ? 'is-drag' : '',
-        item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '',
-        // 初始化标记
-        initTime + 'p',
-        // 查找时唯一标识
-        'i' + item.id + 'd'
-      ]" :style="{
+      <div class="content-box-top"></div>
+      <div class="content-box-bottom">
+        <!-- 组件项 -->
+        <div :class="[
+          'com-item',
+          dragSrc !== null ? '' : 'not-move-animate',
+          item.move ? 'is-move' : '',
+          item.drag ? 'is-drag' : '',
+          item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '',
+          // 初始化标记
+          initTime + 'p',
+          // 查找时唯一标识
+          'i' + item.id + 'd'
+        ]" :style="{
         width: item.s_width + 'px',
         height: item.s_height + 'px',
         top: item.s_y + 'px',
         left: item.s_x + 'px'
       }" v-for="(item, index) in comData" :key="index">
-        <!-- 实际内容区 -->
-        <div :class="[
-          'com-item-inner',
-          seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag',
-          item.move || item.drag ? 'always-hover' : '',
-          seeModel ? 'no-hover' : ''
-        ]"
-          @mousedown.prevent="seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
-          @mouseenter="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : showGroupSet(item)"
-          @mouseleave="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
-          <div class="com-item-box">
-            <!-- 组件内容区 -->
-            <!-- 组合内容 -->
-            <template v-if="item.isGroup">
-              <!-- 组合标题 -->
-              <div class="group-item-tit" :title="item.groupTit" v-if="item.groupTit">
-                {{ item.groupTit }}
-              </div>
-              <!-- 组合子项内容 -->
-              <div :class="['group-item-content', item.groupTit ? '' : 'full']">
-                <div :class="[
-                  'com-item-box-child',
-                  one.isObstacle ? 'is-obstacle' : '',
-                  initTime + 'c'
-                ]" :style="{
+          <!-- 实际内容区 -->
+          <div :class="[
+            'com-item-inner',
+            seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag',
+            item.move || item.drag ? 'always-hover' : '',
+            seeModel ? 'no-hover' : ''
+          ]" @mousedown.prevent="seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
+            @mouseenter="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : showGroupSet(item)"
+            @mouseleave="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
+            <div class="com-item-box">
+              <!-- 组件内容区 -->
+              <!-- 组合内容 -->
+              <template v-if="item.isGroup">
+                <!-- 组合标题 -->
+                <div class="group-item-tit" :title="item.groupTit" v-if="item.groupTit">
+                  {{ item.groupTit }}
+                </div>
+                <!-- 组合子项内容 -->
+                <div :class="['group-item-content', item.groupTit ? '' : 'full']">
+                  <div :class="[
+                    'com-item-box-child',
+                    one.isObstacle ? 'is-obstacle' : '',
+                    initTime + 'c'
+                  ]" :style="{
                   width: one.s_width + 'px',
                   height: one.s_height + 'px',
                   top: one.s_y + 'px',
                   left: one.s_x + 'px'
                 }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
-                  <!-- 内容 -->
-                  <div class="com-item-box-content">
-                    <slot name="item" :data="one">
-                      <p>{{ Math.round(one.s_width * 100) / 100 }},{{ Math.round(one.s_height * 100) / 100 }}</p>
-                      <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
-                    </slot>
-                  </div>
-                  <!-- 组合内设置弹窗入口 -->
-                  <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
-                    @mousedown.prevent.stop="null"
-                    v-if="!seeModel && !trimModel && !isGrouping && dragSrc === null && resizeObj === null">
-                    <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
-                  </div>
-                  <!-- 组合内设置弹窗 -->
-                  <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
-                    <slot name="setPopNormal" :data="outDataInit(one)">
-                      <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
-                      <div class="setting-box-pop-item" @click="copyItem(one.id, one.inGroupId)">复制</div>
-                      <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
-                    </slot>
+                    <!-- 内容 -->
+                    <div class="com-item-box-content">
+                      <slot name="item" :data="one">
+                        <p>{{ Math.round(one.s_width * 100) / 100 }},{{ Math.round(one.s_height * 100) / 100 }}</p>
+                        <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
+                      </slot>
+                    </div>
+                    <!-- 组合内设置弹窗入口 -->
+                    <div class="setting-box" :style="{ display: one.showPop ? 'flex' : 'none' }"
+                      @mousedown.prevent.stop="null"
+                      v-if="!seeModel && !trimModel && !isGrouping && dragSrc === null && resizeObj === null">
+                      <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(one)" />
+                    </div>
+                    <!-- 组合内设置弹窗 -->
+                    <div class="setting-box-pop" @mousedown.prevent.stop="null" v-if="one.showPop">
+                      <slot name="setPopNormal" :data="outDataInit(one)">
+                        <div class="setting-box-pop-item" @click="removeGroupItem(one.id, one.inGroupId)">移出组合</div>
+                        <div class="setting-box-pop-item" @click="copyItem(one.id, one.inGroupId)">复制</div>
+                        <div class="setting-box-pop-item" @click="deleteItem(one.id, one.inGroupId)">删除</div>
+                      </slot>
+                    </div>
                   </div>
                 </div>
+              </template>
+              <!-- 普通内容 -->
+              <template v-else>
+                <div class="com-item-box-content">
+                  <slot name="item" :data="item">
+                    <p>{{ Math.round(item.s_width * 100) / 100 }},{{ Math.round(item.s_height * 100) / 100 }}</p>
+                    <p>{{ Math.round(item.s_x * 100) / 100 }},{{ Math.round(item.s_y * 100) / 100 }}</p>
+                  </slot>
+                </div>
+              </template>
+              <!-- 组合选择器 -->
+              <div :class="['group-checkbox', item.checked ? 'is-checked' : '', item.checkDis ? 'disabled' : '']"
+                @click="item.checkDis ? null : changeCheck(item)"
+                v-if="!item.isGroup && item.notGroup !== true && isGrouping">
               </div>
-            </template>
-            <!-- 普通内容 -->
-            <template v-else>
-              <div class="com-item-box-content">
-                <slot name="item" :data="item">
-                  <p>{{ Math.round(item.s_width * 100) / 100 }},{{ Math.round(item.s_height * 100) / 100 }}</p>
-                  <p>{{ Math.round(item.s_x * 100) / 100 }},{{ Math.round(item.s_y * 100) / 100 }}</p>
+              <!-- 设置弹窗入口 -->
+              <div
+                :class="['setting-box', item.isGroup === true ? item.btnPosition === 'right' ? 'only-g' : item.btnPosition === 'left' ? 'only-g l' : item.btnPosition === 'top' ? 'only-g t' : item.btnPosition === 'bottom' ? 'only-g b' : item.btnPosition === 'center' ? 'only-g c' : '' : '']"
+                :style="{ display: item.showPop || item.showSet ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
+                v-if="!seeModel && !trimModel && !isGrouping && dragSrc === null && resizeObj === null">
+                <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
+              </div>
+              <!-- 设置弹窗 -->
+              <div
+                :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'top' ? 'special t' : item.btnPosition === 'bottom' ? 'special b' : item.btnPosition === 'center' ? 'special c' : '' : '']"
+                @mousedown.prevent.stop="null" v-if="item.showPop">
+                <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
+                  <div class="setting-box-pop-item"
+                    @click="toggleLockItem(item.id, item.static === true ? false : true)">
+                    {{ item.static === true ? '解除' : '' }}锁定
+                  </div>
+                  <div class="setting-box-pop-item" @click="openTrimModel(item.id)" v-if="item.static !== true">
+                    微调
+                  </div>
+                  <div class="setting-box-pop-item"
+                    @click="hideGroupSet(item.id); emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
+                    设置组合标题
+                  </div>
+                  <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
+                </slot>
+                <slot name="setPopNormal" :data="outDataInit(item)" v-else>
+                  <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
+                  <div class="setting-box-pop-item"
+                    @click="toggleLockItem(item.id, item.static === true ? false : true)">
+                    {{ item.static === true ? '解除' : '' }}锁定
+                  </div>
+                  <div class="setting-box-pop-item" @click="openTrimModel(item.id)" v-if="item.static !== true">
+                    微调
+                  </div>
+                  <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
+                  <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
                 </slot>
               </div>
+            </div>
+            <!-- 缩放触发器 -->
+            <template
+              v-if="!seeModel && !trimModel && !isGrouping && !item.showPop && !(item.isGroup && item.groupData.filter(one => one.showPop).length > 0) && !item.move && item.static !== true && item.resizable !== false">
+              <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
+                v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
+              <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
+                v-if="resizeKeys.indexOf('top') !== -1"></div>
+              <div class="resize-line top-right" @mousedown.prevent.stop="resizeStart($event, item, 'top-right')"
+                v-if="resizeKeys.indexOf('topRight') !== -1"></div>
+              <div class="resize-line left" @mousedown.prevent.stop="resizeStart($event, item, 'left')"
+                v-if="resizeKeys.indexOf('left') !== -1"></div>
+              <div class="resize-line right" @mousedown.prevent.stop="resizeStart($event, item, 'right')"
+                v-if="resizeKeys.indexOf('right') !== -1"></div>
+              <div class="resize-line bottom-left" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-left')"
+                v-if="resizeKeys.indexOf('bottomLeft') !== -1"></div>
+              <div class="resize-line bottom" @mousedown.prevent.stop="resizeStart($event, item, 'bottom')"
+                v-if="resizeKeys.indexOf('bottom') !== -1"></div>
+              <div class="resize-line bottom-right" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-right')"
+                v-if="resizeKeys.indexOf('bottomRight') !== -1">
+              </div>
             </template>
-            <!-- 组合选择器 -->
-            <div :class="['group-checkbox', item.checked ? 'is-checked' : '', item.checkDis ? 'disabled' : '']"
-              @click="item.checkDis ? null : changeCheck(item)"
-              v-if="!item.isGroup && item.notGroup !== true && isGrouping">
-            </div>
-            <!-- 设置弹窗入口 -->
-            <div
-              :class="['setting-box', item.isGroup === true ? item.btnPosition === 'right' ? 'only-g' : item.btnPosition === 'left' ? 'only-g l' : item.btnPosition === 'top' ? 'only-g t' : item.btnPosition === 'bottom' ? 'only-g b' : item.btnPosition === 'center' ? 'only-g c' : '' : '']"
-              :style="{ display: item.showPop || item.showSet ? 'flex' : 'none' }" @mousedown.prevent.stop="null"
-              v-if="!seeModel && !trimModel && !isGrouping && dragSrc === null && resizeObj === null">
-              <Icon :iconObj="settingIcon" @click.prevent.stop="openSettingPop(item)" />
-            </div>
-            <!-- 设置弹窗 -->
-            <div
-              :class="['setting-box-pop', item.isGroup === true ? item.btnPosition === 'right' ? 'special' : item.btnPosition === 'left' ? 'special l' : item.btnPosition === 'top' ? 'special t' : item.btnPosition === 'bottom' ? 'special b' : item.btnPosition === 'center' ? 'special c' : '' : '']"
-              @mousedown.prevent.stop="null" v-if="item.showPop">
-              <slot name="setPopSpecial" :data="outDataInit(item)" v-if="item.isGroup === true">
-                <div class="setting-box-pop-item" @click="toggleLockItem(item.id, item.static === true ? false : true)">
-                  {{ item.static === true ? '解除' : '' }}锁定
-                </div>
-                <div class="setting-box-pop-item" @click="openTrimModel(item.id)" v-if="item.static !== true">
-                  微调
-                </div>
-                <div class="setting-box-pop-item"
-                  @click="hideGroupSet(item.id); emit('showTitPop', item.groupTit, item.id)" v-if="!hideTit">
-                  设置组合标题
-                </div>
-                <div class="setting-box-pop-item" @click="removeGroup(item.id)">解除组合</div>
-              </slot>
-              <slot name="setPopNormal" :data="outDataInit(item)" v-else>
-                <div class="setting-box-pop-item" @click="openGroup(item.id)" v-if="item.notGroup !== true">组合</div>
-                <div class="setting-box-pop-item" @click="toggleLockItem(item.id, item.static === true ? false : true)">
-                  {{ item.static === true ? '解除' : '' }}锁定
-                </div>
-                <div class="setting-box-pop-item" @click="openTrimModel(item.id)" v-if="item.static !== true">
-                  微调
-                </div>
-                <div class="setting-box-pop-item" @click="copyItem(item.id)">复制</div>
-                <div class="setting-box-pop-item" @click="deleteItem(item.id)">删除</div>
-              </slot>
-            </div>
           </div>
-          <!-- 缩放触发器 -->
-          <template
-            v-if="!seeModel && !trimModel && !isGrouping && !item.showPop && !(item.isGroup && item.groupData.filter(one => one.showPop).length > 0) && !item.move && item.static !== true && item.resizable !== false">
-            <div class="resize-line top-left" @mousedown.prevent.stop="resizeStart($event, item, 'top-left')"
-              v-if="resizeKeys.indexOf('topLeft') !== -1"></div>
-            <div class="resize-line top" @mousedown.prevent.stop="resizeStart($event, item, 'top')"
-              v-if="resizeKeys.indexOf('top') !== -1"></div>
-            <div class="resize-line top-right" @mousedown.prevent.stop="resizeStart($event, item, 'top-right')"
-              v-if="resizeKeys.indexOf('topRight') !== -1"></div>
-            <div class="resize-line left" @mousedown.prevent.stop="resizeStart($event, item, 'left')"
-              v-if="resizeKeys.indexOf('left') !== -1"></div>
-            <div class="resize-line right" @mousedown.prevent.stop="resizeStart($event, item, 'right')"
-              v-if="resizeKeys.indexOf('right') !== -1"></div>
-            <div class="resize-line bottom-left" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-left')"
-              v-if="resizeKeys.indexOf('bottomLeft') !== -1"></div>
-            <div class="resize-line bottom" @mousedown.prevent.stop="resizeStart($event, item, 'bottom')"
-              v-if="resizeKeys.indexOf('bottom') !== -1"></div>
-            <div class="resize-line bottom-right" @mousedown.prevent.stop="resizeStart($event, item, 'bottom-right')"
-              v-if="resizeKeys.indexOf('bottomRight') !== -1">
-            </div>
-          </template>
         </div>
-      </div>
-      <!-- shadow阴影 -->
-      <div :class="[
-        'shadow-bg',
-        dragSrc !== null ? '' : 'not-move-animate',
-        item.move ? 'is-move' : '',
-        item.drag ? 'is-drag' : ''
-      ]" :style="{
+        <!-- shadow阴影 -->
+        <div :class="[
+          'shadow-bg',
+          dragSrc !== null ? '' : 'not-move-animate',
+          item.move ? 'is-move' : '',
+          item.drag ? 'is-drag' : ''
+        ]" :style="{
         width: item.s_width - nowXSpace * 2 + 'px',
         height: item.s_height - nowYSpace * 2 + 'px',
         top: item.s_y + nowYSpace + 'px',
         left: item.s_x + nowXSpace + 'px'
       }" v-for="(item, index) in comData" :key="index"></div>
-      <!-- 拖拽背景占位 -->
-      <div class="drag-bg" :style="{
-        width: doItemBg.s_width + 'px',
-        height: doItemBg.s_height + 'px',
-        top: doItemBg.s_y + 'px',
-        left: doItemBg.s_x + 'px'
-      }" v-if="dragSrc !== null || resizeObj"></div>
-      <!-- 高度占位，出现滚动条 -->
-      <div class="height-bg"
-        :style="{ height: (heightBg > 0 ? (heightBg * getNowHScale() + (seeModel ? seeModelMinBg : 220)) : 0) + 'px' }">
+        <!-- 拖拽背景占位 -->
+        <div class="drag-bg" :style="{
+          width: doItemBg.s_width + 'px',
+          height: doItemBg.s_height + 'px',
+          top: doItemBg.s_y + 'px',
+          left: doItemBg.s_x + 'px'
+        }" v-if="dragSrc !== null || resizeObj"></div>
+        <!-- 高度占位，出现滚动条 -->
+        <div class="height-bg"
+          :style="{ height: (heightBg > 0 ? (heightBg * getNowHScale() + (seeModel ? seeModelMinBg : 220)) : 0) + 'px' }">
+        </div>
+        <!-- 辅助线 -->
+        <template v-if="showAuxiliary">
+          <!-- 上 -->
+          <div class="auxiliary-line hor" :style="{ top: auxiliaryTop + 'px', left: '0px' }"
+            v-if="auxiliaryTop !== null">
+          </div>
+          <!-- 上下中间 -->
+          <div class="auxiliary-line hor" :style="{ top: auxiliaryTopBottom + 'px', left: '0px' }"
+            v-if="auxiliaryTopBottom !== null">
+          </div>
+          <!-- 下 -->
+          <div class="auxiliary-line hor" :style="{ top: auxiliaryBottom + 'px', left: '0px' }"
+            v-if="auxiliaryBottom !== null"></div>
+          <!-- 左（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
+          <div class="auxiliary-line"
+            :style="{ top: '0px', left: auxiliaryLeft + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
+            v-if="auxiliaryLeft !== null">
+          </div>
+          <!-- 左右中间（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
+          <div class="auxiliary-line"
+            :style="{ top: '0px', left: auxiliaryLeftRight + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
+            v-if="auxiliaryLeftRight !== null">
+          </div>
+          <!-- 右（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
+          <div class="auxiliary-line"
+            :style="{ top: '0px', left: auxiliaryRight + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
+            v-if="auxiliaryRight !== null">
+          </div>
+        </template>
       </div>
-      <!-- 辅助线 -->
-      <template v-if="showAuxiliary">
-        <!-- 上 -->
-        <div class="auxiliary-line hor" :style="{ top: auxiliaryTop + 'px', left: '0px' }" v-if="auxiliaryTop !== null">
-        </div>
-        <!-- 上下中间 -->
-        <div class="auxiliary-line hor" :style="{ top: auxiliaryTopBottom + 'px', left: '0px' }"
-          v-if="auxiliaryTopBottom !== null">
-        </div>
-        <!-- 下 -->
-        <div class="auxiliary-line hor" :style="{ top: auxiliaryBottom + 'px', left: '0px' }"
-          v-if="auxiliaryBottom !== null"></div>
-        <!-- 左（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
-        <div class="auxiliary-line"
-          :style="{ top: '0px', left: auxiliaryLeft + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
-          v-if="auxiliaryLeft !== null">
-        </div>
-        <!-- 左右中间（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
-        <div class="auxiliary-line"
-          :style="{ top: '0px', left: auxiliaryLeftRight + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
-          v-if="auxiliaryLeftRight !== null">
-        </div>
-        <!-- 右（高度100%不够滚动时的总高度，且辅助线不用考虑无数据和预览模式） -->
-        <div class="auxiliary-line"
-          :style="{ top: '0px', left: auxiliaryRight + 'px', height: heightBg * getNowHScale() + 220 + 'px' }"
-          v-if="auxiliaryRight !== null">
-        </div>
-      </template>
       <!-- 空数据 -->
       <div class="com-empty" v-if="comData.length === 0">
         <slot name="empty">

@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-28 13:27:57
+ * @LastEditTime: 2025-07-29 13:48:09
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -49,7 +49,7 @@
   width                      : 100%;
   height                     : 100%;
   background                 : var(--bg);
-  padding                    : var(--com-y-space) var(--com-x-space) 0;
+  padding                    : 0 var(--com-x-space);
 
   > {
     ::-webkit-scrollbar {
@@ -72,6 +72,18 @@
     position  : relative;
     box-sizing: border-box;
     overflow  : hidden auto;
+
+    .content-box-top {
+      width : 100%;
+      height: var(--com-y-space);
+    }
+
+    .content-box-bottom {
+      width     : 100%;
+      min-height: calc(100% - var(--com-y-space));
+      position  : relative;
+      box-sizing: border-box;
+    }
   }
 
   .com-item {
@@ -503,5 +515,9 @@
     align-items    : center;
     justify-content: center;
     height         : 100%;
+    position       : absolute;
+    width          : 100%;
+    left           : 0;
+    top            : 0;
   }
 }
