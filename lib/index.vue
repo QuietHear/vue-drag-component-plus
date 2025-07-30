@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-29 13:48:48
+ * @LastEditTime: 2025-07-30 17:50:05
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -26,18 +26,19 @@
           // 查找时唯一标识
           'i' + item.id + 'd'
         ]" :style="{
-        width: item.s_width + 'px',
-        height: item.s_height + 'px',
-        top: item.s_y + 'px',
-        left: item.s_x + 'px'
-      }" v-for="(item, index) in comData" :key="index">
+          width: item.s_width + 'px',
+          height: item.s_height + 'px',
+          top: item.s_y + 'px',
+          left: item.s_x + 'px'
+        }" v-for="(item, index) in comData" :key="index">
           <!-- 实际内容区 -->
           <div :class="[
             'com-item-inner',
             seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? '' : 'can-drag',
             item.move || item.drag ? 'always-hover' : '',
             seeModel ? 'no-hover' : ''
-          ]" @mousedown.prevent="seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
+          ]"
+            @mousedown.prevent="seeModel || trimModel || isGrouping || item.static === true || item.dragable === false ? null : dragStart($event, index)"
             @mouseenter="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : showGroupSet(item)"
             @mouseleave="seeModel || trimModel || isGrouping || dragSrc !== null || resizeObj || !item.isGroup ? null : hideGroupSet(item.id)">
             <div class="com-item-box">
@@ -55,11 +56,11 @@
                     one.isObstacle ? 'is-obstacle' : '',
                     initTime + 'c'
                   ]" :style="{
-                  width: one.s_width + 'px',
-                  height: one.s_height + 'px',
-                  top: one.s_y + 'px',
-                  left: one.s_x + 'px'
-                }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
+                    width: one.s_width + 'px',
+                    height: one.s_height + 'px',
+                    top: one.s_y + 'px',
+                    left: one.s_x + 'px'
+                  }" v-for="(one, oneIndex) in item.groupData" :key="oneIndex">
                     <!-- 内容 -->
                     <div class="com-item-box-content">
                       <slot name="item" :data="one">
@@ -167,11 +168,11 @@
           item.move ? 'is-move' : '',
           item.drag ? 'is-drag' : ''
         ]" :style="{
-        width: item.s_width - nowXSpace * 2 + 'px',
-        height: item.s_height - nowYSpace * 2 + 'px',
-        top: item.s_y + nowYSpace + 'px',
-        left: item.s_x + nowXSpace + 'px'
-      }" v-for="(item, index) in comData" :key="index"></div>
+          width: item.s_width - nowXSpace * 2 + 'px',
+          height: item.s_height - nowYSpace * 2 + 'px',
+          top: item.s_y + nowYSpace + 'px',
+          left: item.s_x + nowXSpace + 'px'
+        }" v-for="(item, index) in comData" :key="index"></div>
         <!-- 拖拽背景占位 -->
         <div class="drag-bg" :style="{
           width: doItemBg.s_width + 'px',
@@ -1462,7 +1463,7 @@ const resizeIng = (e) => {
     const lArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
       return Math.round(item.s_x) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width) || Math.round(item.s_x + item.s_width / 2) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width) || Math.round(item.s_x + item.s_width) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width);
     });
-    if (lArr.length > 0 || toMove || doItemBg.value.s_width === realMinWidth) {
+    if (lArr.length > 0 || toMove || doItemBg.value.s_width === dealResizeMax('right') || doItemBg.value.s_width === realMinWidth) {
       resizeObj.s_width = doItemBg.value.s_width;
       // 不一定存在接触
       if (obstacleArr.length > 0) {
