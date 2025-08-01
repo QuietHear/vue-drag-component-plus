@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-29 13:48:09
+ * @LastEditTime: 2025-08-01 13:51:27
 */
 .vue-drag-component-plus {
   --bg                       : rgba(0, 0, 0, 0.1);
@@ -498,7 +498,7 @@
     height     : 100%;
     min-height : 100%;
     border-left: var(--auxiliary-width) dashed var(--auxiliary-color);
-    z-index    : 0;
+    z-index    : 2;
     box-sizing : border-box;
 
     &.hor {

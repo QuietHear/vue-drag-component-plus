@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-07-30 17:50:05
+ * @LastEditTime: 2025-08-01 13:57:21
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -748,7 +748,7 @@ const dealAuxiliary = (obj) => {
     t.sort();
     // 上边线计算
     if (t.filter(item => item === Math.round(position.s_y)).length > 0) {
-      auxiliaryTop.value = position.s_y;
+      auxiliaryTop.value = position.s_y + nowYSpace.value;
     } else {
       auxiliaryTop.value = null;
     }
@@ -760,7 +760,7 @@ const dealAuxiliary = (obj) => {
     }
     // 下边线计算
     if (t.filter(item => (item === Math.round(position.s_y + position.s_height))).length > 0) {
-      auxiliaryBottom.value = position.s_y + position.s_height - auxiliaryWidth;
+      auxiliaryBottom.value = position.s_y + position.s_height - auxiliaryWidth - nowYSpace.value;
     } else {
       auxiliaryBottom.value = null;
     }
@@ -773,7 +773,7 @@ const dealAuxiliary = (obj) => {
     l.sort();
     // 左边线计算
     if (l.filter(item => item === Math.round(position.s_x)).length > 0) {
-      auxiliaryLeft.value = position.s_x;
+      auxiliaryLeft.value = position.s_x + nowXSpace.value;
     } else {
       auxiliaryLeft.value = null;
     }
@@ -785,7 +785,7 @@ const dealAuxiliary = (obj) => {
     }
     // 右边线计算
     if (l.filter(item => item === Math.round(position.s_x + position.s_width)).length > 0) {
-      auxiliaryRight.value = position.s_x + position.s_width - auxiliaryWidth;
+      auxiliaryRight.value = position.s_x + position.s_width - auxiliaryWidth - nowXSpace.value;
     } else {
       auxiliaryRight.value = null;
     }
@@ -1508,7 +1508,7 @@ const resizeIng = (e) => {
   });
   dealBg(false);
   // 已背景显示当前位置线
-  dealAuxiliary(doItemBg.value);
+  dealAuxiliary(resizeObj);
   // 优化性能，不抛出当前对象
   emit('resizeIng');
 };
