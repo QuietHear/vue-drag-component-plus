@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-08-01 13:57:21
+* @LastEditors: aFei
+* @LastEditTime: 2025-08-04 10:15:02
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -226,7 +226,7 @@
 <script setup>
 import Icon from "./components/icon.vue";
 import { dealPositionData, findPosition } from "./js/findPosition";
-const emit = defineEmits(["baseWidthInit", "changeScale", "changeCssScale", "changeTrimModel", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady"]);
+const emit = defineEmits(["baseWidthInit", "changeScale", "changeCssScale", "changeTrimModel", "dragStart", "dragIng", "dragEnd", "resizeStart", "resizeIng", "resizeEnd", "showGroup", "openSetMenu", "updateChecked", "showTitPop", "domStart", "domReady", "hasError", "dealError"]);
 const props = defineProps({
   // 包含收缩方向
   insertResizeKeys: {
@@ -460,7 +460,14 @@ const hasClass = (ele, className) => {
 // 保留7位小数（JS本身就有乘法漏洞，所以数据取7位有效小数四舍五入做对比就行了）
 // 例如：634*0.98=621.3199999999999≈621.32; 621.3199999999999/0.98=634; 621.32/0.98=634.0000000000001≈634;
 const getFloat7 = (num) => {
-  return parseFloat(num.toFixed(7));
+  try {
+    return parseFloat(num.toFixed(7));
+  } catch (error) {
+    try {
+      console.error('数值格式转换异常');
+    } catch (error) { }
+    emit('hasError', '数值格式转换异常');
+  }
 };
 // 根据class查找子元素集合
 const findByClass = (ele, className) => {
@@ -820,6 +827,7 @@ const openTrimModel = (id) => {
     try {
       console.error('未找到组件');
     } catch (error) { }
+    emit('hasError', '未找到组件');
   }
 };
 // 键盘控制移动方向
@@ -1684,14 +1692,37 @@ const init = (historyData = [], historyWidth = null) => {
   // DOM检测
   clearInterval(domInt);
   initTime.value = new Date().getTime() + '';
+  // 父组件数量统计
   parentDomNum = 0;
+  // 子组件数量统计
   childDomNum = 0;
+  // 位置信息错误数据集合
+  let errorData = [];
   historyData.forEach(item => {
     parentDomNum += 1;
     if (item.isGroup === true) {
       childDomNum += item.groupData.length;
     }
+    // 位置信息丢失的话都重置为0，然后依靠后面的递归解除叠加
+    if (item.y === undefined || item.y === null) {
+      if (errorData.findIndex(one => one.id === item.id) === -1) {
+        errorData.push(deepCopy(item));
+      }
+      item.y = 0;
+    }
+    if (item.x === undefined || item.x === null) {
+      if (errorData.findIndex(one => one.id === item.id) === -1) {
+        errorData.push(deepCopy(item));
+      }
+      item.x = 0;
+    }
   });
+  if (errorData.length > 0) {
+    try {
+      console.error('存在异常数据已修复');
+    } catch (error) { }
+    emit('dealError', errorData);
+  }
   resetData();
   emit('domStart');
   comData.value = deepCopy(historyData);
@@ -1745,6 +1776,7 @@ const hideGroupSet = (id) => {
     try {
       console.error('未找到组件');
     } catch (error) { }
+    emit('hasError', '未找到组件');
   }
 };
 // 计算新增的一个组件的x,y，画布中数量至少一个（原始尺寸）
@@ -1766,6 +1798,7 @@ const dealMoreItemXY = (item, dataArr, maxWidth) => {
       try {
         console.error('组件宽度太大');
       } catch (error) { }
+      emit('hasError', '组件宽度太大');
     }
   }
   // 原计算逻辑（在最后一行平行位置添加）
@@ -1829,6 +1862,7 @@ const addItem = (obj, pid = null, keepPosition = false) => {
       console.error('未找到组件');
     } catch (error) {
     } finally {
+      emit('hasError', '未找到组件');
       return;
     }
   }
@@ -1896,6 +1930,7 @@ const copyItem = (id, pid = null, nid = null) => {
       console.error('未找到组件');
     } catch (error) {
     } finally {
+      emit('hasError', '未找到组件');
       return null;
     }
   }
@@ -1938,6 +1973,7 @@ const deleteItem = (id, pid = null, deelEmpty = true) => {
     try {
       console.error('未找到组件');
     } catch (error) { }
+    emit('hasError', '未找到组件');
   }
 };
 // 更新一个组件部分数据（原始尺寸）
@@ -2003,6 +2039,7 @@ const updateItemAll = (obj, type = true) => {
             try {
               console.error('数据key: ' + (error + '').replace('Error: ', '') + ' 不存在');
             } catch (error) { }
+            emit('hasError', '数据key: ' + (error + '').replace('Error: ', '') + ' 不存在');
           }
         }
         // 计算实际大小
@@ -2040,6 +2077,7 @@ const updateItemAll = (obj, type = true) => {
             try {
               console.error('数据key: ' + (error + '').replace('Error: ', '') + ' 不存在');
             } catch (error) { }
+            emit('hasError', '数据key: ' + (error + '').replace('Error: ', '') + ' 不存在');
           }
         }
         // 计算实际大小
@@ -2050,11 +2088,13 @@ const updateItemAll = (obj, type = true) => {
       try {
         console.error('未找到组件');
       } catch (error) { }
+      emit('hasError', '未找到组件');
     }
   } else {
     try {
       console.error('未找到组件');
     } catch (error) { }
+    emit('hasError', '未找到组件');
   }
 };
 // 锁定/解除一个组件功能
@@ -2083,6 +2123,7 @@ const toggleLockItem = (id, val = false) => {
       console.error('未找到组件');
     } catch (error) {
     } finally {
+      emit('hasError', '未找到组件');
       return null;
     }
   }
@@ -2147,6 +2188,7 @@ const openGroup = (id) => {
     try {
       console.error('未找到组件');
     } catch (error) { }
+    emit('hasError', '未找到组件');
   }
 };
 // 关闭组合开关
@@ -2281,6 +2323,7 @@ const addGroup = () => {
         console.error('自定义方法抛出数据格式不正确');
       } catch (error) {
       } finally {
+        emit('hasError', '自定义方法抛出数据格式不正确');
         return null;
       }
     }
@@ -2318,6 +2361,7 @@ const removeGroupItem = (id, pid) => {
             console.error('自定义方法抛出数据格式不正确');
           } catch (error) {
           } finally {
+            emit('hasError', '自定义方法抛出数据格式不正确');
             return [];
           }
         }
@@ -2327,6 +2371,7 @@ const removeGroupItem = (id, pid) => {
         console.error('未找到组件');
       } catch (error) {
       } finally {
+        emit('hasError', '未找到组件');
         return [];
       }
     }
@@ -2335,6 +2380,7 @@ const removeGroupItem = (id, pid) => {
       console.error('未找到组件');
     } catch (error) {
     } finally {
+      emit('hasError', '未找到组件');
       return [];
     }
   }
@@ -2358,6 +2404,7 @@ const removeGroup = (id) => {
       });
     } catch (error) {
       console.error('自定义方法抛出数据格式不正确');
+      emit('hasError', '自定义方法抛出数据格式不正确');
     }
     if (reg) {
       deleteItem(lin.id, null, false);
@@ -2388,6 +2435,7 @@ const removeGroup = (id) => {
       console.error('未找到组件');
     } catch (error) {
     } finally {
+      emit('hasError', '未找到组件');
       return [];
     }
   }
@@ -2420,6 +2468,7 @@ const changeGroupTit = (tit = '', id) => {
     try {
       console.error('未找到组件');
     } catch (error) { }
+    emit('hasError', '未找到组件');
   }
 };
 // 重置当前画布数据
