@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2025-08-04 10:15:02
+ * @LastEditors: aFei
+ * @LastEditTime: 2025-08-05 09:35:38
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -1277,42 +1277,74 @@ const dragEnd = () => {
     window.removeEventListener('mousemove', dragIng);
     if (props.dragAdsorbSpace > 0) {
       let autoMove = false;
+      // 允许自主吸附在左/右边界
+      if (doItemBg.value.s_x === 0 || doItemBg.value.s_x === dealDragMax('right')) {
+        autoMove = true;
+      }
       // 左右辅助线自动吸附（从左到右），不用考虑上下，底下逻辑会把上下间距删除
-      try {
-        getPureData(comData.value.filter(item => item.move !== true)).forEach(item => {
-          if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x)) > 0 && Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
-            doItemBg.value.s_x = item.s_x;
-            autoMove = true;
-            throw new Error("");
-          } else if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x)) > 0 && Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
-            doItemBg.value.s_x = item.s_x + item.s_width / 2;
-            autoMove = true;
-            throw new Error("");
-          } else if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x)) > 0 && Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
-            doItemBg.value.s_x = item.s_x + item.s_width;
-            autoMove = true;
-            throw new Error("");
+      // (左侧)优先考虑平行的
+      if (!autoMove) {
+        // 左侧有交集的集合
+        const resultLeft = filterCrossYArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_x + item.s_width) <= getFloat7(doItemBg.value.s_x))), doItemBg.value, true).filter(item => {
+          return Math.round(doItemBg.value.s_x) - Math.round(item.s_x + item.s_width) <= props.dragAdsorbSpace;
+        });
+        if (resultLeft.length > 0) {
+          doItemBg.value.s_x = Math.max(...resultLeft.map(item => (item.s_x + item.s_width)));
+          autoMove = true;
+        }
+      }
+      // (左侧)再考虑离得最近的上下的
+      if (!autoMove) {
+        // 符合条件的X坐标集合
+        let resultTB = [];
+        filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (getFloat7(item.s_y + item.s_height) === getFloat7(doItemBg.value.s_y) || getFloat7(item.s_y) === getFloat7(doItemBg.value.s_y + doItemBg.value.s_height)))), doItemBg.value, true).forEach(item => {
+          if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+            resultTB.push(item.s_x);
+          }
+          if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+            resultTB.push(item.s_x + item.s_width / 2);
+          }
+          if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+            resultTB.push(item.s_x + item.s_width);
           }
         });
-      } catch (error) { }
+        if (resultTB.length > 0) {
+          // 需要考虑超出右侧边界的问题
+          doItemBg.value.s_x = Math.min(...[dealDragMax('right'), ...resultTB]);
+          autoMove = true;
+        }
+      }
+      // (右侧)优先考虑平行的
       if (!autoMove) {
-        try {
-          getPureData(comData.value.filter(item => item.move !== true)).forEach(item => {
-            if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) > 0 && Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
-              doItemBg.value.s_x = item.s_x - doItemBg.value.s_width;
-              autoMove = true;
-              throw new Error("");
-            } else if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) > 0 && Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
-              doItemBg.value.s_x = item.s_x + item.s_width / 2 - doItemBg.value.s_width;
-              autoMove = true;
-              throw new Error("");
-            } else if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) > 0 && Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
-              doItemBg.value.s_x = item.s_x + item.s_width - doItemBg.value.s_width;
-              autoMove = true;
-              throw new Error("");
-            }
-          });
-        } catch (error) { }
+        // 左侧有交集的集合
+        const resultRight = filterCrossYArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(doItemBg.value.s_x + doItemBg.value.s_width) <= getFloat7(item.s_x))), doItemBg.value, true).filter(item => {
+          return Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width) <= props.dragAdsorbSpace;
+        });
+        if (resultRight.length > 0) {
+          doItemBg.value.s_x = Math.min(...resultRight.map(item => item.s_x)) - doItemBg.value.s_width;
+          autoMove = true;
+        }
+      }
+      // (右侧)再考虑离得最近的上下的
+      if (!autoMove) {
+        // 符合条件的X坐标集合
+        let resultTB = [];
+        filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (getFloat7(item.s_y + item.s_height) === getFloat7(doItemBg.value.s_y) || getFloat7(item.s_y) === getFloat7(doItemBg.value.s_y + doItemBg.value.s_height)))), doItemBg.value, true).forEach(item => {
+          if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+            resultTB.push(item.s_x);
+          }
+          if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+            resultTB.push(item.s_x + item.s_width / 2);
+          }
+          if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+            resultTB.push(item.s_x + item.s_width);
+          }
+        });
+        if (resultTB.length > 0) {
+          // 需要考虑超出左侧边界的问题
+          doItemBg.value.s_x = Math.max(...[doItemBg.value.s_width, ...resultTB]) - doItemBg.value.s_width;
+          autoMove = true;
+        }
       }
     }
     delete comData.value[dragSrc].move;
