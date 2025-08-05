@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
- * @LastEditors: aFei
- * @LastEditTime: 2025-08-05 09:35:38
+* @LastEditors: aFei
+* @LastEditTime: 2025-08-05 13:38:07
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -17,7 +17,7 @@
         <!-- 组件项 -->
         <div :class="[
           'com-item',
-          dragSrc !== null ? '' : 'not-move-animate',
+          dragSrc !== null || resizeObj ? '' : 'not-move-animate',
           item.move ? 'is-move' : '',
           item.drag ? 'is-drag' : '',
           item.showPop || (item.isGroup && item.groupData.filter(one => one.showPop).length > 0) ? 'on-top' : '',
@@ -164,7 +164,7 @@
         <!-- shadow阴影 -->
         <div :class="[
           'shadow-bg',
-          dragSrc !== null ? '' : 'not-move-animate',
+          dragSrc !== null || resizeObj ? '' : 'not-move-animate',
           item.move ? 'is-move' : '',
           item.drag ? 'is-drag' : ''
         ]" :style="{
