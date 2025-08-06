@@ -3,8 +3,8 @@
 * @Date: 2024-08-05 13:45:00
 */
 /*
-* @LastEditors: aFei
-* @LastEditTime: 2025-08-05 13:38:07
+ * @LastEditors: aFei
+ * @LastEditTime: 2025-08-06 10:04:32
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -64,8 +64,8 @@
                     <!-- 内容 -->
                     <div class="com-item-box-content">
                       <slot name="item" :data="one">
-                        <p>{{ Math.round(one.s_width * 100) / 100 }},{{ Math.round(one.s_height * 100) / 100 }}</p>
-                        <p>{{ Math.round(one.s_x * 100) / 100 }},{{ Math.round(one.s_y * 100) / 100 }}</p>
+                        <p>{{ parseInt(one.s_width * 100) / 100 }},{{ parseInt(one.s_height * 100) / 100 }}</p>
+                        <p>{{ parseInt(one.s_x * 100) / 100 }},{{ parseInt(one.s_y * 100) / 100 }}</p>
                       </slot>
                     </div>
                     <!-- 组合内设置弹窗入口 -->
@@ -89,8 +89,8 @@
               <template v-else>
                 <div class="com-item-box-content">
                   <slot name="item" :data="item">
-                    <p>{{ Math.round(item.s_width * 100) / 100 }},{{ Math.round(item.s_height * 100) / 100 }}</p>
-                    <p>{{ Math.round(item.s_x * 100) / 100 }},{{ Math.round(item.s_y * 100) / 100 }}</p>
+                    <p>{{ parseInt(item.s_width * 100) / 100 }},{{ parseInt(item.s_height * 100) / 100 }}</p>
+                    <p>{{ parseInt(item.s_x * 100) / 100 }},{{ parseInt(item.s_y * 100) / 100 }}</p>
                   </slot>
                 </div>
               </template>
@@ -746,52 +746,52 @@ const dealAuxiliary = (obj) => {
     // 可能会出现小数的情况，移动时都是整数px
     const tArr = comData.value.filter(item => item.id !== position.id).filter(item => {
       // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
-      return (Math.round(item.s_x) < Math.round(position.s_x) && Math.round(item.s_x + item.s_width) <= Math.round(position.s_x)) || Math.round(item.s_x) >= Math.round(position.s_x + position.s_width);
+      return (parseInt(item.s_x) < parseInt(position.s_x) && parseInt(item.s_x + item.s_width) <= parseInt(position.s_x)) || parseInt(item.s_x) >= parseInt(position.s_x + position.s_width);
     });
-    const t1 = tArr.map(item => Math.round(item.s_y));
-    const t2 = tArr.map(item => Math.round(item.s_y + item.s_height / 2));
-    const t3 = tArr.map(item => Math.round(item.s_y + item.s_height));
+    const t1 = tArr.map(item => parseInt(item.s_y));
+    const t2 = tArr.map(item => parseInt(item.s_y + item.s_height / 2));
+    const t3 = tArr.map(item => parseInt(item.s_y + item.s_height));
     const t = [...t1, ...t2, ...t3];
     t.sort();
     // 上边线计算
-    if (t.filter(item => item === Math.round(position.s_y)).length > 0) {
+    if (t.filter(item => item === parseInt(position.s_y)).length > 0) {
       auxiliaryTop.value = position.s_y + nowYSpace.value;
     } else {
       auxiliaryTop.value = null;
     }
     // 上下中间线计算
-    if (t.filter(item => item === Math.round(position.s_y + position.s_height / 2)).length > 0) {
+    if (t.filter(item => item === parseInt(position.s_y + position.s_height / 2)).length > 0) {
       auxiliaryTopBottom.value = position.s_y + position.s_height / 2;
     } else {
       auxiliaryTopBottom.value = null;
     }
     // 下边线计算
-    if (t.filter(item => (item === Math.round(position.s_y + position.s_height))).length > 0) {
+    if (t.filter(item => (item === parseInt(position.s_y + position.s_height))).length > 0) {
       auxiliaryBottom.value = position.s_y + position.s_height - auxiliaryWidth - nowYSpace.value;
     } else {
       auxiliaryBottom.value = null;
     }
     // y轴符合条件的集合统计
     // 可能会出现小数的情况，移动时都是整数px
-    const l1 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_x));
-    const l2 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_x + item.s_width / 2));
-    const l3 = comData.value.filter(item => item.id !== position.id).map(item => Math.round(item.s_x + item.s_width));
+    const l1 = comData.value.filter(item => item.id !== position.id).map(item => parseInt(item.s_x));
+    const l2 = comData.value.filter(item => item.id !== position.id).map(item => parseInt(item.s_x + item.s_width / 2));
+    const l3 = comData.value.filter(item => item.id !== position.id).map(item => parseInt(item.s_x + item.s_width));
     const l = [...l1, ...l2, ...l3];
     l.sort();
     // 左边线计算
-    if (l.filter(item => item === Math.round(position.s_x)).length > 0) {
+    if (l.filter(item => item === parseInt(position.s_x)).length > 0) {
       auxiliaryLeft.value = position.s_x + nowXSpace.value;
     } else {
       auxiliaryLeft.value = null;
     }
     // 左右中间线计算
-    if (l.filter(item => item === Math.round(position.s_x + position.s_width / 2)).length > 0) {
+    if (l.filter(item => item === parseInt(position.s_x + position.s_width / 2)).length > 0) {
       auxiliaryLeftRight.value = position.s_x + position.s_width / 2;
     } else {
       auxiliaryLeftRight.value = null;
     }
     // 右边线计算
-    if (l.filter(item => item === Math.round(position.s_x + position.s_width)).length > 0) {
+    if (l.filter(item => item === parseInt(position.s_x + position.s_width)).length > 0) {
       auxiliaryRight.value = position.s_x + position.s_width - auxiliaryWidth - nowXSpace.value;
     } else {
       auxiliaryRight.value = null;
@@ -1286,7 +1286,7 @@ const dragEnd = () => {
       if (!autoMove) {
         // 左侧有交集的集合
         const resultLeft = filterCrossYArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_x + item.s_width) <= getFloat7(doItemBg.value.s_x))), doItemBg.value, true).filter(item => {
-          return Math.round(doItemBg.value.s_x) - Math.round(item.s_x + item.s_width) <= props.dragAdsorbSpace;
+          return parseInt(doItemBg.value.s_x) - parseInt(item.s_x + item.s_width) <= props.dragAdsorbSpace;
         });
         if (resultLeft.length > 0) {
           doItemBg.value.s_x = Math.max(...resultLeft.map(item => (item.s_x + item.s_width)));
@@ -1298,13 +1298,13 @@ const dragEnd = () => {
         // 符合条件的X坐标集合
         let resultTB = [];
         filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (getFloat7(item.s_y + item.s_height) === getFloat7(doItemBg.value.s_y) || getFloat7(item.s_y) === getFloat7(doItemBg.value.s_y + doItemBg.value.s_height)))), doItemBg.value, true).forEach(item => {
-          if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x) - parseInt(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
             resultTB.push(item.s_x);
           }
-          if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width / 2) - parseInt(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
             resultTB.push(item.s_x + item.s_width / 2);
           }
-          if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width) - parseInt(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
             resultTB.push(item.s_x + item.s_width);
           }
         });
@@ -1318,7 +1318,7 @@ const dragEnd = () => {
       if (!autoMove) {
         // 左侧有交集的集合
         const resultRight = filterCrossYArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(doItemBg.value.s_x + doItemBg.value.s_width) <= getFloat7(item.s_x))), doItemBg.value, true).filter(item => {
-          return Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width) <= props.dragAdsorbSpace;
+          return parseInt(item.s_x) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width) <= props.dragAdsorbSpace;
         });
         if (resultRight.length > 0) {
           doItemBg.value.s_x = Math.min(...resultRight.map(item => item.s_x)) - doItemBg.value.s_width;
@@ -1330,13 +1330,13 @@ const dragEnd = () => {
         // 符合条件的X坐标集合
         let resultTB = [];
         filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (getFloat7(item.s_y + item.s_height) === getFloat7(doItemBg.value.s_y) || getFloat7(item.s_y) === getFloat7(doItemBg.value.s_y + doItemBg.value.s_height)))), doItemBg.value, true).forEach(item => {
-          if (Math.abs(Math.round(item.s_x) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
             resultTB.push(item.s_x);
           }
-          if (Math.abs(Math.round(item.s_x + item.s_width / 2) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width / 2) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
             resultTB.push(item.s_x + item.s_width / 2);
           }
-          if (Math.abs(Math.round(item.s_x + item.s_width) - Math.round(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
             resultTB.push(item.s_x + item.s_width);
           }
         });
@@ -1451,9 +1451,9 @@ const resizeIng = (e) => {
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const tArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
       // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
-      return (Math.round(item.s_x) < Math.round(doItemBg.value.s_x) && Math.round(item.s_x + item.s_width) <= Math.round(doItemBg.value.s_x)) || Math.round(item.s_x) >= Math.round(doItemBg.value.s_x + doItemBg.value.s_width);
+      return (parseInt(item.s_x) < parseInt(doItemBg.value.s_x) && parseInt(item.s_x + item.s_width) <= parseInt(doItemBg.value.s_x)) || parseInt(item.s_x) >= parseInt(doItemBg.value.s_x + doItemBg.value.s_width);
     }).filter(item => {
-      return Math.round(item.s_y) === Math.round(doItemBg.value.s_y) || Math.round(item.s_y + item.s_height / 2) === Math.round(doItemBg.value.s_y) || Math.round(item.s_y + item.s_height) === Math.round(doItemBg.value.s_y);
+      return parseInt(item.s_y) === parseInt(doItemBg.value.s_y) || parseInt(item.s_y + item.s_height / 2) === parseInt(doItemBg.value.s_y) || parseInt(item.s_y + item.s_height) === parseInt(doItemBg.value.s_y);
     });
     if (tArr.length > 0 || toMove || doItemBg.value.s_y === 0 || doItemBg.value.s_height === realMinHeight) {
       resizeObj.s_height = doItemBg.value.s_height;
@@ -1469,9 +1469,9 @@ const resizeIng = (e) => {
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const tArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
       // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
-      return (Math.round(item.s_x) < Math.round(doItemBg.value.s_x) && Math.round(item.s_x + item.s_width) <= Math.round(doItemBg.value.s_x)) || Math.round(item.s_x) >= Math.round(doItemBg.value.s_x + doItemBg.value.s_width);
+      return (parseInt(item.s_x) < parseInt(doItemBg.value.s_x) && parseInt(item.s_x + item.s_width) <= parseInt(doItemBg.value.s_x)) || parseInt(item.s_x) >= parseInt(doItemBg.value.s_x + doItemBg.value.s_width);
     }).filter(item => {
-      return Math.round(item.s_y) === Math.round(doItemBg.value.s_y + doItemBg.value.s_height) || Math.round(item.s_y + item.s_height / 2) === Math.round(doItemBg.value.s_y + doItemBg.value.s_height) || Math.round(item.s_y + item.s_height) === Math.round(doItemBg.value.s_y + doItemBg.value.s_height);
+      return parseInt(item.s_y) === parseInt(doItemBg.value.s_y + doItemBg.value.s_height) || parseInt(item.s_y + item.s_height / 2) === parseInt(doItemBg.value.s_y + doItemBg.value.s_height) || parseInt(item.s_y + item.s_height) === parseInt(doItemBg.value.s_y + doItemBg.value.s_height);
     });
     if (tArr.length > 0 || toMove || doItemBg.value.s_height === realMinHeight) {
       resizeObj.s_height = doItemBg.value.s_height;
@@ -1486,7 +1486,7 @@ const resizeIng = (e) => {
     const toMove = Math.abs(getFloat7(doItemBg.value.s_x - resizeObj.s_x)) > nowXSpace.value * 2;
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const lArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
-      return Math.round(item.s_x) === Math.round(doItemBg.value.s_x) || Math.round(item.s_x + item.s_width / 2) === Math.round(doItemBg.value.s_x) || Math.round(item.s_x + item.s_width) === Math.round(doItemBg.value.s_x);
+      return parseInt(item.s_x) === parseInt(doItemBg.value.s_x) || parseInt(item.s_x + item.s_width / 2) === parseInt(doItemBg.value.s_x) || parseInt(item.s_x + item.s_width) === parseInt(doItemBg.value.s_x);
     });
     if (lArr.length > 0 || toMove || doItemBg.value.s_x === 0 || doItemBg.value.s_width === realMinWidth) {
       resizeObj.s_width = doItemBg.value.s_width;
@@ -1501,7 +1501,7 @@ const resizeIng = (e) => {
     const toMove = Math.abs(getFloat7(doItemBg.value.s_width - resizeObj.s_width)) > nowXSpace.value * 2;
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const lArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
-      return Math.round(item.s_x) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width) || Math.round(item.s_x + item.s_width / 2) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width) || Math.round(item.s_x + item.s_width) === Math.round(doItemBg.value.s_x + doItemBg.value.s_width);
+      return parseInt(item.s_x) === parseInt(doItemBg.value.s_x + doItemBg.value.s_width) || parseInt(item.s_x + item.s_width / 2) === parseInt(doItemBg.value.s_x + doItemBg.value.s_width) || parseInt(item.s_x + item.s_width) === parseInt(doItemBg.value.s_x + doItemBg.value.s_width);
     });
     if (lArr.length > 0 || toMove || doItemBg.value.s_width === dealResizeMax('right') || doItemBg.value.s_width === realMinWidth) {
       resizeObj.s_width = doItemBg.value.s_width;
