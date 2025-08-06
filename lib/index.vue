@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-08-06 10:04:32
+ * @LastEditTime: 2025-08-06 15:02:15
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -378,8 +378,8 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  // 拖拽结束时自动吸附的最大间距（缩放尺寸）
-  dragAdsorbSpace: {
+  // 拖拽结束时、缩放过程中自动吸附的最大间距（缩放尺寸）
+  adsorbSpace: {
     type: Number,
     default: 10,
     validator(value, props) {
@@ -1275,7 +1275,7 @@ const dragEnd = () => {
   } else {
     clearScrollInt();
     window.removeEventListener('mousemove', dragIng);
-    if (props.dragAdsorbSpace > 0) {
+    if (props.adsorbSpace > 0) {
       let autoMove = false;
       // 允许自主吸附在左/右边界
       if (doItemBg.value.s_x === 0 || doItemBg.value.s_x === dealDragMax('right')) {
@@ -1286,7 +1286,7 @@ const dragEnd = () => {
       if (!autoMove) {
         // 左侧有交集的集合
         const resultLeft = filterCrossYArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(item.s_x + item.s_width) <= getFloat7(doItemBg.value.s_x))), doItemBg.value, true).filter(item => {
-          return parseInt(doItemBg.value.s_x) - parseInt(item.s_x + item.s_width) <= props.dragAdsorbSpace;
+          return parseInt(doItemBg.value.s_x) - parseInt(item.s_x + item.s_width) <= props.adsorbSpace;
         });
         if (resultLeft.length > 0) {
           doItemBg.value.s_x = Math.max(...resultLeft.map(item => (item.s_x + item.s_width)));
@@ -1298,13 +1298,13 @@ const dragEnd = () => {
         // 符合条件的X坐标集合
         let resultTB = [];
         filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (getFloat7(item.s_y + item.s_height) === getFloat7(doItemBg.value.s_y) || getFloat7(item.s_y) === getFloat7(doItemBg.value.s_y + doItemBg.value.s_height)))), doItemBg.value, true).forEach(item => {
-          if (Math.abs(parseInt(item.s_x) - parseInt(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x) - parseInt(doItemBg.value.s_x)) <= props.adsorbSpace) {
             resultTB.push(item.s_x);
           }
-          if (Math.abs(parseInt(item.s_x + item.s_width / 2) - parseInt(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width / 2) - parseInt(doItemBg.value.s_x)) <= props.adsorbSpace) {
             resultTB.push(item.s_x + item.s_width / 2);
           }
-          if (Math.abs(parseInt(item.s_x + item.s_width) - parseInt(doItemBg.value.s_x)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width) - parseInt(doItemBg.value.s_x)) <= props.adsorbSpace) {
             resultTB.push(item.s_x + item.s_width);
           }
         });
@@ -1318,7 +1318,7 @@ const dragEnd = () => {
       if (!autoMove) {
         // 左侧有交集的集合
         const resultRight = filterCrossYArr(getPureData(comData.value.filter(item => item.move !== true && getFloat7(doItemBg.value.s_x + doItemBg.value.s_width) <= getFloat7(item.s_x))), doItemBg.value, true).filter(item => {
-          return parseInt(item.s_x) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width) <= props.dragAdsorbSpace;
+          return parseInt(item.s_x) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width) <= props.adsorbSpace;
         });
         if (resultRight.length > 0) {
           doItemBg.value.s_x = Math.min(...resultRight.map(item => item.s_x)) - doItemBg.value.s_width;
@@ -1330,13 +1330,13 @@ const dragEnd = () => {
         // 符合条件的X坐标集合
         let resultTB = [];
         filterCrossXArr(getPureData(comData.value.filter(item => item.move !== true && (getFloat7(item.s_y + item.s_height) === getFloat7(doItemBg.value.s_y) || getFloat7(item.s_y) === getFloat7(doItemBg.value.s_y + doItemBg.value.s_height)))), doItemBg.value, true).forEach(item => {
-          if (Math.abs(parseInt(item.s_x) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.adsorbSpace) {
             resultTB.push(item.s_x);
           }
-          if (Math.abs(parseInt(item.s_x + item.s_width / 2) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width / 2) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.adsorbSpace) {
             resultTB.push(item.s_x + item.s_width / 2);
           }
-          if (Math.abs(parseInt(item.s_x + item.s_width) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.dragAdsorbSpace) {
+          if (Math.abs(parseInt(item.s_x + item.s_width) - parseInt(doItemBg.value.s_x + doItemBg.value.s_width)) <= props.adsorbSpace) {
             resultTB.push(item.s_x + item.s_width);
           }
         });
@@ -1448,16 +1448,35 @@ const resizeIng = (e) => {
   if (resizeDirection.indexOf('top') !== -1) {
     // 是否向上移动了足够距离
     const toMove = Math.abs(getFloat7(doItemBg.value.s_y - resizeObj.s_y)) > nowYSpace.value * 2;
+    // 记录对齐的辅助线集合（正常来说只会有一个，极端情况下会有多个）
+    const targetArr = [];
+    let targetNum = null;
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const tArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
       // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
       return (parseInt(item.s_x) < parseInt(doItemBg.value.s_x) && parseInt(item.s_x + item.s_width) <= parseInt(doItemBg.value.s_x)) || parseInt(item.s_x) >= parseInt(doItemBg.value.s_x + doItemBg.value.s_width);
     }).filter(item => {
-      return parseInt(item.s_y) === parseInt(doItemBg.value.s_y) || parseInt(item.s_y + item.s_height / 2) === parseInt(doItemBg.value.s_y) || parseInt(item.s_y + item.s_height) === parseInt(doItemBg.value.s_y);
+      let reg = false;
+      if (Math.abs(parseInt(doItemBg.value.s_y) - parseInt(item.s_y)) <= props.adsorbSpace) {
+        targetArr.push(item.s_y);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_y) - parseInt(item.s_y + item.s_height / 2)) <= props.adsorbSpace) {
+        targetArr.push(item.s_y + item.s_height / 2);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_y) - parseInt(item.s_y + item.s_height)) <= props.adsorbSpace) {
+        targetArr.push(item.s_y + item.s_height);
+        reg = true;
+      }
+      return reg;
     });
+    if (targetArr.length > 0) {
+      targetNum = Math.max(...targetArr);
+    }
     if (tArr.length > 0 || toMove || doItemBg.value.s_y === 0 || doItemBg.value.s_height === realMinHeight) {
-      resizeObj.s_height = doItemBg.value.s_height;
-      resizeObj.s_y = doItemBg.value.s_y;
+      resizeObj.s_height = (targetNum ? (doItemBg.value.s_y - targetNum) : 0) + doItemBg.value.s_height;
+      resizeObj.s_y = targetNum || doItemBg.value.s_y;
       // 不一定存在接触
       if (obstacleArr.length > 0) {
         obstacleArrCopy = [...obstacleArrCopy, ...filterCrossXArr(obstacleArr, resizeObj, true)];
@@ -1466,15 +1485,34 @@ const resizeIng = (e) => {
   } else if (resizeDirection.indexOf('bottom') !== -1) {
     // 是否向下移动了足够距离
     const toMove = Math.abs(getFloat7(doItemBg.value.s_height - resizeObj.s_height)) > nowYSpace.value * 2;
+    // 记录对齐的辅助线集合（正常来说只会有一个，极端情况下会有多个）
+    const targetArr = [];
+    let targetNum = null;
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const tArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
       // 排除一下位置在上下的元素，不然上下元素会导致横线一直存在
       return (parseInt(item.s_x) < parseInt(doItemBg.value.s_x) && parseInt(item.s_x + item.s_width) <= parseInt(doItemBg.value.s_x)) || parseInt(item.s_x) >= parseInt(doItemBg.value.s_x + doItemBg.value.s_width);
     }).filter(item => {
-      return parseInt(item.s_y) === parseInt(doItemBg.value.s_y + doItemBg.value.s_height) || parseInt(item.s_y + item.s_height / 2) === parseInt(doItemBg.value.s_y + doItemBg.value.s_height) || parseInt(item.s_y + item.s_height) === parseInt(doItemBg.value.s_y + doItemBg.value.s_height);
+      let reg = false;
+      if (Math.abs(parseInt(doItemBg.value.s_y + doItemBg.value.s_height) - parseInt(item.s_y)) <= props.adsorbSpace) {
+        targetArr.push(item.s_y - doItemBg.value.s_y);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_y + doItemBg.value.s_height) - parseInt(item.s_y + item.s_height / 2)) <= props.adsorbSpace) {
+        targetArr.push(item.s_y + item.s_height / 2 - doItemBg.value.s_y);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_y + doItemBg.value.s_height) - parseInt(item.s_y + item.s_height)) <= props.adsorbSpace) {
+        targetArr.push(item.s_y + item.s_height - doItemBg.value.s_y);
+        reg = true;
+      }
+      return reg;
     });
+    if (targetArr.length > 0) {
+      targetNum = Math.min(...targetArr);
+    }
     if (tArr.length > 0 || toMove || doItemBg.value.s_height === realMinHeight) {
-      resizeObj.s_height = doItemBg.value.s_height;
+      resizeObj.s_height = targetNum || doItemBg.value.s_height;
       // 不一定存在接触
       if (obstacleArr.length > 0) {
         obstacleArrCopy = [...obstacleArrCopy, ...filterCrossXArr(obstacleArr, resizeObj, true)];
@@ -1484,13 +1522,32 @@ const resizeIng = (e) => {
   if (resizeDirection.indexOf('left') !== -1) {
     // 是否向左移动了足够距离
     const toMove = Math.abs(getFloat7(doItemBg.value.s_x - resizeObj.s_x)) > nowXSpace.value * 2;
+    // 记录对齐的辅助线集合（正常来说只会有一个，极端情况下会有多个）
+    const targetArr = [];
+    let targetNum = null;
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const lArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
-      return parseInt(item.s_x) === parseInt(doItemBg.value.s_x) || parseInt(item.s_x + item.s_width / 2) === parseInt(doItemBg.value.s_x) || parseInt(item.s_x + item.s_width) === parseInt(doItemBg.value.s_x);
+      let reg = false;
+      if (Math.abs(parseInt(doItemBg.value.s_x) - parseInt(item.s_x)) <= props.adsorbSpace) {
+        targetArr.push(item.s_x);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_x) - parseInt(item.s_x + item.s_width / 2)) <= props.adsorbSpace) {
+        targetArr.push(item.s_x + item.s_width / 2);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_x) - parseInt(item.s_x + item.s_width)) <= props.adsorbSpace) {
+        targetArr.push(item.s_x + item.s_width);
+        reg = true;
+      }
+      return reg;
     });
+    if (targetArr.length > 0) {
+      targetNum = Math.max(...targetArr);
+    }
     if (lArr.length > 0 || toMove || doItemBg.value.s_x === 0 || doItemBg.value.s_width === realMinWidth) {
-      resizeObj.s_width = doItemBg.value.s_width;
-      resizeObj.s_x = doItemBg.value.s_x;
+      resizeObj.s_width = (targetNum ? (doItemBg.value.s_x - targetNum) : 0) + doItemBg.value.s_width;
+      resizeObj.s_x = targetNum || doItemBg.value.s_x;
       // 不一定存在接触
       if (obstacleArr.length > 0) {
         obstacleArrCopy = [...obstacleArrCopy, ...filterCrossYArr(obstacleArr, resizeObj, true)];
@@ -1499,12 +1556,31 @@ const resizeIng = (e) => {
   } else if (resizeDirection.indexOf('right') !== -1) {
     // 是否向右移动了足够距离
     const toMove = Math.abs(getFloat7(doItemBg.value.s_width - resizeObj.s_width)) > nowXSpace.value * 2;
+    // 记录对齐的辅助线集合（正常来说只会有一个，极端情况下会有多个）
+    const targetArr = [];
+    let targetNum = null;
     // 检测是否存在对齐的元素，对齐则允许直接覆盖对齐
     const lArr = comData.value.filter(item => item.id !== resizeObj.id).filter(item => {
-      return parseInt(item.s_x) === parseInt(doItemBg.value.s_x + doItemBg.value.s_width) || parseInt(item.s_x + item.s_width / 2) === parseInt(doItemBg.value.s_x + doItemBg.value.s_width) || parseInt(item.s_x + item.s_width) === parseInt(doItemBg.value.s_x + doItemBg.value.s_width);
+      let reg = false;
+      if (Math.abs(parseInt(doItemBg.value.s_x + doItemBg.value.s_width) - parseInt(item.s_x)) <= props.adsorbSpace) {
+        targetArr.push(item.s_x - doItemBg.value.s_x);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_x + doItemBg.value.s_width) - parseInt(item.s_x + item.s_width / 2)) <= props.adsorbSpace) {
+        targetArr.push(item.s_x + item.s_width / 2 - doItemBg.value.s_x);
+        reg = true;
+      }
+      if (Math.abs(parseInt(doItemBg.value.s_x + doItemBg.value.s_width) - parseInt(item.s_x + item.s_width)) <= props.adsorbSpace) {
+        targetArr.push(item.s_x + item.s_width - doItemBg.value.s_x);
+        reg = true;
+      }
+      return reg;
     });
+    if (targetArr.length > 0) {
+      targetNum = Math.min(...targetArr);
+    }
     if (lArr.length > 0 || toMove || doItemBg.value.s_width === dealResizeMax('right') || doItemBg.value.s_width === realMinWidth) {
-      resizeObj.s_width = doItemBg.value.s_width;
+      resizeObj.s_width = targetNum || doItemBg.value.s_width;
       // 不一定存在接触
       if (obstacleArr.length > 0) {
         obstacleArrCopy = [...obstacleArrCopy, ...filterCrossYArr(obstacleArr, resizeObj, true)];
