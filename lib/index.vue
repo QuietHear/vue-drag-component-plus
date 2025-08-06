@@ -4,7 +4,7 @@
 */
 /*
  * @LastEditors: aFei
- * @LastEditTime: 2025-08-06 15:02:15
+ * @LastEditTime: 2025-08-06 17:00:36
 */
 <template>
   <div class="vue-drag-component-plus"
@@ -441,6 +441,34 @@ const getPureData = (obj) => {
     }
   }
   return result;
+};
+// 在数组中查找离变量最近的一个值（第二个参数控制存在距离相同的数字时返回大还是小值，默认返回小的）
+const findClosestNumber = (arr, x, returnMin = true) => {
+  // 空数组处理
+  if (arr.length === 0) {
+    return null;
+  };
+  let minDiff = Infinity;
+  let minCandidate = Infinity;
+  let maxCandidate = -Infinity;
+  let foundExactMatch = false;
+  for (const num of arr) {
+    const diff = Math.abs(num - x);
+    // 找到更小的差值时重置所有状态
+    if (diff < minDiff) {
+      minDiff = diff;
+      minCandidate = num;
+      maxCandidate = num;
+      foundExactMatch = (diff === 0);
+    }
+    // 遇到相同差值的候选数时更新极值
+    else if (diff === minDiff) {
+      if (num < minCandidate) minCandidate = num;
+      if (num > maxCandidate) maxCandidate = num;
+    }
+  }
+  // 根据控制变量返回结果（优先返回精确匹配值）
+  return foundExactMatch ? x : returnMin ? minCandidate : maxCandidate;
 };
 // JQ的closest()方法
 const closest = (ele, selector) => {
@@ -1471,9 +1499,7 @@ const resizeIng = (e) => {
       }
       return reg;
     });
-    if (targetArr.length > 0) {
-      targetNum = Math.max(...targetArr);
-    }
+    targetNum = findClosestNumber(targetArr, doItemBg.value.s_y, false);
     if (tArr.length > 0 || toMove || doItemBg.value.s_y === 0 || doItemBg.value.s_height === realMinHeight) {
       resizeObj.s_height = (targetNum ? (doItemBg.value.s_y - targetNum) : 0) + doItemBg.value.s_height;
       resizeObj.s_y = targetNum || doItemBg.value.s_y;
@@ -1508,9 +1534,7 @@ const resizeIng = (e) => {
       }
       return reg;
     });
-    if (targetArr.length > 0) {
-      targetNum = Math.min(...targetArr);
-    }
+    targetNum = findClosestNumber(targetArr, doItemBg.value.s_height);
     if (tArr.length > 0 || toMove || doItemBg.value.s_height === realMinHeight) {
       resizeObj.s_height = targetNum || doItemBg.value.s_height;
       // 不一定存在接触
@@ -1542,9 +1566,7 @@ const resizeIng = (e) => {
       }
       return reg;
     });
-    if (targetArr.length > 0) {
-      targetNum = Math.max(...targetArr);
-    }
+    targetNum = findClosestNumber(targetArr, doItemBg.value.s_x, false);
     if (lArr.length > 0 || toMove || doItemBg.value.s_x === 0 || doItemBg.value.s_width === realMinWidth) {
       resizeObj.s_width = (targetNum ? (doItemBg.value.s_x - targetNum) : 0) + doItemBg.value.s_width;
       resizeObj.s_x = targetNum || doItemBg.value.s_x;
@@ -1576,9 +1598,7 @@ const resizeIng = (e) => {
       }
       return reg;
     });
-    if (targetArr.length > 0) {
-      targetNum = Math.min(...targetArr);
-    }
+    targetNum = findClosestNumber(targetArr, doItemBg.value.s_width);
     if (lArr.length > 0 || toMove || doItemBg.value.s_width === dealResizeMax('right') || doItemBg.value.s_width === realMinWidth) {
       resizeObj.s_width = targetNum || doItemBg.value.s_width;
       // 不一定存在接触
