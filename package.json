@@ -1,7 +1,7 @@
 {
   "name": "vue-drag-component-plus",
   "description": "拖拽卡片布局组件 vue3版组件",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "author": "aFei <1106728884@qq.com>",
   "license": "MIT",
   "main": "dist/vue-drag-component-plus.umd.js",
@@ -10,7 +10,7 @@
       "import": "./dist/vue-drag-component-plus.mjs",
       "require": "./dist/vue-drag-component-plus.umd.js"
     },
-    "./index.css": "./dist/style.css"
+    "./index.css": "./dist/vue-drag-component-plus.css"
   },
   "private": false,
   "scripts": {
